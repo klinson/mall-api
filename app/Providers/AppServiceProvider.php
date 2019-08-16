@@ -63,12 +63,9 @@ class AppServiceProvider extends ServiceProvider
 
     protected function loadObserverConfig()
     {
-        \App\Models\Message::observe(\App\Observers\MessageObserver::class);
         // 轮播广告的缓存观察器
         \App\Models\CarouselAd::observe(\App\Observers\CarouselAdObserver::class);
         \App\Models\CarouselAdItem::observe(\App\Observers\CarouselAdItemObserver::class);
         // 超链接的缓存观察器
-        \App\Models\Link::observe(\App\Observers\LinkObserver::class);
-        \App\Models\LinkItem::observe(\App\Observers\LinkItemObserver::class);
     }
 }

@@ -15,12 +15,12 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\User::class, function (Faker $faker) {
     return [
-        'username' => str_random(10),
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'password' => bcrypt('12345678'), // secret
-        'sex' => $faker->randomKey([0, 1]),
-        'created_at' => $faker->unixTime(),
-        'updated_at' => $faker->unixTime(),
+        'wxapp_openid' => str_random(28),
+        'nickname' => $faker->name,
+        'sex' => $faker->randomKey([1, 2]),
+        'mobile' => '158'.random_string(8),
+        'has_enabled' => 1,
+        'created_at' => $faker->dateTime()->format('Y-m-d H:i:s'),
+        'updated_at' => $faker->dateTime()->format('Y-m-d H:i:s'),
     ];
 });
