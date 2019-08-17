@@ -1,6 +1,6 @@
-# Laravel-cms
+# Mall-api
 
-> The cms depend on laravel/lavavel and encore/laravel-admin
+> 商城接口及管理后台
 
 ## install/安装
 
@@ -11,7 +11,7 @@ php artisan migrate --seed
 
 ## admin login/后台登录
 ```
-url: http://your-cms-domain/admin
+url: http://your-domain/admin
 username: admin
 password: admin
 ```
