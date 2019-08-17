@@ -138,6 +138,12 @@ class GoodsController extends AdminController
             $form->switch('has_enabled', __('Has enabled'))->default(1);
         });
 
+        $form->saving(function ($form) {
+            if (is_null($form->images)) {
+                $form->images = [];
+            };
+        });
+
         return $form;
     }
 }
