@@ -13,6 +13,16 @@ class Model extends EloquentModel
         return $query->orderBy('created_at', 'desc');
     }
 
+    public function scopeEnabled($query)
+    {
+        return $query->where('has_enabled', 1);
+    }
+
+    public function scopeById($query)
+    {
+        return $query->orderBy('id');
+    }
+
     public function scopeSort($query)
     {
         return $query->orderBy('sort', 'desc');

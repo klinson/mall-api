@@ -31,6 +31,8 @@ $api->version('v1', [
     $api->group([
 
     ], function ($api) {
+        $api->get('categories', 'CategoriesController@index');
+        $api->get('goods', 'GoodsController@index');
 
     });
 
