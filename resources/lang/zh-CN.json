@@ -3,8 +3,14 @@
   "Title": "标题",
   "Name": "名称",
   "Type": "类型",
-  "Has Enabled": "启用？",
+  "Has enabled": "启用？",
+  "Sort": "排序",
   "Created at": "创建时间",
   "Updated at": "更新时间",
-  "Deleted at": "删除时间"
+  "Deleted at": "删除时间",
+  "Wxapp openid": "小程序OPENID",
+  "Nickname": "昵称",
+  "Sex": "性别",
+  "Mobile": "手机号",
+  "Thumbnail": "缩略图"
 }
