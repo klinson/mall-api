@@ -66,6 +66,6 @@ class AppServiceProvider extends ServiceProvider
         // 轮播广告的缓存观察器
         \App\Models\CarouselAd::observe(\App\Observers\CarouselAdObserver::class);
         \App\Models\CarouselAdItem::observe(\App\Observers\CarouselAdItemObserver::class);
-        // 超链接的缓存观察器
+        \App\Models\GoodsSpecification::observe(\App\Observers\GoodsSpecificationObserver::class);
     }
 }

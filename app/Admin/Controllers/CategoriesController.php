@@ -66,7 +66,7 @@ class CategoriesController extends AdminController
         $form = new Form(new Category);
 
         $form->text('title', __('Title'))->required();
-        $form->image('thumbnail', __('Thumbnail'))->uniqueName()->required();
+        $form->image('thumbnail', __('Thumbnail'))->uniqueName();
         $form->switch('has_enabled', __('Has enabled'))->default(1);
         $form->number('sort', __('Sort'))->default(0);
 

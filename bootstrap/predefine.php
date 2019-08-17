@@ -8,3 +8,5 @@
 const HAS_ENABLED2TEXT = [
     '禁用', '正常'
 ];
+
+const YN2TEXT = ['否', '是'];

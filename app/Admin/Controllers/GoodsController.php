@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Category;
 use App\Models\Goods;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -15,7 +16,7 @@ class GoodsController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\Goods';
+    protected $title = '商品管理';
 
     /**
      * Make a grid builder.
@@ -26,20 +27,37 @@ class GoodsController extends AdminController
     {
         $grid = new Grid(new Goods);
 
+        $grid->model()->with(['specifications']);
+
         $grid->column('id', __('Id'));
-        $grid->column('category_id', __('Category id'));
+        grid_display_relation($grid, 'category');
         $grid->column('title', __('Title'));
-        $grid->column('thumbnail', __('Thumbnail'));
-        $grid->column('images', __('Images'));
-        $grid->column('detail', __('Detail'));
-        $grid->column('max_price', __('Max price'));
-        $grid->column('min_price', __('Min price'));
-        $grid->column('has_enabled', __('Has enabled'));
-        $grid->column('has_recommended', __('Has recommended'));
+        $grid->column('thumbnail', __('Thumbnail'))->image();
+        $grid->column('max_price', __('Max price'))->currency();
+        $grid->column('min_price', __('Min price'))->currency();
+        $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+        $grid->column('has_recommended', __('Has recommended'))->using(YN2TEXT);
         $grid->column('sort', __('Sort'));
-        $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
-        $grid->column('deleted_at', __('Deleted at'));
+
+        $grid->column('specifications', '商品规格')->display(function () {
+            if (empty($this->specifications)) {
+                $specificationList = [];
+            } else if (is_array($this->specifications)) {
+                $specificationList = $this->specifications;
+            } else {
+                $specificationList = $this->specifications->toArray();
+            }
+            $specifications = array_map(function ($item) {
+                return [
+                    '规格名称' => $item['title'],
+                    '售价' => '￥'.strval($item['price'] * 0.01),
+                    '库存' => $item['quantity'],
+                    '启用？' => HAS_ENABLED2TEXT[$item['has_enabled']],
+                ];
+            }, $specificationList);
+            return $specifications;
+        })->table();
 
         return $grid;
     }
@@ -55,19 +73,40 @@ class GoodsController extends AdminController
         $show = new Show(Goods::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('category_id', __('Category id'));
+        show_display_relation($show, 'category');
         $show->field('title', __('Title'));
-        $show->field('thumbnail', __('Thumbnail'));
-        $show->field('images', __('Images'));
-        $show->field('detail', __('Detail'));
-        $show->field('max_price', __('Max price'));
-        $show->field('min_price', __('Min price'));
-        $show->field('has_enabled', __('Has enabled'));
-        $show->field('has_recommended', __('Has recommended'));
+        $show->field('thumbnail', __('Thumbnail'))->image();
+        $show->field('images', __('Images'))->image();
+        $show->field('detail', __('Detail'))->unescape();
+        $show->field('max_price', __('Max price'))->as(function ($item) {
+            return '￥'.$item*0.01;
+        });
+        $show->field('min_price', __('Min price'))->as(function ($item) {
+            return '￥'.$item*0.01;
+        });
+        $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+        $show->field('has_recommended', __('Has recommended'))->using(YN2TEXT);
         $show->field('sort', __('Sort'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
+
+        $show->specifications('规格', function (Grid $grid) {
+            $grid->column('id', __('Id'));
+            $grid->column('title', __('Title'));
+            $grid->column('thumbnail', __('Thumbnail'))->image();
+            $grid->column('price', __('Price'))->currency();
+            $grid->column('quantity', __('Quantity'));
+            $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+            $grid->column('sort', __('Sort'));
+            $grid->column('created_at', __('Created at'));
+            $grid->column('updated_at', __('Updated at'));
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
 
         return $show;
     }
@@ -81,16 +120,23 @@ class GoodsController extends AdminController
     {
         $form = new Form(new Goods);
 
-        $form->number('category_id', __('Category id'));
-        $form->text('title', __('Title'));
-        $form->text('thumbnail', __('Thumbnail'));
-        $form->text('images', __('Images'));
-        $form->textarea('detail', __('Detail'));
-        $form->number('max_price', __('Max price'));
-        $form->number('min_price', __('Min price'));
+        Category::form_display_select($form, 'category_id')->required();
+        $form->text('title', __('Title'))->required();
+        $form->image('thumbnail', __('Thumbnail'))->uniqueName();
+        $form->multipleImage('images', __('Images'))->uniqueName()->removable();
+        $form->editor('detail', __('Detail'));
         $form->switch('has_enabled', __('Has enabled'))->default(1);
         $form->switch('has_recommended', __('Has recommended'))->default(1);
-        $form->switch('sort', __('Sort'));
+        $form->number('sort', __('Sort'))->default(0);
+
+        $form->hasMany('specifications', '商品规格',  function (Form\NestedForm $form) {
+            $form->text('title', __('Title'))->rules('required');
+            $form->image('thumbnail', __('Thumbnail'))->uniqueName()->removable()->addElementClass('specifications_'.random_string(10));
+            $form->currency('price', __('Price'))->rules(['required', 'min:1', 'numeric']);
+            $form->number('quantity', __('Quantity'))->default(1)->rules(['required', 'integer', 'min:0']);
+            $form->number('sort', __('Sort'))->default(0);
+            $form->switch('has_enabled', __('Has enabled'))->default(1);
+        });
 
         return $form;
     }

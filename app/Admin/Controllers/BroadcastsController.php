@@ -15,7 +15,7 @@ class BroadcastsController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\Broadcast';
+    protected $title = '广播管理';
 
     /**
      * Make a grid builder.
@@ -29,9 +29,7 @@ class BroadcastsController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('content', __('Content'));
         $grid->column('has_enabled', __('Has enabled'));
-        $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
-        $grid->column('deleted_at', __('Deleted at'));
 
         return $grid;
     }
@@ -51,7 +49,6 @@ class BroadcastsController extends AdminController
         $show->field('has_enabled', __('Has enabled'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
@@ -65,7 +62,7 @@ class BroadcastsController extends AdminController
     {
         $form = new Form(new Broadcast);
 
-        $form->text('content', __('Content'));
+        $form->textarea('content', __('Content'));
         $form->switch('has_enabled', __('Has enabled'))->default(1);
 
         return $form;
