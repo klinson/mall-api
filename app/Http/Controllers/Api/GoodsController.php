@@ -8,9 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Category;
 use App\Models\Goods;
-use App\Transformers\CategoryTransformer;
 use App\Transformers\GoodsTransformer;
 use Illuminate\Http\Request;
 
