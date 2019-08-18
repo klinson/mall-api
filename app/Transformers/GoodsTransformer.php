@@ -7,6 +7,8 @@ use League\Fractal\TransformerAbstract;
 
 class GoodsTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['category', 'soldSpecifications'];
+
     public function __construct()
     {
     }
@@ -23,5 +25,15 @@ class GoodsTransformer extends TransformerAbstract
             'has_recommended' => $model->has_recommended,
             'created_at' => $model->created_at->toDateTimeString(),
         ];
+    }
+
+    public function includeCategory(Model $model)
+    {
+        return $this->item($model->category, new CategoryTransformer());
+    }
+
+    public function includeSoldSpecifications(Model $model)
+    {
+        return $this->collection($model->soldSpecifications, new GoodsSpecificationTransformer());
     }
 }

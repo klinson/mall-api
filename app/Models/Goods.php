@@ -25,12 +25,19 @@ class Goods extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->withDefault([
+            'title' => '【无分类】'
+        ]);
     }
 
     public function specifications()
     {
         return $this->hasMany(GoodsSpecification::class, 'goods_id')->orderBy('sort');
+    }
+
+    public function soldSpecifications()
+    {
+        return $this->specifications()->where('has_enabled', 1);
     }
 
     public function getImagesUrlAttribute()

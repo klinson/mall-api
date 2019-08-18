@@ -23,7 +23,7 @@ class GoodsController extends Controller
         if ($request->category_id) {
             $query->where('category_id', $request->category_id);
         }
-        if ($request->q) {
+        if (! blank($request->q)) {
             $query->where('title', 'like', '%'.$request->q.'%');
         }
 
