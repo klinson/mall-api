@@ -36,4 +36,13 @@ class GoodsController extends Controller
         return $this->response->paginator($list, new GoodsTransformer());
 
     }
+
+    public function show(Goods $goods)
+    {
+        if ($goods->has_enabled != 1) {
+            return $this->response->errorNotFound();
+        }
+
+        return $this->response->item($goods, new GoodsTransformer());
+    }
 }

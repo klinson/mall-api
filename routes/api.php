@@ -33,6 +33,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->get('categories', 'CategoriesController@index');
         $api->get('goods', 'GoodsController@index');
+        $api->get('goods/{goods}', 'GoodsController@show')->where('goods', '[0-9]+');;
 
     });
 
