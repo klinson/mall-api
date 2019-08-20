@@ -48,6 +48,7 @@ $api->version('v1', [
     ], function ($api) {
         $api->get('user', 'UserController@show');
         $api->put('user', 'UserController@update');
-
+        $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);
+        $api->delete('shoppingCarts', 'ShoppingCartController@clearAll');
     });
 });

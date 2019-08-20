@@ -8,6 +8,11 @@ class Model extends EloquentModel
 {
     protected $perPage = 10;
 
+    public function scopeIsMine($query)
+    {
+        return $query->where($this->getTable().'.user_id', \Auth::user()->id ?? 0);
+    }
+
     public function scopeRecent($query)
     {
         return $query->orderBy('created_at', 'desc');
