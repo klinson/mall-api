@@ -20,6 +20,8 @@ class CreateUsersTable extends Migration
             $table->tinyInteger('sex')->default(0)->comment('性别: 1-男, 2-女');
             $table->char('mobile', 11)->nullable()->comment('手机');
             $table->tinyInteger('has_enabled')->default(1)->comment('是否启用');
+            $table->string('avatar');
+            $table->json('wxapp_userinfo');
 
             $table->rememberToken();
             $table->timestamps();

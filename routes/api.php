@@ -25,6 +25,8 @@ $api->version('v1', [
     ], function ($api) {
         $api->post('login', 'AuthorizationsController@login');
         $api->post('logout', 'AuthorizationsController@logout');
+        $api->post('login/wxapp', 'AuthorizationsController@wxappLogin');
+
     });
 
     //不需要登录的路由

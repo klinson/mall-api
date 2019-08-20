@@ -20,6 +20,8 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'sex' => $faker->randomKey([1, 2]),
         'mobile' => '158'.random_string(8),
         'has_enabled' => 1,
+        'avatar' => '',
+        'wxapp_userinfo' => "{}",
         'created_at' => $faker->dateTime()->format('Y-m-d H:i:s'),
         'updated_at' => $faker->dateTime()->format('Y-m-d H:i:s'),
     ];

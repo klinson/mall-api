@@ -3,10 +3,64 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\AuthorizationsRequest;
+use App\Models\User;
+use App\Transformers\UserTransformer;
 use Auth;
+use Illuminate\Http\Request;
 
 class AuthorizationsController extends Controller
 {
+    public function wxappLogin(Request $request)
+    {
+        if (blank($request->code)) {
+            return $this->response->errorBadRequest('code不能为空');
+        }
+
+        $app = app('wechat.mini_program');
+        $wechat_info = $app->auth->session($request->code);
+//        $wechat_info = [
+//            'openid' => 2111111111,
+//            'session_key' => 'SESSION_KEY'
+//        ];
+        if (isset($wechat_info['openid'])) {
+            $user = User::where('wxapp_openid', $wechat_info['openid'])->first();
+
+            if (empty($user)) {
+                // 第一次登录
+                if (! $request->user || ! is_array($request->user)) {
+                    if ($request->type === 'try') {
+                        // 静默尝试登录
+                        return $this->response->array([
+                            'wxapp_openid' => $wechat_info['openid'],
+                        ]);
+                    } else {
+                        return $this->response->errorBadRequest('用户信息不能为空');
+                    }
+                }
+                $info = $request->user;
+
+                $user = new User([
+                    'wxapp_openid' => $wechat_info['openid'],
+                    'nickname' => $info['nickName'],
+                    'sex' => $info['gender'],
+                    'avatar' => $info['avatarUrl'],
+                    'wxapp_userinfo' => json_encode($info),
+                    'has_enabled' => 1,
+                    'mobile' => '',
+                ]);
+                $user->save();
+            } else {
+                // 已绑定
+
+            }
+            $token = Auth::guard('api')->login($user);
+
+            return $this->response->item($user, new UserTransformer($token));
+        } else {
+            return $this->response->errorBadRequest('登录失败，' . $wechat_info['errmsg']);
+        }
+    }
+
     public function login(AuthorizationsRequest $request)
     {
         //TODO: check user login
