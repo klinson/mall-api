@@ -46,9 +46,18 @@ $api->version('v1', [
     $api->group([
         'middleware' => 'refresh.token'
     ], function ($api) {
+        // 用户
         $api->get('user', 'UserController@show');
         $api->put('user', 'UserController@update');
+        $api->resource('addresses', 'AddressesController', ['only' => ['index', 'update', 'store', 'destroy']]);
+
+        // 购物车
         $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);
         $api->delete('shoppingCarts', 'ShoppingCartController@clearAll');
+
+        // 订单
+        $api->get('orders', 'OrdersController@index');
+        $api->post('orders', 'OrdersController@store');
+        $api->get('orders/{order}', 'OrdersController@show')->where('order', '[0-9]+');
     });
 });
