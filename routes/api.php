@@ -45,6 +45,7 @@ $api->version('v1', [
     $api->group([
         'middleware' => 'refresh.token'
     ], function ($api) {
+        $api->get('user', 'UserController@show');
 
     });
 });

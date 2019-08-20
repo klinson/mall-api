@@ -25,7 +25,7 @@ class UserTransformer extends TransformerAbstract
                     'mobile' => $model->mobile,
                     'sex' => $model->sex,
                     'avatar' => $avatar,
-                    'created_at' => $model->created_at,
+                    'created_at' => $model->created_at->toDateTimeString(),
                 ];
                 break;
             case '':
@@ -45,7 +45,7 @@ class UserTransformer extends TransformerAbstract
                         'mobile' => $model->mobile,
                         'sex' => $model->sex,
                         'avatar' => $avatar,
-                        'created_at' => $model->created_at,
+                        'created_at' => $model->created_at->toDateTimeString(),
                     ],
                     'token' => $this->token,
                 ];
