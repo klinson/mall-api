@@ -15,6 +15,11 @@ class BroadcastsController extends Controller
 {
     public function show()
     {
-        return $this->response->item(Broadcast::getShow(), new BroadcastTransformer());
+        $broadcast =  Broadcast::getShow();
+        if ($broadcast) {
+            return $this->response->item($broadcast, new BroadcastTransformer());
+        } else {
+            return $this->response->noContent();
+        }
     }
 }
