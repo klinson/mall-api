@@ -47,6 +47,7 @@ $api->version('v1', [
         'middleware' => 'refresh.token'
     ], function ($api) {
         $api->get('user', 'UserController@show');
+        $api->put('user', 'UserController@update');
 
     });
 });
