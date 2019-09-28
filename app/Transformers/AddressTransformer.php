@@ -17,10 +17,11 @@ class AddressTransformer extends TransformerAbstract
             'id' => $model->id,
             'name' => $model->name,
             'mobile' => $model->mobile,
-            'province_id' => $model->province_id,
-            'city_id' => $model->city_id,
-            'district_id' => $model->district_id,
+            'province_code' => $model->province_code,
+            'city_code' => $model->city_code,
+            'district_code' => $model->district_code,
             'address' => $model->address,
+            'is_default' => $model->is_default,
             'created_at' => $model->created_at->toDatetimeString(),
         ];
     }

@@ -18,10 +18,11 @@ class CreateAddressesTable extends Migration
             $table->unsignedInteger('user_id')->default(0);
             $table->string('name', 10);
             $table->char('mobile', 11);
-            $table->unsignedInteger('province_id')->default(0);
-            $table->unsignedInteger('city_id')->default(0);
-            $table->unsignedInteger('district_id')->default(0);
+            $table->unsignedInteger('province_code')->default(0);
+            $table->unsignedInteger('city_code')->default(0);
+            $table->unsignedInteger('district_code')->default(0);
             $table->string('address')->default('');
+            $table->unsignedTinyInteger('is_default')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
