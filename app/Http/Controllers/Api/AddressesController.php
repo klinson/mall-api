@@ -78,7 +78,16 @@ class AddressesController extends Controller
 
     public function destroy(Address $address)
     {
+        $this->authorize('is-mine', $address);
+
         $address->delete();
         return $this->response->noContent();
+    }
+
+    public function show(Address $address)
+    {
+        $this->authorize('is-mine', $address);
+
+        return $this->response->item($address, new AddressTransformer());
     }
 }

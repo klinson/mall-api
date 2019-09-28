@@ -49,7 +49,7 @@ $api->version('v1', [
         // 用户
         $api->get('user', 'UserController@show');
         $api->put('user', 'UserController@update');
-        $api->resource('addresses', 'AddressesController', ['only' => ['index', 'update', 'store', 'destroy']]);
+        $api->resource('addresses', 'AddressesController', ['only' => ['index', 'update', 'store', 'destroy', 'show']]);
 
         // 购物车
         $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);
