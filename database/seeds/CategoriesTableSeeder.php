@@ -15,12 +15,12 @@ class CategoriesTableSeeder extends Seeder
         
 
         \DB::table('categories')->delete();
-        
+
         \DB::table('categories')->insert(array (
             0 => 
             array (
                 'id' => 1,
-                'title' => '应季水果',
+                'title' => '医用测温',
                 'thumbnail' => NULL,
                 'has_enabled' => 1,
                 'sort' => 0,
@@ -31,7 +31,7 @@ class CategoriesTableSeeder extends Seeder
             1 => 
             array (
                 'id' => 2,
-                'title' => '馋嘴零食',
+                'title' => '吸发理发',
                 'thumbnail' => NULL,
                 'has_enabled' => 1,
                 'sort' => 0,
@@ -42,7 +42,7 @@ class CategoriesTableSeeder extends Seeder
             2 => 
             array (
                 'id' => 3,
-                'title' => '酒水饮品',
+                'title' => '棉柔巾',
                 'thumbnail' => NULL,
                 'has_enabled' => 1,
                 'sort' => 0,
@@ -53,7 +53,7 @@ class CategoriesTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-                'title' => '家居百货',
+                'title' => '卫生湿巾',
                 'thumbnail' => NULL,
                 'has_enabled' => 1,
                 'sort' => 0,
@@ -64,7 +64,7 @@ class CategoriesTableSeeder extends Seeder
             4 => 
             array (
                 'id' => 5,
-                'title' => '蛋糕甜品',
+                'title' => '两用棉签',
                 'thumbnail' => NULL,
                 'has_enabled' => 1,
                 'sort' => 0,
@@ -72,8 +72,40 @@ class CategoriesTableSeeder extends Seeder
                 'updated_at' => '2019-08-18 00:40:18',
                 'deleted_at' => NULL,
             ),
+            5 =>
+                array (
+                    'id' => 6,
+                    'title' => '有机洗护',
+                    'thumbnail' => NULL,
+                    'has_enabled' => 1,
+                    'sort' => 0,
+                    'created_at' => '2019-08-18 00:40:18',
+                    'updated_at' => '2019-08-18 00:40:18',
+                    'deleted_at' => NULL,
+                ),
+            6 =>
+                array (
+                    'id' => 7,
+                    'title' => '驱蚊防晒',
+                    'thumbnail' => NULL,
+                    'has_enabled' => 1,
+                    'sort' => 0,
+                    'created_at' => '2019-08-18 00:40:18',
+                    'updated_at' => '2019-08-18 00:40:18',
+                    'deleted_at' => NULL,
+                ),
+            7 =>
+                array (
+                    'id' => 8,
+                    'title' => '喂养系列',
+                    'thumbnail' => NULL,
+                    'has_enabled' => 1,
+                    'sort' => 0,
+                    'created_at' => '2019-08-18 00:40:18',
+                    'updated_at' => '2019-08-18 00:40:18',
+                    'deleted_at' => NULL,
+                ),
         ));
-        
-        
+
     }
 }
