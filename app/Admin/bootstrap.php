@@ -33,6 +33,7 @@ Form::extend('markdown', \App\Admin\Extensions\Form\MarkdownEditor::class);
 Form::extend('media', \Encore\FileBrowser\FileBrowserField::class);
 Column::extend('currency', \App\Admin\Extensions\Column\Currency::class);
 Form::extend('currency', \App\Admin\Extensions\Form\Currency::class);
+Form::extend('weight', \App\Admin\Extensions\Form\Weight::class);
 
 //Column::extend('qrcode', \App\Admin\Extensions\Column\Qrcode::class);
 Admin::js('/vendor/clipboard/dist/clipboard.min.js');

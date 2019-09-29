@@ -64,7 +64,9 @@
   "Min price": "最低价",
   "Price": "价格",
   "Quantity": "库存数量",
+  "Sold quantity": "销量",
   "Images": "多图",
+  "Weight": "重量(kg)",
   "Detail": "详细介绍",
   "Content": "内容"
 }

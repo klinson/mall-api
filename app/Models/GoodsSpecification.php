@@ -11,7 +11,7 @@ class GoodsSpecification extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'thumbnail', 'price', 'quantity', 'sold_quantity', 'sort', 'has_enabled'];
+    protected $fillable = ['title', 'thumbnail', 'price', 'quantity', 'sold_quantity', 'sort', 'has_enabled', 'weight'];
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 

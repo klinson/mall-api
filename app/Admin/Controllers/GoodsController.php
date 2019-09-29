@@ -53,6 +53,8 @@ class GoodsController extends AdminController
                     '规格名称' => $item['title'],
                     '售价' => '￥'.strval($item['price'] * 0.01),
                     '库存' => $item['quantity'],
+                    '销量' => $item['sold_quantity'],
+                    '重量' => $item['weight'],
                     '启用？' => HAS_ENABLED2TEXT[$item['has_enabled']],
                 ];
             }, $specificationList);
@@ -96,6 +98,8 @@ class GoodsController extends AdminController
             $grid->column('thumbnail', __('Thumbnail'))->image();
             $grid->column('price', __('Price'))->currency();
             $grid->column('quantity', __('Quantity'));
+            $grid->column('sold_quantity', __('Sold quantity'));
+            $grid->column('weight', __('Weight'));
             $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
             $grid->column('sort', __('Sort'));
             $grid->column('created_at', __('Created at'));
@@ -134,6 +138,8 @@ class GoodsController extends AdminController
             $form->image('thumbnail', __('Thumbnail'))->uniqueName()->removable()->addElementClass('specifications_'.random_string(10));
             $form->currency('price', __('Price'))->rules(['required', 'min:1', 'numeric']);
             $form->number('quantity', __('Quantity'))->default(1)->rules(['required', 'integer', 'min:0']);
+            $form->number('sold_quantity', __('Sold quantity'))->default(0)->rules(['required', 'integer', 'min:0']);
+            $form->weight('weight', __('Weight'))->default(0)->rules(['required', 'min:0']);
             $form->number('sort', __('Sort'))->default(0);
             $form->switch('has_enabled', __('Has enabled'))->default(1);
         });
