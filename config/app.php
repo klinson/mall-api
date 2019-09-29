@@ -178,6 +178,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // 发布语言包打开
+//        Overtrue\LaravelLang\TranslationServiceProvider::class,
     ],
 
     /*
