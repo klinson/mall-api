@@ -25,6 +25,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('freight_price')->default(0);
             $table->string('remarks', 100)->default('');
             $table->tinyInteger('status')->default(0);
+            $table->unsignedInteger('freight_template_id')->default(0);
+            $table->unsignedTinyInteger('goods_count')->default(0);
+            $table->unsignedDecimal('goods_weight', 8, 4)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

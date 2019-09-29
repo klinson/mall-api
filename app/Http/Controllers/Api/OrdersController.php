@@ -45,7 +45,7 @@ class OrdersController extends Controller
             return $this->response->errorBadRequest('备注信息不可超过100字符');
         }
 
-        if (! $request->address_id || ! $this->user->addresses()->where('id', $request->address_id)->first()) {
+        if (! $request->address_id || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
             return $this->response->errorBadRequest('请选择配送地址');
         }
 
@@ -78,10 +78,12 @@ class OrdersController extends Controller
         }
         $goods_specification_by_key_list = $goods_specification_list->keyBy('id');
 
-        // 验证优惠券
+        //TODO: 验证优惠券
 
         $order_goods = [];
         $all_goods_price = 0;
+        $goods_count = 0;
+        $goods_weight = 0;
         $sub_quantity = [];
 
         foreach ($goods_ids_list as $info) {
@@ -103,14 +105,9 @@ class OrdersController extends Controller
                 }
             }
 
-
             $goods_price = $specification->price;
-            $marketing_info = null;
 
-            //商品库存删减
-            $specification->quantity -= $info['quantity'];
-
-            //商品库存删减
+            //商品库存待删减
             $sub_quantity[] = [
                 'model' => $specification,
                 'quantity' => $info['quantity']
@@ -119,27 +116,30 @@ class OrdersController extends Controller
             $order_goods_item = [
                 'goods_id' => $goods_id,
                 'goods_specification_id' => $specification_id,
-                'snapshot' => '{}',
+                // 快照记录
+                'snapshot' => $specification->toSnapshot(),
                 'price' => $goods_price,
                 'quantity' => $info['quantity'],
             ];
 
             $order_goods[] = $order_goods_item;
             $all_goods_price += $goods_price * $info['quantity'];
+            $goods_count += $info['quantity'];
+            $goods_weight += $specification->weight * $info['quantity'];
+
         }
 
-        // 配送费
+        //TODO: 根据地区计算配送费和运费模板
         $freight_price = 0;
+        $freight_template_id = 0;
 
-        // 优惠金额
+        //TODO: 优惠金额
         $coupon_price = 0;
 
         // 总费用
         $all_price = $all_goods_price + $freight_price;
         // 支付费用
         $real_price = $all_price - $coupon_price;
-
-        DB::beginTransaction();
 
         $order = new Order();
         $order->order_number = Order::generateOrderNumber();
@@ -149,11 +149,32 @@ class OrdersController extends Controller
         $order->all_price = $all_price;
         $order->coupon_price = $coupon_price;
         $order->real_price = $real_price;
+        $order->goods_count = $goods_count;
+        $order->goods_weight = $goods_weight;
         $order->status = 1;
         $order->remarks = $request->remarks ?: '';
         $order->address_id = $request->address_id;
+        // 运费模板
+        $order->freight_template_id = $freight_template_id;
+
+        DB::beginTransaction();
 
         try {
+            // 减库存
+            foreach ($sub_quantity as $item) {
+                $res = $item['model']->sold($item['quantity']);
+                if ($res === false) {
+                    DB::rollBack();
+                    $specification = GoodsSpecification::find($item['model']->id);
+                    if ($specification->quantity) {
+                        return $this->response->errorBadRequest("商品【{$specification->goods->title}（{$specification->title}）】库存紧剩{$specification->quantity}件, 不足{$item['quantity']}件，请重新调整数量后下单");
+                    } else {
+                        return $this->response->errorBadRequest("商品【{$specification->goods->title}（{$specification->title}）】已售罄");
+                    }
+                }
+            }
+
+
             $order->save();
 
             $order->orderGoods()->createMany($order_goods);
@@ -163,7 +184,13 @@ class OrdersController extends Controller
                 ShoppingCart::isMine()->whereIn('id', $from_shopping_cart_ids)->delete();
             }
 
-            DB::commit();
+            // 测试计算
+            $test = intval($request->test);
+            if ($test === 1) {
+                DB::rollBack();
+            } else {
+                DB::commit();
+            }
 
             // 订单记录日志
 //            dispatch(new RecordOrderLog($order, $this->user, 1, $request->getClientIp()));

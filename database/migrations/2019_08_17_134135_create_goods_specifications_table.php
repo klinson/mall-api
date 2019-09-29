@@ -20,6 +20,8 @@ class CreateGoodsSpecificationsTable extends Migration
             $table->string('thumbnail')->nullable();
             $table->unsignedInteger('price')->default(0);
             $table->unsignedInteger('quantity')->default(0);
+            $table->unsignedInteger('sold_quantity')->default(0);
+            $table->unsignedDecimal('weight', 8, 4)->default(0);
             $table->unsignedTinyInteger('has_enabled')->default(1);
             $table->unsignedTinyInteger('sort')->default(0);
             $table->timestamps();

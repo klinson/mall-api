@@ -10,6 +10,10 @@ class OrderGoods extends Model
         'goods_id', 'goods_specification_id', 'goods_info', 'price', 'quantity', 'snapshot'
     ];
 
+    protected $casts = [
+        'snapshot' => 'array'
+    ];
+
     public function goods()
     {
         return $this->hasOne(Goods::class, 'id', 'goods_id')->withDefault(['title' => '[已删除]']);

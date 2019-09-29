@@ -18,6 +18,7 @@ class OrderGoodsTransformer extends TransformerAbstract
             'goods_specification_id' => $orderGoods->goods_specification_id,
             'price' => $orderGoods->price,
             'quantity' => $orderGoods->quantity,
+            'snapshot' => $orderGoods->snapshot,
         ];
     }
 

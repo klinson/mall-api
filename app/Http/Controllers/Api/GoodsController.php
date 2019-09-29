@@ -41,6 +41,6 @@ class GoodsController extends Controller
             return $this->response->errorNotFound();
         }
 
-        return $this->response->item($goods, new GoodsTransformer());
+        return $this->response->item($goods, new GoodsTransformer('show'));
     }
 }
