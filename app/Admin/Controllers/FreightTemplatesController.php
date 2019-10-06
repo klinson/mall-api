@@ -60,7 +60,6 @@ class FreightTemplatesController extends AdminController
         $show->field('continued_cost', __('Continued cost'));
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('sort', __('Sort'));
-        $show->field('addresses', __('Addresses'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -84,7 +83,7 @@ class FreightTemplatesController extends AdminController
         $form->currency('continued_cost', __('Continued cost'))->default(1000);
         $form->switch('has_enabled', __('Has enabled'))->default(1);
         $form->number('sort', __('Sort'))->default(0);
-//        $form->text('addresses', __('Addresses'));
+        $form->areaCheckbox('addresses', __('Addresses'));
 
         return $form;
     }

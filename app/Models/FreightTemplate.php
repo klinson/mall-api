@@ -19,5 +19,9 @@ class FreightTemplate extends Model
         2 => '1kg'
     ];
 
+    protected $casts = [
+        'addresses' => 'array'
+    ];
+
 
 }
