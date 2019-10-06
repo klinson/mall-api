@@ -37,6 +37,7 @@ $api->version('v1', [
         $api->get('goods', 'GoodsController@index');
         $api->get('goods/{goods}', 'GoodsController@show')->where('goods', '[0-9]+');;
         $api->get('broadcast', 'BroadcastsController@show');
+        $api->get('carouselAd', 'CarouselAdsController@show');
         $api->post('files', 'FilesController@upload');
 
 
