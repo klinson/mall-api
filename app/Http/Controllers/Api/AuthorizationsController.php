@@ -27,7 +27,16 @@ class AuthorizationsController extends Controller
 
             if (empty($user)) {
                 // 第一次登录
-                if (! $request->user || ! is_array($request->user)) {
+                if (! $info = $request->user) {
+                    if (is_string($info)) {
+                        $info = json_decode($info, true);
+                    } else if (is_array($info)) {
+
+                    } else {
+                        $info = null;
+                    }
+                }
+                if (empty($info)) {
                     if ($request->type === 'try') {
                         // 静默尝试登录
                         return $this->response->array([
@@ -37,7 +46,6 @@ class AuthorizationsController extends Controller
                         return $this->response->errorBadRequest('用户信息不能为空');
                     }
                 }
-                $info = $request->user;
 
                 $user = new User([
                     'wxapp_openid' => $wechat_info['openid'],
