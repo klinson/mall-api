@@ -54,7 +54,7 @@ $api->version('v1', [
 
         // 购物车
         $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);
-        $api->delete('shoppingCarts', 'ShoppingCartController@clearAll');
+        $api->delete('shoppingCarts', 'ShoppingCartsController@clearAll');
 
         // 订单
         $api->get('orders', 'OrdersController@index');
