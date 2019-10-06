@@ -12,6 +12,7 @@ class AuthorizationsController extends Controller
 {
     public function wxappLogin(Request $request)
     {
+        logger($request->user);
         if (blank($request->code)) {
             return $this->response->errorBadRequest('code不能为空');
         }
@@ -27,7 +28,7 @@ class AuthorizationsController extends Controller
 
             if (empty($user)) {
                 // 第一次登录
-                if (! $info = $request->user) {
+                if ($info = $request->user) {
                     if (is_string($info)) {
                         $info = json_decode($info, true);
                     } else if (is_array($info)) {
