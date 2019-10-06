@@ -18,6 +18,8 @@ Route::group([
     $router->resource('addresses', AddressesController::class);
     $router->resource('orders', OrdersController::class);
     $router->resource('broadcasts', BroadcastsController::class);
+    $router->resource('freightTemplates', FreightTemplatesController::class);
+
 
     // 通用轮播路由
     $router->get('carouselAds/{ad}/items', 'CarouselAdsController@items')->where('ad', '[0-9]+');

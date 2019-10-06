@@ -68,5 +68,11 @@
   "Images": "多图",
   "Weight": "重量(kg)",
   "Detail": "详细介绍",
-  "Content": "内容"
+  "Content": "内容",
+  "Basic cost": "基础运费",
+  "Pinkage type": "包邮类型",
+  "Pinkage number": "包邮金额或数量",
+  "Continued type": "续重类型",
+  "Continued cost": "续重费用",
+  "Addresses": "地区"
 }
