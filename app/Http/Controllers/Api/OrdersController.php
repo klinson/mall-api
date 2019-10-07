@@ -8,7 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Address;
+use App\Models\FreightTemplate;
 use App\Models\GoodsSpecification;
 use App\Models\Order;
 use App\Models\OrderGoods;
@@ -47,6 +47,10 @@ class OrdersController extends Controller
 
         if (! $request->address_id || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
             return $this->response->errorBadRequest('请选择配送地址');
+        }
+        // 获取运费计算模板，没有则非配送范围
+        if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
+            return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
         }
 
         $goods_ids_list = $request->goods_list;
@@ -129,9 +133,12 @@ class OrdersController extends Controller
 
         }
 
+        $goods_weight = floatval(strval($goods_weight));
+        $goods_count = intval(strval($goods_count));
+        $all_goods_price = intval(strval($all_goods_price));
+
         //TODO: 根据地区计算配送费和运费模板
-        $freight_price = 0;
-        $freight_template_id = 0;
+        $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_goods_price);
 
         //TODO: 优惠金额
         $coupon_price = 0;
@@ -155,7 +162,7 @@ class OrdersController extends Controller
         $order->remarks = $request->remarks ?: '';
         $order->address_id = $request->address_id;
         // 运费模板
-        $order->freight_template_id = $freight_template_id;
+        $order->freight_template_id = $freightTemplate->id;
 
         DB::beginTransaction();
 

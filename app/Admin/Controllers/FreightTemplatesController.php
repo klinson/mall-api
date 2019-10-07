@@ -33,7 +33,6 @@ class FreightTemplatesController extends AdminController
         $grid->column('basic_cost', __('Basic cost'));
         $grid->column('pinkage_type', __('Pinkage type'))->using(FreightTemplate::pinkage_types);
         $grid->column('pinkage_number', __('Pinkage number'));
-        $grid->column('continued_type', __('Continued type'))->using(FreightTemplate::continued_types);
         $grid->column('continued_cost', __('Continued cost'));
         $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $grid->column('sort', __('Sort'));
@@ -56,7 +55,6 @@ class FreightTemplatesController extends AdminController
         $show->field('basic_cost', __('Basic cost'));
         $show->field('pinkage_type', __('Pinkage type'))->using(FreightTemplate::pinkage_types);
         $show->field('pinkage_number', __('Pinkage number'));
-        $show->field('continued_type', __('Continued type'))->using(FreightTemplate::continued_types);
         $show->field('continued_cost', __('Continued cost'));
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('sort', __('Sort'));
@@ -79,7 +77,6 @@ class FreightTemplatesController extends AdminController
         $form->currency('basic_cost', __('Basic cost'))->default(1000);
         $form->select('pinkage_type', __('Pinkage type'))->options(FreightTemplate::pinkage_types);
         $form->number('pinkage_number', __('Pinkage number'))->default(0);
-        $form->select('continued_type', __('Continued type'))->options(FreightTemplate::continued_types)->default(1);
         $form->currency('continued_cost', __('Continued cost'))->default(1000);
         $form->switch('has_enabled', __('Has enabled'))->default(1);
         $form->number('sort', __('Sort'))->default(0);

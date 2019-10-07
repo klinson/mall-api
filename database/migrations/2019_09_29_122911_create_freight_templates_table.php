@@ -19,7 +19,6 @@ class CreateFreightTemplatesTable extends Migration
             $table->unsignedInteger('basic_cost')->default(0);
             $table->unsignedTinyInteger('pinkage_type')->default(0);
             $table->unsignedInteger('pinkage_number')->default(0);
-            $table->unsignedTinyInteger('continued_type')->default(0);
             $table->unsignedInteger('continued_cost')->default(0);
             $table->unsignedTinyInteger('has_enabled')->default(0);
             $table->unsignedInteger('sort')->default(0);
