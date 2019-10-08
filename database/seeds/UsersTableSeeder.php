@@ -22,5 +22,11 @@ class UsersTableSeeder extends Seeder
         $user->mobile = '15818253017';
         $user->sex = 1;
         $user->save();
+
+        User::chunk(100, function ($users) {
+            foreach ($users as $user) {
+                $user->init();
+            }
+        });
     }
 }

@@ -8,9 +8,9 @@ class Order extends Model
 {
     use SoftDeletes;
 
-    // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期
+    // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期，7退款
     const status_text = [
-        '未知', '待支付', '待发货', '待收货', '已完成', '已订单'
+        '未知', '待支付', '待发货', '待收货', '已完成', '已取消', '超时过期', '已退款'
     ];
 
     public static function generateOrderNumber()
@@ -61,5 +61,30 @@ class Order extends Model
         $this->save();
         // TODO: 日志记录
         // TODO: 通知
+    }
+
+    /**
+     * 支付
+     * @param int $used_balance
+     * @author klinson <klinson@163.com>
+     */
+    public function pay($used_balance = 0)
+    {
+        // 直接支付成功
+        $this->used_balance = $used_balance;
+        if ($used_balance >= $this->real_price) {
+            $this->real_cost = 0;
+        } else {
+            $this->real_cost = $this->real_price - $used_balance;
+        }
+        $this->status = 2;
+        $this->payed_at = date('Y-m-d H:i:s');
+        $this->save();
+    }
+
+    public function receive()
+    {
+        $this->status = 4;
+        $this->save();
     }
 }

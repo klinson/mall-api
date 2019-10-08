@@ -286,3 +286,18 @@ function show_display_relation($show, $related, $title = 'title', $relate_column
         return model2a($item, $title);
     });
 }
+
+/**
+ * 微信支付md5 paySign
+ * @param $appid
+ * @param $nonceStr
+ * @param $prepay_id
+ * @param $timeStamp
+ * @param $key
+ * @author klinson <klinson@163.com>
+ * @return string
+ */
+function generate_wechat_payment_md5_sign($appid, $nonceStr, $prepay_id, $timeStamp, $key)
+{
+    return md5("appId={$appid}&nonceStr=$nonceStr&package=prepay_id={$prepay_id}&signType=MD5&timeStamp={$timeStamp}&key={$key}");
+}

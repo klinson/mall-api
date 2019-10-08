@@ -28,6 +28,9 @@ class OrderTransformer extends TransformerAbstract
             'address_id' => $order->address_id,
             'created_at' => $order->created_at->toDatetimeString(),
             'payed_at' => $order->payed_at,
+            'used_balance' => $order->used_balance,
+            'real_cost' => $order->real_cost,
+            'cancel_order_number' => $order->cancel_order_number,
         ];
     }
 

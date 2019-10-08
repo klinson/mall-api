@@ -137,7 +137,7 @@ class OrdersController extends Controller
         $goods_count = intval(strval($goods_count));
         $all_goods_price = intval(strval($all_goods_price));
 
-        //TODO: 根据地区计算配送费和运费模板
+        // 根据地区计算配送费和运费模板
         $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_goods_price);
 
         //TODO: 优惠金额
@@ -180,7 +180,6 @@ class OrdersController extends Controller
                     }
                 }
             }
-
 
             $order->save();
 
@@ -231,7 +230,7 @@ class OrdersController extends Controller
 
     public function show(Order $order)
     {
-        $this->authorize('my-order', $order);
+        $this->authorize('is-mine', $order);
         return $this->response->item($order, new OrderTransformer());
     }
 
@@ -247,67 +246,21 @@ class OrdersController extends Controller
      * @author klinson <klinson@163.com>
      * @return \Dingo\Api\Http\Response|void
      */
-    public function cancel(Order $order, Request $request)
+    public function cancel(Order $order)
     {
-        $this->authorize('my-order', $order);
+        $this->authorize('is-mine', $order);
 
-        if ( $order->status == 6) {
-            return $this->response->errorBadRequest('订单已取消');
-        }
-        if (! $order->timeCanCancel()) {
-            return $this->response->errorBadRequest('订单已经进行装箱打包，不可以取消');
-        }
-        if ( $order->status > 2) {
-            return $this->response->errorBadRequest('城主已经发货，不可以取消');
+        if ( $order->status !== 1) {
+            return $this->response->errorBadRequest('订单状态不可取消');
         }
 
         try {
-            $original_order_status = $order->status;
-
-            // 退款
-            if ($original_order_status > 1) {
-                $order->cancel_order_number = generate_order_number();
-                if (config('app.env') != 'local') {
-                    $app = app('wechat.payment');
-                    $result = $app->refund->byOutTradeNumber($order->order_number, $order->cancel_order_number, $order->price, $order->price, [
-                        // 可在此处传入其他参数，详细参数见微信支付文档
-                        'refund_desc' => "用户本人操作订单【{$order->order_number}】进行商品订单取消并进行退款",
-                    ]);
-                    Log::info("[wechat][payment][refund][{$order->order_number}][{$order->cancel_order_number}]微信支付退款：" . json_encode($result, JSON_UNESCAPED_UNICODE));
-
-                    if (($result['return_code'] ?? 'FAIL') == 'FAIL') {
-                        Log::error("[wechat][payment][refund][{$order->order_number}][{$order->cancel_order_number}]微信支付退款失败：[{$result['return_code']}]{$result['return_msg']}");
-                        return $this->response->errorBadRequest('退款失败，' . $result['return_msg']);
-                    }
-                    if (($result['result_code'] ?? 'FAIL') == 'FAIL') {
-                        Log::error("[wechat][payment][refund][{$order->order_number}][{$order->cancel_order_number}]微信支付退款失败：[{$result['err_code']}]{$result['err_code_des']}");
-                        return $this->response->errorBadRequest('退款失败，' . $result['err_code_des']);
-                    }
-                    Log::error("[wechat][payment][refund][{$order->order_number}][{$order->cancel_order_number}]微信支付退款成功：{$order->price}");
-                }
-
-            }
-
-            $order->status = 6;
+            $order->status = 5;
             $order->save();
 
             // 加库存
-            $order->changeGoodsQuantity('inc');
 
             // 订单记录日志
-            dispatch(new RecordOrderLog($order, $this->user, 6, $request->getClientIp()));
-            if ($original_order_status > 1) {
-                dispatch(new RecordOrderLog($order, $this->user, 11, $request->getClientIp()));
-            }
-
-            // 通知街道街道配送员
-            if (check_model($order->leaderModel)) {
-                $order->leaderModel->notify(new OrderNotification($order, 6, 'user_to_other'));
-            }
-            // 通知城主
-            if (check_model($order->castellanModel)) {
-                $order->castellanModel->notify(new OrderNotification($order, 6, 'user_to_other'));
-            }
 
             return $this->response->item($order, new OrderTransformer());
         } catch (\Exception $exception) {
@@ -325,20 +278,48 @@ class OrdersController extends Controller
      */
     public function pay(Order $order, Request $request)
     {
-        $this->authorize('my-order', $order);
+        $this->authorize('is-mine', $order);
 
         if ($order->status !== 1) {
             return $this->response->errorBadRequest('订单无法支付，请查看订单状态');
         }
 
-        if (config('app.env') != 'local') {
+        // 使用余额抵扣
+        $balance = intval($request->balance);
+        if ($balance) {
+            if ($this->user->wallet->balance < $balance) {
+                return $this->response->errorBadRequest('用户余额不足，无法支付');
+            }
+            if ($balance > $order->real_price) {
+                return $this->response->errorBadRequest('输入余额超过订单金额，请重试');
+            }
+        }
+
+        if ($balance === $order->real_price) {
+            // 直接支付成功
+            DB::beginTransaction();
+            try {
+                $this->user->wallet->decrement('balance', $balance);
+                $order->pay($balance);
+                DB::commit();
+                return $this->response->item($order, new OrderTransformer());
+            } catch (\Exception $exception) {
+                DB::rollback();
+                return $this->response->errorBadRequest('支付失败');
+            }
+        }
+
+        if (config('app.env') !== 'loca1l') {
+            $order->real_cost = $order->real_price - $balance;
+            $order->used_balance = $balance;
+
             $app = app('wechat.payment');
             $config = $app->getConfig();
             $order_title = "【".config('app.name')."】订单：{$order->order_number}";
             $result = $app->order->unify([
                 'body' => $order_title,
                 'out_trade_no' => $order->order_number,
-                'total_fee' => $order->price,
+                'total_fee' => $order->real_cost,
                 'trade_type' => 'JSAPI',
                 'spbill_create_ip' => $request->getClientIp(),
                 'openid' => \Auth::user()->wxapp_openid,
@@ -356,7 +337,6 @@ class OrdersController extends Controller
                 return $this->response->errorBadRequest('支付失败，' . $result['err_code_des']);
             }
 
-
             $timestamp = time();
             $return = [
                 'trade_type' => $result['trade_type'],
@@ -369,67 +349,33 @@ class OrdersController extends Controller
                 'appid' => $result['appid'],
                 'order_number' => $order->order_number,
                 'order_title' => $order_title,
-                'order_price' => $order->price,
+                'order_price' => $order->real_cost,
             ];
 
-            dispatch(new RecordOrderLog($order, $this->user, 15, $request->getClientIp()));
+            // 日志
+//            dispatch(new RecordOrderLog($order, $this->user, 15, $request->getClientIp()));
 
             return $this->response->array($return);
         } else {
-            // 直接支付成功
-
-            $now = Carbon::now();
-            $limit_time = Carbon::createFromTimeString(config('mall.order_cancel_time'));
-            if ($now->timestamp < $limit_time->timestamp) {
-                // 当前时间小于当天的截止时间，前一天的截止时间开始计算
-                $limit_end_time = $limit_time->toDateTimeString();
-                $max_community_number = Order::where('community_id', $order->community_id)->whereBetween('payed_at', [$limit_time->subDay()->toDateTimeString(), $limit_end_time])->max('community_number');
-            } else {
-                // 当前时间大于或等于当天的截止时间，当天的截止时间计算
-                $max_community_number = Order::where('community_id', $order->community_id)->where('payed_at', '>',$limit_time->toDateTimeString())->max('community_number');
-            }
-
-            if (is_null($max_community_number)) $max_community_number = 0;
-            $order->community_number = $max_community_number+1;
-            $order->status = 2;
-            $order->payed_at = date('Y-m-d H:i:s');
-            $order->save();
-
-            // 通知城主
-            if (check_model(\Auth::user()->castellan)) {
-                \Auth::user()->castellan->notify(new OrderNotification($order, 2));
-            }
-
-            dispatch(new RecordOrderLog($order, $this->user, 2, $request->getClientIp()));
+            $order->pay();
             return $this->response->item($order, new OrderTransformer());
         }
     }
 
-    // 确认验证用户取货
-    public function verifyReceive(Order $order, Request $request)
+    // 确认收到货
+    public function receive(Order $order, Request $request)
     {
-        $this->authorize('my-order', $order);
-        if ($order->status !== 4) {
+        $this->authorize('is-mine', $order);
+        if ($order->status !== 3) {
             return $this->response->errorBadRequest('订单无法确认，请查看订单状态');
         }
-        $order->status = 5;
-        $order->update();
+        $order->receive();
 
-        $user = $this->user;
-        dispatch(new RecordOrderLog($order, $user, 5, $request->getClientIp()));
+        // TODO: 日志
+
         // TODO: 一定时间后订单结算收益
-//        dispatch(new TimeToBalance($order, $order->leaderModel, $order->castellanModel));
-        dispatch(new TimeToInviteBalance($order,  $order->user->invite->inviter ?? null, $order->user->invite->leader ?? null, $order->castellanModel, 1, $order->area->enable_fee_splitting));
-        // 通知城主
-        if (check_model($user->castellan)) {
-            $user->castellan->notify(new OrderNotification($order, 5, 'castellan_by_user'));
-        }
-        if (check_model($order->leaderModel)) {
-            // 通知街道配送员
-            $order->leaderModel->notify(new OrderNotification($order, 5, 'leader'));
-        }
 
-        return $this->response->noContent();
+        return $this->response->item($order, new OrderTransformer());
     }
 
     // 评论
@@ -500,18 +446,6 @@ class OrdersController extends Controller
 //            return $this->response->errorBadRequest('订单已退款');
 //        }
         return $this->response->collection($orderGoods->comments, new OrderGoodsCommentTransformer());
-    }
-
-    // 统计数据
-    public function statistics()
-    {
-        // 待支付
-        $statistics = [
-            'unpaid_count' => \Auth::user()->orders()->where('status', 1)->count(),
-            'in_progress_count' => \Auth::user()->orders()->whereIn('status', [2, 3, 4])->count()
-        ];
-        return $this->response->array($statistics);
-
     }
 
     // 退款操作
