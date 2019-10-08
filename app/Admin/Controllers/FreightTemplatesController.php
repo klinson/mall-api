@@ -30,10 +30,10 @@ class FreightTemplatesController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('title', __('Title'));
-        $grid->column('basic_cost', __('Basic cost'));
+        $grid->column('basic_cost', __('Basic cost'))->currency();
         $grid->column('pinkage_type', __('Pinkage type'))->using(FreightTemplate::pinkage_types);
         $grid->column('pinkage_number', __('Pinkage number'));
-        $grid->column('continued_cost', __('Continued cost'));
+        $grid->column('continued_cost', __('Continued cost'))->currency();
         $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $grid->column('sort', __('Sort'));
 
@@ -52,10 +52,14 @@ class FreightTemplatesController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('title', __('Title'));
-        $show->field('basic_cost', __('Basic cost'));
+        $show->field('basic_cost', __('Basic cost'))->as(function ($item) {
+            return strval(round($item * 0.01, 2));
+        });
         $show->field('pinkage_type', __('Pinkage type'))->using(FreightTemplate::pinkage_types);
         $show->field('pinkage_number', __('Pinkage number'));
-        $show->field('continued_cost', __('Continued cost'));
+        $show->field('continued_cost', __('Continued cost'))->as(function ($item) {
+            return strval(round($item * 0.01, 2));
+        });
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('sort', __('Sort'));
         $show->field('created_at', __('Created at'));

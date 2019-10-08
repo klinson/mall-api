@@ -38,12 +38,12 @@ class FreightTemplate extends Model
     {
         //包邮类型，0-不包，1按金额，2按件数
         switch ($this->pinkage_type) {
-            case 1:
-                if ($goods_cost >= $this->pinkage_number) {
+            case 1: //单位元
+                if ($goods_cost >= $this->pinkage_number * 100) {
                     return 0;
                 }
                 break;
-            case 2:
+            case 2:  // 单位个
                 if ($goods_count >= $this->pinkage_number) {
                     return 0;
                 }
