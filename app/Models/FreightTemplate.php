@@ -17,11 +17,11 @@ class FreightTemplate extends Model
         'addresses' => 'array'
     ];
 
-    public static function getTemplate($code)
+    public static function getTemplate(Address $address)
     {
         $query = static::query();
         $query->sort()->enabled();
-        $query->whereRaw("JSON_CONTAINS (addresses->'$[*]', '\"{$code}\"', '$')");
+        $query->whereRaw("JSON_CONTAINS (addresses->'$[*]', '\"{$address->city_code}\"', '$')");
         $model = $query->first();
         return $model;
     }
