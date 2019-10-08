@@ -2,11 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Order;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
 class OrdersController extends AdminController
 {
@@ -15,7 +17,7 @@ class OrdersController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\Order';
+    protected $title = '订单管理';
 
     /**
      * Make a grid builder.
@@ -28,18 +30,28 @@ class OrdersController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
-        $grid->column('user_id', __('User id'));
-        $grid->column('address_id', __('Address id'));
-        $grid->column('all_price', __('All price'));
-        $grid->column('goods_price', __('Goods price'));
-        $grid->column('real_price', __('Real price'));
-        $grid->column('coupon_price', __('Coupon price'));
-        $grid->column('freight_price', __('Freight price'));
+        grid_display_relation($grid, 'user', 'nickname');
+        $grid->column('all_price', __('All price'))->currency();
+        $grid->column('goods_price', __('Goods price'))->currency();
+        $grid->column('real_price', __('Real price'))->currency();
+        $grid->column('coupon_price', __('Coupon price'))->currency();
+        $grid->column('freight_price', __('Freight price'))->currency();
         $grid->column('remarks', __('Remarks'));
-        $grid->column('status', __('Status'));
+        $grid->column('status', __('Status'))->using(Order::status_text);
         $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('deleted_at', __('Deleted at'));
+        $grid->column('payed_at', __('Payed at'));
+
+        $grid->disableCreateButton();
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->disableEdit();
+        });
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->batch(function (Grid\Tools\BatchActions $batch) {
+//                $batch->disableDelete();
+                $batch->add('取消订单', new DefaultBatchTool('cancel'));
+                $batch->add('确认发货', new DefaultBatchTool('express'));
+            });
+        });
 
         return $grid;
     }
@@ -56,18 +68,18 @@ class OrdersController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('order_number', __('Order number'));
-        $show->field('user_id', __('User id'));
-        $show->field('address_id', __('Address id'));
-        $show->field('all_price', __('All price'));
-        $show->field('goods_price', __('Goods price'));
-        $show->field('real_price', __('Real price'));
-        $show->field('coupon_price', __('Coupon price'));
-        $show->field('freight_price', __('Freight price'));
+        show_display_relation($show, 'user', 'nickname');
+        show_display_relation($show, 'address', 'address');
+        $show->field('all_price', __('All price'))->currency();
+        $show->field('goods_price', __('Goods price'))->currency();
+        $show->field('real_price', __('Real price'))->currency();
+        $show->field('coupon_price', __('Coupon price'))->currency();
+        $show->field('freight_price', __('Freight price'))->currency();
         $show->field('remarks', __('Remarks'));
-        $show->field('status', __('Status'));
+        $show->field('status', __('Status'))->using(Order::status_text);
         $show->field('created_at', __('Created at'));
+        $show->field('payed_at', __('Payed at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
@@ -81,17 +93,46 @@ class OrdersController extends AdminController
     {
         $form = new Form(new Order);
 
-        $form->text('order_number', __('Order number'));
-        $form->number('user_id', __('User id'));
-        $form->number('address_id', __('Address id'));
-        $form->number('all_price', __('All price'));
-        $form->number('goods_price', __('Goods price'));
-        $form->number('real_price', __('Real price'));
-        $form->number('coupon_price', __('Coupon price'));
-        $form->number('freight_price', __('Freight price'));
-        $form->text('remarks', __('Remarks'));
-        $form->switch('status', __('Status'));
+        $form->display('id');
 
         return $form;
+    }
+
+    // 确认发货
+    public function express(Request $request)
+    {
+        $orders = Order::where('status', 2)
+            ->whereIn('id', $request->ids)
+            ->get();
+        if (! $orders->isEmpty()) {
+            foreach ($orders as $order) {
+                $order->express();
+            }
+        }
+
+        $data = [
+            'status'  => true,
+            'message' => '操作成功',
+        ];
+        return response()->json($data);
+    }
+
+    // 确认发货
+    public function cancel(Request $request)
+    {
+        $orders = Order::where('status', '<>', 5)
+            ->whereIn('id', $request->ids)
+            ->get();
+        if (! $orders->isEmpty()) {
+            foreach ($orders as $order) {
+                $order->cancel();
+            }
+        }
+
+        $data = [
+            'status'  => true,
+            'message' => '操作成功',
+        ];
+        return response()->json($data);
     }
 }

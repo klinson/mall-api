@@ -16,6 +16,8 @@ Route::group([
     $router->resource('categories', CategoriesController::class);
     $router->resource('goods', GoodsController::class);
     $router->resource('addresses', AddressesController::class);
+    $router->put('orders/express', 'OrdersController@express');
+    $router->put('orders/cancel', 'OrdersController@cancel');
     $router->resource('orders', OrdersController::class);
     $router->resource('broadcasts', BroadcastsController::class);
     $router->resource('freightTemplates', FreightTemplatesController::class);

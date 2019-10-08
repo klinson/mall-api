@@ -74,5 +74,16 @@
   "Pinkage number": "包邮金额或数量",
   "Continued type": "续重类型",
   "Continued cost": "续重费用",
-  "Addresses": "地区"
+  "Addresses": "地区",
+  "Order number": "订单号",
+  "All price": "总价",
+  "Goods price": "商品总价",
+  "Real price": "实际付款",
+  "Coupon price": "优惠金额",
+  "Freight price": "运费",
+  "Remarks": "备注",
+  "Status": "状态",
+  "User id": "用户",
+  "Address id": "配送地址",
+  "Payed at": "支付时间"
 }

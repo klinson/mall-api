@@ -20,6 +20,7 @@
 
 use Encore\Admin\Form;
 use Encore\Admin\Grid\Column;
+use Encore\Admin\Show;
 
 Admin::script("document.getElementsByTagName('footer')[0].getElementsByTagName('strong')[0].innerHTML='".config('admin.powered_by_info')."';");
 
@@ -39,3 +40,5 @@ Form::extend('areaCheckbox', \App\Admin\Extensions\Form\AreaCheckbox::class);
 //Column::extend('qrcode', \App\Admin\Extensions\Column\Qrcode::class);
 Admin::js('/vendor/clipboard/dist/clipboard.min.js');
 Column::extend('urlWrapper', \App\Admin\Extensions\Column\UrlWrapper::class);
+
+show::extend('currency', \App\Admin\Extensions\Show\Currency::class);
