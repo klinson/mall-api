@@ -66,6 +66,7 @@ $api->version('v1', [
 
         // 钱包
         $api->get('wallet', 'WalletsController@show');
+        $api->get('wallet/logs', 'WalletsController@logs');
 
     });
 });

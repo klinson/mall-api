@@ -8,8 +8,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Transformers\WalletLogTransformer;
 use App\Transformers\WalletTransformer;
 use Auth;
+use Illuminate\Http\Request;
 
 class WalletsController extends Controller
 {
@@ -18,4 +20,9 @@ class WalletsController extends Controller
         return $this->response->item($this->user->wallet, new WalletTransformer());
     }
 
+    public function logs(Request $request)
+    {
+        $logs = $this->user->wallet->logs()->recent()->paginate($request->per_page);
+        return $this->response->paginator($logs, new WalletLogTransformer());
+    }
 }
