@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CarouselAdsTableSeeder::class);
         $this->call(FreightTemplatesTableSeeder::class);
         $this->call(AddressesTableSeeder::class);
+        $this->call(AgencyConfigsTableSeeder::class);
     }
 }

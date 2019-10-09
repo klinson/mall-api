@@ -68,5 +68,8 @@ $api->version('v1', [
         $api->get('wallet', 'WalletsController@show');
         $api->get('wallet/logs', 'WalletsController@logs');
 
+        // 代理
+        $api->get('agency/configs', 'AgencyController@agencyConfigs');
+
     });
 });
