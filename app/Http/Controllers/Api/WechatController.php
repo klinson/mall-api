@@ -55,25 +55,8 @@ class WechatController
                             // 检查余额
                             $res = false;
                             if ($order->used_balance) {
-                                if ($order->user->wallet->balance > $order->used_balance) {
-                                    DB::beginTransaction();
-                                    try {
-                                        // 扣余额
-                                        $order->user->wallet->decrement('balance', $order->used_balance);
-
-                                        // 标记支付
-                                        $order->status = 2;
-                                        $order->payed_at = date('Y-m-d H:i:s');
-                                        $order->save();
-
-                                        DB::commit();
-                                        $res = true;
-                                    } catch (\Exception $exception) {
-                                        LogHandler::log('wechat-payment', 'notify-'.$message['out_trade_no'], '扣余额支付失败'.$exception->getMessage().$exception->getFile().$exception->getLine());
-
-                                        DB::rollback();
-                                    }
-                                }
+                                // 使用余额支付了
+                                $res = true;
                             } else {
                                 // 标记支付
                                 $order->payed_at = date('Y-m-d H:i:s'); // 更新支付时间为当前时间

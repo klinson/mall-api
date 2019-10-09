@@ -284,7 +284,7 @@ class OrdersController extends Controller
             return $this->response->errorBadRequest('订单无法支付，请查看订单状态');
         }
 
-        // 使用余额抵扣
+        // 使用余额抵扣，只能全额抵扣
         $balance = intval($request->balance);
         if ($balance) {
             if ($this->user->wallet->balance < $balance) {
@@ -293,25 +293,29 @@ class OrdersController extends Controller
             if ($balance > $order->real_price) {
                 return $this->response->errorBadRequest('输入余额超过订单金额，请重试');
             }
-        }
 
-        if ($balance === $order->real_price) {
-            // 直接支付成功
-            DB::beginTransaction();
-            try {
-                $this->user->wallet->decrement('balance', $balance);
-                $order->pay($balance);
-                DB::commit();
-                return $this->response->item($order, new OrderTransformer());
-            } catch (\Exception $exception) {
-                DB::rollback();
-                return $this->response->errorBadRequest('支付失败');
+            if ($balance === $order->real_price) {
+                // 直接支付成功
+                DB::beginTransaction();
+                try {
+                    $this->user->wallet->decrement('balance', $balance);
+                    $order->pay($balance);
+                    DB::commit();
+                    return $this->response->item($order, new OrderTransformer());
+                } catch (\Exception $exception) {
+                    DB::rollback();
+                    return $this->response->errorBadRequest('支付失败');
+                }
+            } else {
+                return $this->response->errorBadRequest('请输入正确的余额金额');
             }
         }
 
-        if (config('app.env') !== 'loca1l') {
-            $order->real_cost = $order->real_price - $balance;
-            $order->used_balance = $balance;
+
+
+        if (config('app.env') !== 'local') {
+            $order->real_cost = $order->real_price;
+            $order->used_balance = 0;
 
             $app = app('wechat.payment');
             $config = $app->getConfig();
