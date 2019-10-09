@@ -33,6 +33,16 @@ class User extends Authenticatable implements JWTSubject
 
     ];
 
+    // 注册用户初始化
+    protected static function boot()
+    {
+        self::created(function ($model) {
+            $model->init();
+        });
+
+        parent::boot();
+    }
+
     /**
      * sub 内容
      * @author klinson <klinson@163.com>
