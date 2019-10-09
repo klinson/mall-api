@@ -299,11 +299,13 @@ class OrdersController extends Controller
                 DB::beginTransaction();
                 try {
                     $this->user->wallet->decrement('balance', $balance);
+                    $this->user->wallet->log($balance, "支付订单（{$order->order_number}）");
                     $order->pay($balance);
                     DB::commit();
                     return $this->response->item($order, new OrderTransformer());
                 } catch (\Exception $exception) {
                     DB::rollback();
+                    Log::error("[wallet][payment][pay][{$order->order_number}]支付失败：[{$exception->getMessage()}]{$exception->getFile()}.{$exception->getLine()}");
                     return $this->response->errorBadRequest('支付失败');
                 }
             } else {
