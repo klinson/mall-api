@@ -26,8 +26,8 @@ class OrdersController extends Controller
     public function index(Request $request)
     {
         $query = Order::query();
-        if ($request->order_status) {
-            $query->whereIn('status', $this->order_status);
+        if ($request->status) {
+            $query->whereIn('status', $this->status);
         }
         if ($request->order_number) {
             $query->where('order_number', "like", "%{$request->order_number}%");
