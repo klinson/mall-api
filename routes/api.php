@@ -59,10 +59,12 @@ $api->version('v1', [
         // 订单
         $api->get('orders', 'OrdersController@index');
         $api->post('orders', 'OrdersController@store');
+        $api->get('orders/statistics', 'OrdersController@statistics');
         $api->get('orders/{order}', 'OrdersController@show')->where('order', '[0-9]+');
         $api->put('orders/{order}/cancel', 'OrdersController@cancel')->where('order', '[0-9]+');
         $api->put('orders/{order}/pay', 'OrdersController@pay')->where('order', '[0-9]+');
         $api->put('orders/{order}/receive', 'OrdersController@receive')->where('order', '[0-9]+');
+
 
         // 钱包
         $api->get('wallet', 'WalletsController@show');

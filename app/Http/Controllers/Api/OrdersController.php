@@ -529,4 +529,12 @@ class OrdersController extends Controller
 
     }
 
+    // 统计数据
+    public function statistics()
+    {
+        $res = Order::statusCount($this->user->id);
+
+        return $this->response->array($res);
+    }
+
 }

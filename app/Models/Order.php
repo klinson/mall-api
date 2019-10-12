@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use DB;
 
 class Order extends Model
 {
@@ -86,5 +87,50 @@ class Order extends Model
     {
         $this->status = 4;
         $this->save();
+    }
+
+    /**
+     * 订单状态统计
+     * @param $user
+     * @author klinson <klinson@163.com>
+     * @return array
+     */
+    public static function statusCount($user)
+    {
+        if ($user instanceof User) {
+            $user_id = $user->id;
+        } else {
+            $user_id = intval($user);
+        }
+
+        $res = DB::table('orders')
+            ->whereNull('deleted_at')
+            ->where('user_id', $user_id)
+            ->groupBy('status')
+            ->select(['status', \DB::raw('count(*) as total_count')])
+            ->orderBy('status')
+            ->get();
+
+        $return = [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+        ];
+
+        if ($res->isEmpty()) {
+            return $return;
+        }
+
+        foreach ($res as $re) {
+            $return[$re->status] = $re->total_count;
+            $return[0] += $re->total_count;
+        }
+
+        return $return;
     }
 }
