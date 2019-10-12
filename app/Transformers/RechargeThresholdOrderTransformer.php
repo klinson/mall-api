@@ -8,6 +8,8 @@ use League\Fractal\TransformerAbstract;
 
 class RechargeThresholdOrderTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = ['agencyConfig'];
+
     public function transform(RechargeThresholdOrder $order)
     {
         return [
@@ -22,31 +24,8 @@ class RechargeThresholdOrderTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeOrderGoods(Order $order)
+    public function includeAgencyConfig(RechargeThresholdOrder $order)
     {
-        return $this->collection($order->orderGoods, new OrderGoodsTransformer());
-    }
-
-    public function includeUser(Order $order)
-    {
-        return $this->item($order->user, new UserTransformer());
-    }
-
-    public function includeCoupon(Order $order)
-    {
-        if ($order->coupon) {
-            return $this->item($order->coupon, new UserCouponTransformer());
-        } else {
-            return null;
-        }
-    }
-
-    public function includeLeaderModel(Order $order)
-    {
-        if ($order->leaderModel) {
-            return $this->item($order->leaderModel, new UserTransformer('leader'));
-        } else {
-            return null;
-        }
+        return $this->item($order->agencyConfig, new AgencyConfigTransformer());
     }
 }

@@ -48,4 +48,20 @@ class AgencyController extends Controller
         }
     }
 
+    // 门槛金充值订单记录
+    public function rechargeThresholdOrders(Request $request)
+    {
+        $query = RechargeThresholdOrder::query();
+
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->order_number) {
+            $query->where('order_number', "like", "%{$request->order_number}%");
+        }
+
+        $list = $query->isOwner()->recent()->paginate($request->per_page);
+        return $this->response->paginator($list, new RechargeThresholdOrderTransformer());
+    }
+
 }

@@ -23,4 +23,9 @@ trait HasOwnerHelper
     {
         return $this->belongsTo($this->ownerModel, $this->ownerForeignKey, $this->ownerModelKey);
     }
+
+    public function scopeIsOwner($query)
+    {
+        return $query->where($this->getTable().'.'.$this->ownerForeignKey, \Auth::user()->id ?? 0);
+    }
 }
