@@ -77,4 +77,9 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->wallet()->create();
     }
+
+    public function agency()
+    {
+        return $this->belongsTo(AgencyConfig::class, 'agency_id', 'id');
+    }
 }

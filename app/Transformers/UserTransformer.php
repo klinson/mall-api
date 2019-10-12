@@ -8,6 +8,9 @@ use App\Models\User as Model;
 class UserTransformer extends TransformerAbstract
 {
     protected $token;
+
+    protected $availableIncludes = ['agency'];
+
     public function __construct($token = '')
     {
         $this->token = $token;
@@ -24,6 +27,7 @@ class UserTransformer extends TransformerAbstract
                     'nickname' => $model->nickname,
                     'mobile' => $model->mobile,
                     'sex' => $model->sex,
+                    'agency_id' => $model->agency_id,
                     'avatar' => $avatar,
                     'created_at' => $model->created_at->toDateTimeString(),
                 ];
@@ -44,12 +48,22 @@ class UserTransformer extends TransformerAbstract
                         'nickname' => $model->nickname,
                         'mobile' => $model->mobile,
                         'sex' => $model->sex,
+                        'agency_id' => $model->agency_id,
                         'avatar' => $avatar,
                         'created_at' => $model->created_at->toDateTimeString(),
                     ],
                     'token' => $this->token,
                 ];
                 break;
+        }
+    }
+
+    public function includeAgency(Model $model)
+    {
+        if ($model->agency) {
+            return $this->item($model->agency, new AgencyConfigTransformer());
+        } else {
+            return null;
         }
     }
 }
