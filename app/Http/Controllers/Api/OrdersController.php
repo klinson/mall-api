@@ -299,6 +299,7 @@ class OrdersController extends Controller
                 DB::beginTransaction();
                 try {
                     $this->user->wallet->decrement('balance', $balance);
+                    $this->user->wallet->save();
                     $this->user->wallet->log($balance, "支付订单（{$order->order_number}）");
                     $order->pay($balance);
                     DB::commit();
