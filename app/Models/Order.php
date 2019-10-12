@@ -9,10 +9,17 @@ class Order extends Model
 {
     use SoftDeletes;
 
+    const wechat_pay_notify_route = 'order.wechat.pay.notify';
+
     // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期，7退款
     const status_text = [
         '未知', '待支付', '待发货', '待收货', '已完成', '已取消', '超时过期', '已退款'
     ];
+
+    public static function getWechatPayNotifyUrl()
+    {
+        return app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route(self::wechat_pay_notify_route);
+    }
 
     public static function generateOrderNumber()
     {

@@ -330,6 +330,7 @@ class OrdersController extends Controller
                 'trade_type' => 'JSAPI',
                 'spbill_create_ip' => $request->getClientIp(),
                 'openid' => \Auth::user()->wxapp_openid,
+                'notify_url' => Order::getWechatPayNotifyUrl(),
             ]);
 
 //        dd($result);

@@ -40,6 +40,11 @@ $api->version('v1', [
         $api->get('carouselAd', 'CarouselAdsController@show');
         $api->post('files', 'FilesController@upload');
 
+        // 微信回调路由
+        $api->post('wechat/OrderPaidNotify', 'WechatController@OrderPaidNotify')->name('order.wechat.pay.notify');
+        $api->post('wechat/RechargeThresholdOrderPaidNotify', 'WechatController@RechargeThresholdOrderPaidNotify')->name('RechargeThresholdOrder.wechat.pay.notify');
+
+
 
     });
 
@@ -72,6 +77,7 @@ $api->version('v1', [
 
         // 代理
         $api->get('agency/configs', 'AgencyController@agencyConfigs');
+        $api->post('agency/{agencyConfig}/recharge', 'AgencyController@recharge')->where('agencyConfig', '[0-9]+');
 
     });
 });
