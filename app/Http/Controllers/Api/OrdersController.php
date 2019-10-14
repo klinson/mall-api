@@ -300,7 +300,7 @@ class OrdersController extends Controller
                 try {
                     $this->user->wallet->decrement('balance', $balance);
                     $this->user->wallet->save();
-                    $this->user->wallet->log($balance, "支付订单（{$order->order_number}）");
+                    $this->user->wallet->log($balance, $order, "支付订单（{$order->order_number}）");
                     $order->pay($balance);
                     DB::commit();
                     return $this->response->item($order, new OrderTransformer());

@@ -115,7 +115,7 @@ class RechargeThresholdOrder extends Model
             // 充值入账
             $this->owner->wallet->increment('balance', $this->balance);
             $this->owner->wallet->save();
-            $this->owner->wallet->log($this->balance, "充值'{$this->agencyConfig->title}'代理（{$this->order_number}）", 1);
+            $this->owner->wallet->log($this->balance, $this, "充值'{$this->agencyConfig->title}'代理（{$this->order_number}）", 1);
 
             DB::commit();
         } catch (Exception $exception) {

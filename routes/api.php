@@ -79,6 +79,7 @@ $api->version('v1', [
         $api->get('agency/configs', 'AgencyController@agencyConfigs');
         $api->post('agency/{agencyConfig}/recharge', 'AgencyController@recharge')->where('agencyConfig', '[0-9]+');
         $api->get('agency/rechargeThresholdOrders', 'AgencyController@rechargeThresholdOrders');
+        $api->get('agency/rechargeThresholdOrders/{order}', 'AgencyController@rechargeThresholdOrder');
 
 
     });

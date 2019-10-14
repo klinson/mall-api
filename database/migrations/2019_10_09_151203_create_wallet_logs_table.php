@@ -16,6 +16,8 @@ class CreateWalletLogsTable extends Migration
         Schema::create('wallet_logs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->default(0);
+            $table->unsignedInteger('data_id')->default(0);
+            $table->string('data_type')->nullable();
             $table->unsignedInteger('balance')->default(0);
             $table->unsignedTinyInteger('type')->default(0);
             $table->string('description')->default('');

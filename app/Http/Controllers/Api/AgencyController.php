@@ -64,4 +64,11 @@ class AgencyController extends Controller
         return $this->response->paginator($list, new RechargeThresholdOrderTransformer());
     }
 
+    // 门槛金充值订单记录
+    public function rechargeThresholdOrder(RechargeThresholdOrder $order)
+    {
+        $this->authorize('is-mine', $order);
+
+        return $this->response->item($order, new RechargeThresholdOrderTransformer());
+    }
 }

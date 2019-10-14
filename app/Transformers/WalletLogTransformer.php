@@ -17,6 +17,8 @@ class WalletLogTransformer extends TransformerAbstract
             'id' => $model->id,
             'balance' => $model->balance,
             'type' => $model->type,
+            'data_type' => $model->type,
+            'data_id' => $model->type,
             'description' => $model->description,
             'created_at' => $model->created_at,
         ];
