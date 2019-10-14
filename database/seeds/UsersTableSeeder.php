@@ -23,10 +23,5 @@ class UsersTableSeeder extends Seeder
         $user->sex = 1;
         $user->save();
 
-        User::chunk(100, function ($users) {
-            foreach ($users as $user) {
-                $user->init();
-            }
-        });
     }
 }
