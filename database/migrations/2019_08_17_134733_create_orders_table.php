@@ -32,6 +32,10 @@ class CreateOrdersTable extends Migration
             $table->unsignedTinyInteger('goods_count')->default(0);
             $table->unsignedDecimal('goods_weight', 8, 4)->default(0);
             $table->timestamp('payed_at')->nullable();
+            $table->timestamp('expressed_at')->nullable();
+            $table->timestamp('confirmed_at')->nullable();
+            $table->unsignedInteger('express_id')->default(0);
+            $table->string('express_number')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

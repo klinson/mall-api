@@ -66,6 +66,10 @@ class Order extends Model
     public function express()
     {
         $this->status = 3;
+        $this->expressed_at = date('Y-m-d H:i:s');
+        $this->express_id = 0;
+        $this->express_number = '';
+
         $this->save();
         // TODO: 日志记录
         // TODO: 通知
@@ -93,6 +97,7 @@ class Order extends Model
     public function receive()
     {
         $this->status = 4;
+        $this->comfirmed_at = date('Y-m-d H:i:s');
         $this->save();
     }
 
