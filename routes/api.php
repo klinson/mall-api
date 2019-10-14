@@ -69,6 +69,9 @@ $api->version('v1', [
         $api->put('orders/{order}/cancel', 'OrdersController@cancel')->where('order', '[0-9]+');
         $api->put('orders/{order}/pay', 'OrdersController@pay')->where('order', '[0-9]+');
         $api->put('orders/{order}/receive', 'OrdersController@receive')->where('order', '[0-9]+');
+        // 退款订单
+        $api->get('refundOrders', 'RefundOrdersController@index');
+        $api->post('refundOrders/{order}/orderGoods/{orderGoods}', 'RefundOrdersController@store')->where('order', '[0-9]+')->where('orderGoods', '[0-9]+');
 
 
         // 钱包

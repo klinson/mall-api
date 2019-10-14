@@ -20,6 +20,7 @@ class CreateOrderGoodsTable extends Migration
             $table->unsignedInteger('goods_specification_id')->default(0);
             $table->unsignedInteger('quantity')->default(0);
             $table->unsignedInteger('price')->default(0);
+            $table->unsignedTinyInteger('refund_status')->default(0);
             $table->json('snapshot');
         });
     }
