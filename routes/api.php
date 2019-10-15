@@ -86,6 +86,7 @@ $api->version('v1', [
 
         //系统
         $api->get('system/configs', 'SystemController@getConfig');
+        $api->get('expresses', 'ExpressesController@index');
 
     });
 });
