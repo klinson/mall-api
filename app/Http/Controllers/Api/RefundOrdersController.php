@@ -81,4 +81,30 @@ class RefundOrdersController extends Controller
 
         return $this->response->item($refund_order, new RefundOrderTransformer());
     }
+
+    // 用户发货
+    public function express(RefundOrder $order, Request $request)
+    {
+        $this->authorize('is-mine', $order);
+
+        if ($order->status !== 2) {
+            return $this->response->errorBadRequest('订单状态异常，请确认订单状态');
+        }
+
+        $this->validate($request, [
+            'freight_price' => 'required',
+            'express_id' => 'required',
+            'express_number' => 'required'
+        ], [], [
+            'freight_price' => '快递费',
+            'express_id' => '快递公司',
+            'express_number' => '快递单号'
+        ]);
+
+        $order->fill($request->only(['freight_price', 'express_number', 'express_id']));
+        $order->expressed_at = date('Y-m-d H:i:s');
+        $order->save();
+
+        return $this->response->item($order, new RefundOrderTransformer());
+    }
 }

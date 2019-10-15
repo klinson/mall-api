@@ -140,7 +140,7 @@ class RefundOrdersController extends AdminController
         return response()->json($data);
     }
 
-    // 确认通过
+    // 确认拒绝
     public function reject(Request $request)
     {
         RefundOrder::where('status', 1)
@@ -163,6 +163,7 @@ class RefundOrdersController extends AdminController
 
         foreach ($orders as $order) {
             $order->status = 4;
+            $order->confirmed_at = date('Y-m-d H:i:s');
             $order->save();
 
             $order->refund();
@@ -180,7 +181,10 @@ class RefundOrdersController extends AdminController
     {
         RefundOrder::where('status', 3)
             ->whereIn('id', $request->ids)
-            ->update(['status' => 5]);
+            ->update([
+                'status' => 5,
+                'confirmed_at' => date('Y-m-d H:i:s'),
+        ]);
 
         $data = [
             'status'  => true,
