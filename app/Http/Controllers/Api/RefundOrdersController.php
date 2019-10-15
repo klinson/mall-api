@@ -103,6 +103,7 @@ class RefundOrdersController extends Controller
 
         $order->fill($request->only(['freight_price', 'express_number', 'express_id']));
         $order->expressed_at = date('Y-m-d H:i:s');
+        $order->status = 3;
         $order->save();
 
         return $this->response->item($order, new RefundOrderTransformer());
