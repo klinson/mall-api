@@ -97,7 +97,7 @@ class Order extends Model
     public function receive()
     {
         $this->status = 4;
-        $this->comfirmed_at = date('Y-m-d H:i:s');
+        $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
     }
 
