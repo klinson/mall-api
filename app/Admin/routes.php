@@ -19,6 +19,13 @@ Route::group([
     $router->put('orders/express', 'OrdersController@express');
     $router->put('orders/cancel', 'OrdersController@cancel');
     $router->resource('orders', OrdersController::class);
+
+    $router->put('refundOrders/pass', 'RefundOrdersController@pass');
+    $router->put('refundOrders/reject', 'RefundOrdersController@reject');
+    $router->put('refundOrders/refund', 'RefundOrdersController@refund');
+    $router->put('refundOrders/rejectRefund', 'RefundOrdersController@rejectRefund');
+    $router->resource('refundOrders', RefundOrdersController::class);
+
     $router->resource('broadcasts', BroadcastsController::class);
     $router->resource('freightTemplates', FreightTemplatesController::class);
 

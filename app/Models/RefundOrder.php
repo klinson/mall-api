@@ -13,6 +13,11 @@ class RefundOrder extends Model
         'order_id', 'order_goods_id', 'order_number', 'user_id', 'goods_id', 'goods_specification_id', 'reason_text', 'reason_images', 'quantity', 'price', 'real_price', 'real_refund_cost', 'real_refund_balance', 'freight_price', 'status', 'reject_reason', 'refund_order_number', 'express_id', 'express_number', 'expressed_at', 'confirmed_at'
     ];
 
+    //状态，0已撤销，1申请中，2通过待买家发货，3已发货待卖家确认到货，4已退款，5确认到货拒绝退款，6申请后直接拒绝
+    const status_text = [
+        '已撤销', '待审核', '待买家发货', '待确认到货', '已退款', '拒绝退款', '驳回审核'
+    ];
+
     protected static function boot()
     {
         self::saved(function ($model) {
@@ -28,5 +33,21 @@ class RefundOrder extends Model
     public static function generateOrderNumber()
     {
         return date('YmdHis') . random_string(11);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function orderGoods()
+    {
+        return $this->belongsTo(OrderGoods::class);
+    }
+
+    // 执行退款逻辑
+    public function refund()
+    {
+
     }
 }

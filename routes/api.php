@@ -84,6 +84,8 @@ $api->version('v1', [
         $api->get('agency/rechargeThresholdOrders', 'AgencyController@rechargeThresholdOrders');
         $api->get('agency/rechargeThresholdOrders/{order}', 'AgencyController@rechargeThresholdOrder');
 
+        //系统
+        $api->get('system/configs', 'SystemController@getConfig');
 
     });
 });

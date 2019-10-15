@@ -85,5 +85,9 @@
   "Status": "状态",
   "User id": "用户",
   "Address id": "配送地址",
-  "Payed at": "支付时间"
+  "Payed at": "支付时间",
+  "Reason text": "原因",
+  "Expressed at": "寄出时间",
+  "Owner id": "所属用户",
+  "Order id": "订单"
 }
