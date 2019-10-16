@@ -31,9 +31,18 @@ class RefundOrdersController extends Controller
         return $this->response->paginator($list, new RefundOrderTransformer());
     }
 
+    // 发起退款，仅支持确认到货7天内的未申请(1)或已经撤销申请(0)情况
     public function store(Order $order, OrderGoods $orderGoods, Request $request)
     {
         $this->authorize('is-mine', $order);
+
+        if (! in_array($order->status, [3, 4])) {
+            return $this->response->errorBadRequest('订单状态异常，请确认订单状态');
+        }
+
+        if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
+            return $this->response->errorBadRequest('订单确定到货已经超过7天，不可申请退款');
+        }
 
         if ($orderGoods->order_id !== $order->id) {
             return $this->response->errorBadRequest('请选择退款商品');
@@ -56,7 +65,6 @@ class RefundOrdersController extends Controller
         if ($orderGoods->quantity < $request->quantity) {
             return $this->response->errorBadRequest('退款数量不合法');
         }
-
 
         $data = [
             'order_number' => RefundOrder::generateOrderNumber(),
@@ -112,6 +120,57 @@ class RefundOrdersController extends Controller
     public function show(RefundOrder $order)
     {
         $this->authorize('is-mine', $order);
+
+        return $this->response->item($order, new RefundOrderTransformer());
+    }
+
+    // 撤销申请,已发货(3)，已退款(4)和已拒绝退款(5)是不可撤销的
+    public function repeal(RefundOrder $order)
+    {
+        $this->authorize('is-mine', $order);
+
+        if (in_array($order->status, [3, 4, 5])) {
+            return $this->response->errorBadRequest('售后订单已发货或已完成，不可撤销');
+        }
+
+        $order->status = 0;
+        $order->save();
+
+        return $this->response->item($order, new RefundOrderTransformer());
+    }
+
+    // 更新，仅支持确认到货7天内的未审批(1)和已驳回申请(6)的状态下可以更新
+    public function update(RefundOrder $order, Request $request)
+    {
+        $this->authorize('is-mine', $order);
+
+        if (! in_array($order->status, [1, 6])) {
+            return $this->response->errorBadRequest('售后订单已发货或已完成，不可撤销');
+        }
+
+        $this->validate($request, [
+            'quantity' => 'required|numeric',
+            'reason_text' => 'required|max:250',
+            'reason_images' => 'required'
+        ], [], [
+            'quantity' => '退款数量',
+            'reason_text' => '退款原因',
+            'reason_images' => '说明图片'
+        ]);
+
+        $data = $request->only(['quantity', 'reason_text', 'reason_images']);
+
+        $data['real_price'] = $request->quantity * $order->orderGoods->price;
+        $data['status'] = 1;
+
+        if ($order->used_balance) {
+            $data['real_refund_balance'] = $data['real_price'];
+        } else {
+            $data['real_refund_cost'] = $data['real_price'];
+        }
+
+        $order->fill($data);
+        $order->save();
 
         return $this->response->item($order, new RefundOrderTransformer());
     }

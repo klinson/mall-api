@@ -74,6 +74,8 @@ $api->version('v1', [
         $api->post('refundOrders/{order}/orderGoods/{orderGoods}', 'RefundOrdersController@store')->where('order', '[0-9]+')->where('orderGoods', '[0-9]+');
         $api->get('refundOrders/{order}', 'RefundOrdersController@show')->where('order', '[0-9]+');
         $api->put('refundOrders/{order}/express', 'RefundOrdersController@express')->where('order', '[0-9]+');
+        $api->put('refundOrders/{order}/repeal', 'RefundOrdersController@repeal')->where('order', '[0-9]+');
+        $api->put('refundOrders/{order}', 'RefundOrdersController@update')->where('order', '[0-9]+');
 
 
         // 钱包

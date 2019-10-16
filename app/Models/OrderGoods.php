@@ -31,6 +31,6 @@ class OrderGoods extends Model
 
     public function refundOrder()
     {
-        return $this->hasOne(RefundOrder::class, 'order_goods_id', 'id');
+        return $this->hasOne(RefundOrder::class, 'order_goods_id', 'id')->orderBy('id', 'desc');
     }
 }

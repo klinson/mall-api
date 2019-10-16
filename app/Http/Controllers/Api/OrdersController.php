@@ -209,6 +209,12 @@ class OrdersController extends Controller
         }
     }
 
+    public function show(Order $order)
+    {
+        $this->authorize('is-mine', $order);
+        return $this->response->item($order, new OrderTransformer());
+    }
+
     /**
      * 取消订单
      * @param Order $order
