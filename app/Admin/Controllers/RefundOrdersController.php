@@ -49,6 +49,7 @@ class RefundOrdersController extends AdminController
                 $batch->add('批量审核不通过', new DefaultBatchTool('reject'));
                 $batch->add('批量退款', new DefaultBatchTool('refund'));
                 $batch->add('批量拒绝退款', new DefaultBatchTool('rejectRefund'));
+                $batch->add('批量撤销申请', new DefaultBatchTool('repeal'));
             });
         });
 
@@ -147,6 +148,20 @@ class RefundOrdersController extends AdminController
         RefundOrder::where('status', 1)
             ->whereIn('id', $request->ids)
             ->update(['status' => 6]);
+
+        $data = [
+            'status'  => true,
+            'message' => '操作成功',
+        ];
+        return response()->json($data);
+    }
+
+    // 撤销申请
+    public function repeal(Request $request)
+    {
+        RefundOrder::whereNotIn('status', [3, 4, 5])
+            ->whereIn('id', $request->ids)
+            ->update(['status' => 0]);
 
         $data = [
             'status'  => true,

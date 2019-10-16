@@ -21,6 +21,7 @@ Route::group([
     $router->resource('orders', OrdersController::class);
 
     $router->put('refundOrders/pass', 'RefundOrdersController@pass');
+    $router->put('refundOrders/repeal', 'RefundOrdersController@repeal');
     $router->put('refundOrders/reject', 'RefundOrdersController@reject');
     $router->put('refundOrders/refund', 'RefundOrdersController@refund');
     $router->put('refundOrders/rejectRefund', 'RefundOrdersController@rejectRefund');
