@@ -28,4 +28,9 @@ class OrderGoods extends Model
     {
         return $this->hasOne(GoodsSpecification::class, 'id', 'goods_specification_id');
     }
+
+    public function refundOrder()
+    {
+        return $this->hasOne(RefundOrder::class, 'order_goods_id', 'id');
+    }
 }
