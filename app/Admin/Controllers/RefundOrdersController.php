@@ -9,6 +9,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
+use DB;
 
 class RefundOrdersController extends AdminController
 {
@@ -161,12 +162,44 @@ class RefundOrdersController extends AdminController
             ->whereIn('id', $request->ids)
             ->get();
 
+        $info = [];
+        $error_code = 0;
         foreach ($orders as $order) {
-            $order->status = 4;
-            $order->confirmed_at = date('Y-m-d H:i:s');
-            $order->save();
+            try {
+                DB::beginTransaction();
 
-            $order->refund();
+                $order->status = 4;
+                $order->confirmed_at = date('Y-m-d H:i:s');
+                $order->save();
+
+                $order->refund();
+                DB::commit();
+                $info[] = "No.{$order->id}：{$order->order_number} 退款成功";
+            } catch (\Exception $exception) {
+                if ($order->used_balance) {
+                    $error_code === 0 && $error_code = 1;
+                    $info[] = "No.{$order->id}：{$order->order_number} 退款失败，请重试";
+                } else {
+                    $error_code = 2;
+                    $info[] = "No.{$order->id}：{$order->order_number} 退款异常，请联系管理员";
+                }
+
+                DB::rollBack();
+            }
+        }
+
+        switch ($error_code) {
+            case 1:
+                admin_warning('处理完成，存在失败', implode("<br/>", $info));
+                break;
+            case 2:
+                admin_error('处理存在异常，请不要反复操作，请联系管理员', implode("<br/>", $info));
+                break;
+            case 0:
+            default:
+            admin_success('处理成功', implode("<br/>", $info));
+                break;
+
         }
 
         $data = [

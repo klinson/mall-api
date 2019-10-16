@@ -209,37 +209,6 @@ class OrdersController extends Controller
         }
     }
 
-    public function refunds(Request $request)
-    {
-        $query = OrderRefund::query();
-
-        if ($request->refund_order_number) {
-            $query->where('order_number', "like", "%{$request->order_number}%");
-        }
-
-
-        $list = $query->where('order_user_id', \Auth::user()->id)->recent()->paginate($request->per_page);
-        return $this->response->paginator($list, new OrderRefundTransformer());
-    }
-
-    public function refundShow(OrderRefund $orderRefund)
-    {
-        $this->authorize('is-mine', $orderRefund->order);
-        return $this->response->item($orderRefund, new OrderRefundTransformer());
-    }
-
-    public function show(Order $order)
-    {
-        $this->authorize('is-mine', $order);
-        return $this->response->item($order, new OrderTransformer());
-    }
-
-    public function logs(Order $order)
-    {
-        $this->authorize('my-order', $order);
-        return $this->response->collection($order->orderLogs, new OrderLogTransformer());
-    }
-
     /**
      * 取消订单
      * @param Order $order
@@ -454,76 +423,6 @@ class OrdersController extends Controller
 //            return $this->response->errorBadRequest('订单已退款');
 //        }
         return $this->response->collection($orderGoods->comments, new OrderGoodsCommentTransformer());
-    }
-
-    // 退款操作
-    public function refund(Order $order, OrderGoods $orderGoods, Request $request)
-    {
-        $this->authorize('is-mine', $order);
-
-        if (! $order->timeCanRefund()) {
-            return $this->response->errorBadRequest('订单已经过了退款时间，不可以退款');
-        }
-        if ( $order->status < 2) {
-            return $this->response->errorBadRequest('订单未付款，不可以退款');
-        }
-        if ($orderGoods->order->id !== $order->id) {
-            return $this->response->errorBadRequest('订单不存在该商品');
-        }
-        if ($orderGoods->is_refund > 0) {
-            return $this->response->errorBadRequest('该商品已经申请退款了');
-        }
-
-        if (empty($request->reason)) {
-            return $this->response->errorBadRequest('请输入退款理由');
-        }
-        if (empty($request->images) || ! is_array($request->images)) {
-            return $this->response->errorBadRequest('请上传退款说明图片');
-        }
-        if (strlen($request->reason) > 250) {
-            return $this->response->errorBadRequest('退款理由最长250字符');
-        }
-
-        // 记录退款
-        $orderRefund = new OrderRefund();
-        $orderRefund->order_number = generate_order_number();
-        $orderRefund->order_id = $order->id;
-        $orderRefund->goods_id = $orderGoods->goods_id;
-        $orderRefund->goods_specification_id = $orderGoods->goods_specification_id;
-        $orderRefund->order_goods_id = $orderGoods->id;
-        $orderRefund->price = $orderGoods->price;
-        $orderRefund->quantity = $orderGoods->quantity;
-        $orderRefund->reason = $request->reason;
-        $orderRefund->images = $request->images;
-        $orderRefund->order_user_id = $order->user_id;
-        $orderRefund->operation_user_id = $this->user->id;
-
-        $orderRefund->refund_price = $orderGoods->real_price;
-
-        // 默认申请退款
-        $orderRefund->status = 1;
-        $orderRefund->save();
-
-        // 标记申请退款
-        $orderGoods->is_refund = 1;
-        $orderGoods->save();
-
-        // 订单总价调整
-//        $order->decrement('price', $orderGoods->quantity * $orderGoods->price);
-//        $order->save();
-
-        dispatch(new RecordOrderLog($order, $this->user, 10, $request->getClientIp()));
-
-        if (check_model($order->leaderModel)) {
-            $order->leaderModel->notify(new OrderNotification($order, 8, 'leader'));
-        }
-        // 通知城主
-        if (check_model(\Auth::user()->castellan)) {
-            \Auth::user()->castellan->notify(new OrderNotification($order, 8, 'castellan'));
-        }
-
-        return $this->response->noContent();
-
     }
 
     public function destroy(Order $order)
