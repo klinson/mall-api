@@ -219,13 +219,12 @@ class OrdersController extends Controller
     {
         $this->authorize('is-mine', $order);
 
-        if ( $order->status !== 1) {
+        if ( in_array($order->status, [1, 2])) {
             return $this->response->errorBadRequest('订单状态不可取消');
         }
 
         try {
-            $order->status = 5;
-            $order->save();
+            $order->cancel();
 
             // 加库存
 
