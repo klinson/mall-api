@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class RefundOrderTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['order'];
+    protected $availableIncludes = ['order', 'orderGoods'];
 
     public function transform(RefundOrder $order)
     {
@@ -40,5 +40,15 @@ class RefundOrderTransformer extends TransformerAbstract
             'real_cost' => $order->real_cost,
             'cancel_order_number' => $order->cancel_order_number,
         ];
+    }
+
+    public function includeOrderGoods(RefundOrder $order)
+    {
+        return $this->item($order->orderGoods, new OrderGoodsTransformer());
+    }
+
+    public function includeOrder(RefundOrder $order)
+    {
+        return $this->item($order->order, new OrderTransformer());
     }
 }

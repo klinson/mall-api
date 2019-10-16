@@ -108,4 +108,11 @@ class RefundOrdersController extends Controller
 
         return $this->response->item($order, new RefundOrderTransformer());
     }
+
+    public function show(RefundOrder $order)
+    {
+        $this->authorize('is-mine', $order);
+
+        return $this->response->item($order, new RefundOrderTransformer());
+    }
 }
