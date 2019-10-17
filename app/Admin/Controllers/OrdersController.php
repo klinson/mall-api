@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\AjaxWithInputButton;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Order;
 use Encore\Admin\Controllers\AdminController;
@@ -44,12 +45,21 @@ class OrdersController extends AdminController
         $grid->disableCreateButton();
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
+            if ($this->row->status === 2) {
+                $actions->append(new AjaxWithInputButton(
+                    $actions->getResource() . '/' . $actions->getKey() . '/express',
+                    '发货',
+                    'express_number',
+                    '请输入快递单号'
+                ));
+            }
         });
         $grid->tools(function (Grid\Tools $tools) {
             $tools->batch(function (Grid\Tools\BatchActions $batch) {
 //                $batch->disableDelete();
-                $batch->add('取消订单', new DefaultBatchTool('cancel'));
-                $batch->add('确认发货', new DefaultBatchTool('express'));
+                $batch->add('批量取消订单', new DefaultBatchTool('cancel'));
+                // 暂时未对接快递，无法自动批量发货
+//                $batch->add('批量确认发货', new DefaultBatchTool('express'));
             });
         });
 
@@ -99,7 +109,7 @@ class OrdersController extends AdminController
     }
 
     // 确认发货
-    public function express(Request $request)
+    public function batchExpress(Request $request)
     {
         $orders = Order::where('status', 2)
             ->whereIn('id', $request->ids)
@@ -109,6 +119,33 @@ class OrdersController extends AdminController
                 $order->express();
             }
         }
+
+        $data = [
+            'status'  => true,
+            'message' => '操作成功',
+        ];
+        return response()->json($data);
+    }
+
+    public function express(Order $order, Request $request)
+    {
+        if ($order->status !== 2) {
+            $data = [
+                'status'  => false,
+                'message' => '订单状态异常',
+            ];
+            return response()->json($data);
+        }
+
+        if (empty($request->express_number)) {
+            $data = [
+                'status'  => false,
+                'message' => '请输入快递单号',
+            ];
+            return response()->json($data);
+        }
+
+        $order->expressing($request->express_number);
 
         $data = [
             'status'  => true,

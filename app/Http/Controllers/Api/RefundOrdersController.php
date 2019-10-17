@@ -174,4 +174,21 @@ class RefundOrdersController extends Controller
 
         return $this->response->item($order, new RefundOrderTransformer());
     }
+
+    // 获取物流信息，仅支持3已发货待卖家确认到货，4已退款，5确认到货拒绝退款
+    public function logistics(RefundOrder $order)
+    {
+        $this->authorize('is-mine', $order);
+
+        if (! in_array($order->status, [3, 4, 5])) {
+            return $this->response->errorBadRequest('未发货，无法查询');
+        }
+
+        try {
+            $list = $order->getLogistics();
+            return $this->response->array($list);
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest('获取物流失败');
+        }
+    }
 }

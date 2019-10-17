@@ -58,4 +58,25 @@ class RefundOrder extends Model
 
         }
     }
+
+    /**
+     * 获取快递100物流信息
+     * @author klinson <klinson@163.com>
+     * @return mixed
+     */
+    public function getLogistics()
+    {
+        $config = config('services.kuaidi100');
+        $express = new \Puzzle9\Kuaidi100\Express($config['key'], $config['customer'], $config['callbackurl']);
+        $rev_phone = config('system.express_address.mobile', null);
+
+        //实时查询
+        $list = $express->synquery($this->express->code, $this->express_number, $rev_phone); // 快递服务商 快递单号 手机号
+        return $list;
+    }
+
+    public function express()
+    {
+        return $this->belongsTo(Express::class, 'express_id', 'id');
+    }
 }

@@ -41,6 +41,26 @@ class Order extends Model
         return $this->belongsTo(Address::class, 'address_id', 'id')->withDefault(['address' => '[已删除]', 'mobile' => '']);
     }
 
+    /**
+     * 获取快递100物流信息
+     * @author klinson <klinson@163.com>
+     * @return mixed
+     */
+    public function getLogistics()
+    {
+        $config = config('services.kuaidi100');
+        $express = new \Puzzle9\Kuaidi100\Express($config['key'], $config['customer'], $config['callbackurl']);
+
+        //实时查询
+        $list = $express->synquery($this->express->code, $this->express_number, $this->address->mobile); // 快递服务商 快递单号 手机号
+        return $list;
+    }
+
+    public function express()
+    {
+        return $this->belongsTo(Express::class, 'express_id', 'id');
+    }
+
     // 取消订单
     public function cancel()
     {
@@ -63,12 +83,12 @@ class Order extends Model
     }
 
     // 发货
-    public function express()
+    public function expressing($express_number = null)
     {
         $this->status = 3;
         $this->expressed_at = date('Y-m-d H:i:s');
-        $this->express_id = 0;
-        $this->express_number = '';
+        $this->express_id = config('system.express_company_id', 0);
+        $this->express_number = $express_number ?: '';
 
         $this->save();
         // TODO: 日志记录

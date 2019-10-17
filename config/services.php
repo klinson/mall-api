@@ -35,4 +35,10 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'kuaidi100' => [
+        'key' => env('KUAIDI100_KEY'),
+        'customer' => env('KUAIDI100_CUSTOMER'),
+        'callbackurl' => env('KUAIDI100_CALLBACKURL'),
+    ],
+
 ];

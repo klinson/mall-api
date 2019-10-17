@@ -215,6 +215,23 @@ class OrdersController extends Controller
         return $this->response->item($order, new OrderTransformer());
     }
 
+    // 获取物流信息，仅支持3已发货待收货，4已收货交易完成
+    public function logistics(Order $order)
+    {
+        $this->authorize('is-mine', $order);
+
+        if (! in_array($order->status, [3, 4])) {
+            return $this->response->errorBadRequest('订单状态无法查询');
+        }
+
+        try {
+            $list = $order->getLogistics();
+            return $this->response->array($list);
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest('获取物流失败');
+        }
+    }
+
     /**
      * 取消订单
      * @param Order $order
