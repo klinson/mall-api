@@ -68,7 +68,12 @@ class RefundOrder extends Model
     {
         $config = config('services.kuaidi100');
         $express = new \Puzzle9\Kuaidi100\Express($config['key'], $config['customer'], $config['callbackurl']);
-        $rev_phone = config('system.express_address.mobile', null);
+
+        if ($this->express->code === 'shunfeng') {
+            $rev_phone = config('system.express_address.mobile', null);
+        } else {
+            $rev_phone = null;
+        }
 
         //实时查询
         $list = $express->synquery($this->express->code, $this->express_number, $rev_phone); // 快递服务商 快递单号 手机号
