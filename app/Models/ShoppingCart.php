@@ -4,7 +4,7 @@ namespace App\Models;
 
 class ShoppingCart extends Model
 {
-    protected $fillable = ['goods_id', 'quantity', 'goods_specification_id'];
+    protected $fillable = ['goods_id', 'quantity', 'goods_specification_id', 'inviter_id'];
 
     public function goods()
     {

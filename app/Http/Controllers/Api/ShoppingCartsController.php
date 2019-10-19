@@ -45,6 +45,12 @@ class ShoppingCartsController extends Controller
             $shoppingCart->quantity = $shoppingCart->quantity + $shoppingCartRequest->quantity;
         }
 
+        if (\Auth::user()->agency_id) {
+            $shoppingCart->inviter_id = \Auth::user()->id;
+        } else {
+            $shoppingCart->inviter_id = intval($shoppingCartRequest->inviter_id);
+        }
+
         try {
             $shoppingCart->save();
             return $this->response->created();

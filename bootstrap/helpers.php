@@ -301,3 +301,22 @@ function generate_wechat_payment_md5_sign($appid, $nonceStr, $prepay_id, $timeSt
 {
     return md5("appId={$appid}&nonceStr=$nonceStr&package=prepay_id={$prepay_id}&signType=MD5&timeStamp={$timeStamp}&key={$key}");
 }
+
+/**
+ * 记录邀请人
+ * @param $model
+ * @author klinson <klinson@163.com>
+ * @return mixed
+ */
+function record_inviter($model)
+{
+    $model->inviter_id = request('inviter_id', 0);
+    // 用户自身是代理则永远是自己邀请自己
+    if (\Auth::check()) {
+        if (\Auth::user()->agency_id) {
+            $model->inviter_id = \Auth::user()->id;
+        }
+    }
+
+    return $model;
+}

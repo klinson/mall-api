@@ -71,4 +71,38 @@ class AgencyController extends Controller
 
         return $this->response->item($order, new RechargeThresholdOrderTransformer());
     }
+
+    // 生成邀请二维码
+    public function qrcode(Request $request)
+    {
+        $disk = 'qrcode';
+        $user_id = \Auth::user()->id ?? 0;
+
+        $agency_id = $request->agency_id ?: 0;
+
+        $filename = "agency/{$agency_id}_{$user_id}.png";
+
+        try {
+            if (! \Storage::disk($disk)->exists($filename)) {
+                $scene = "agency_id={$agency_id}&inviter_id={$user_id}";
+
+                $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, ['width' => 430]);
+                if ($stream instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
+                    // 以内容 md5 为文件名存到本地
+                    //      $stream->save('abc');
+                    // 自定义文件名，不需要带后缀
+                    //      $stream->saveAs('abc', 'aaa');
+
+                    \Storage::disk($disk)->put($filename, $stream);
+                }
+
+            }
+
+            return $this->response->array([
+                'url' => \Storage::disk($disk)->url($filename)
+            ]);
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest('生成小程序码失败，请稍后重试');
+        }
+    }
 }

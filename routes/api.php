@@ -92,6 +92,7 @@ $api->version('v1', [
         $api->post('agency/{agencyConfig}/recharge', 'AgencyController@recharge')->where('agencyConfig', '[0-9]+');
         $api->get('agency/rechargeThresholdOrders', 'AgencyController@rechargeThresholdOrders');
         $api->get('agency/rechargeThresholdOrders/{order}', 'AgencyController@rechargeThresholdOrder');
+        $api->get('agency/qrcode', 'AgencyController@qrcode');
 
         //系统
         $api->get('system/configs', 'SystemController@getConfig');

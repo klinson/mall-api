@@ -125,6 +125,7 @@ class OrdersController extends Controller
                 'snapshot' => $specification->toSnapshot(),
                 'price' => $goods_price,
                 'quantity' => $info['quantity'],
+                'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
             ];
 
             $order_goods[] = $order_goods_item;

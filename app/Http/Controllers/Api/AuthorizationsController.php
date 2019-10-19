@@ -56,6 +56,7 @@ class AuthorizationsController extends Controller
                     'wxapp_userinfo' => json_encode($info),
                     'has_enabled' => 1,
                     'mobile' => '',
+                    'inviter_id' => $request->inviter_id ?: 0,
                 ]);
                 $user->save();
             } else {

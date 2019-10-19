@@ -54,11 +54,11 @@ class GoodsController extends Controller
         $disk = 'qrcode';
         $user_id = \Auth::user()->id ?? 0;
 
-        $filename = "{$goods->id}_{$user_id}.png";
+        $filename = "goods/{$goods->id}_{$user_id}.png";
 
         try {
             if (! \Storage::disk($disk)->exists($filename)) {
-                $scene = "goods_id={$goods->id}&user_id={$user_id}";
+                $scene = "goods_id={$goods->id}&inviter_id={$user_id}";
 
                 $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, ['width' => 430]);
                 if ($stream instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
