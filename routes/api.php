@@ -85,6 +85,7 @@ $api->version('v1', [
         // 钱包
         $api->get('wallet', 'WalletsController@show');
         $api->get('wallet/logs', 'WalletsController@logs');
+        $api->post('wallet/recharge', 'WalletsController@recharge');
 
         // 代理
         $api->get('agency/configs', 'AgencyController@agencyConfigs');

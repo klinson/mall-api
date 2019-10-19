@@ -26,6 +26,10 @@ class RechargeThresholdOrderTransformer extends TransformerAbstract
 
     public function includeAgencyConfig(RechargeThresholdOrder $order)
     {
-        return $this->item($order->agencyConfig, new AgencyConfigTransformer());
+        if ($order->agencyConfig->id) {
+            return $this->item($order->agencyConfig, new AgencyConfigTransformer());
+        } else {
+            return null;
+        }
     }
 }

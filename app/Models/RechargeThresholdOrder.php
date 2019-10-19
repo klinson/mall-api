@@ -30,9 +30,28 @@ class RechargeThresholdOrder extends Model
             $user_id = intval($user);
         }
         $data = [
-            'balance' => $agencyConfig->id,
+            'balance' => $agencyConfig->recharge_threshold,
             'user_id' => $user_id,
             'agency_config_id' => $agencyConfig->id,
+            'status' => 1,
+        ];
+        $order = new self($data);
+        $order->order_number = self::generateOrderNumber();
+        $order->save();
+        return $order;
+    }
+
+    public static function generateRechargeOrder($user, $balance)
+    {
+        if ($user instanceof User) {
+            $user_id = $user->id;
+        } else {
+            $user_id = intval($user);
+        }
+        $data = [
+            'balance' => $balance,
+            'user_id' => $user_id,
+            'agency_config_id' => 0,
             'status' => 1,
         ];
         $order = new self($data);
@@ -94,7 +113,9 @@ class RechargeThresholdOrder extends Model
 
     public function agencyConfig()
     {
-        return $this->belongsTo(AgencyConfig::class);
+        return $this->belongsTo(AgencyConfig::class)->withDefault([
+            'title' => '钱包充值',
+        ]);
     }
 
     // 设置支付成功
@@ -108,14 +129,19 @@ class RechargeThresholdOrder extends Model
             $this->payed_at = date('Y-m-d H:i:s');
             $this->save();
 
-            // 修改用户代理等级
-            $this->owner->agency_id = $this->agency_config_id;
-            $this->owner->save();
+            if ($this->agency_config_id) {
+                // 修改用户代理等级
+                $this->owner->agency_id = $this->agency_config_id;
+                $this->owner->save();
+                $log_info = "充值'{$this->agencyConfig->title}'代理（{$this->order_number}）";
+            } else {
+                $log_info = "充值钱包（{$this->order_number}）";
+            }
 
             // 充值入账
             $this->owner->wallet->increment('balance', $this->balance);
             $this->owner->wallet->save();
-            $this->owner->wallet->log($this->balance, $this, "充值'{$this->agencyConfig->title}'代理（{$this->order_number}）", 1);
+            $this->owner->wallet->log($this->balance, $this, $log_info, 1);
 
             DB::commit();
         } catch (Exception $exception) {
