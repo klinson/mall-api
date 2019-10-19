@@ -70,6 +70,13 @@ return [
             'url' => env('APP_URL').'/uploads',
         ],
 
+        'qrcode' => [
+            'driver' => 'local',
+            'root' => public_path('qrcode'),
+            'visibility' => 'public',
+            'url' => env('APP_URL').'/qrcode',
+        ],
+
         'wechat_upload' => [
             'driver' => 'local',
             'root' => public_path('uploads/wechat'),
