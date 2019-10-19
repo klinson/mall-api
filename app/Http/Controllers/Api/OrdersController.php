@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Express;
 use App\Models\FreightTemplate;
 use App\Models\GoodsSpecification;
 use App\Models\Order;
@@ -225,8 +226,17 @@ class OrdersController extends Controller
         }
 
         try {
-            $list = $order->getLogistics();
-            return $this->response->array($list);
+            $res = $order->getLogistics();
+
+            if (isset($res['status']) && $res['status'] == 200) {
+                $res['com_name'] = Express::getNameByCode($res['com']);
+                return $this->response->array($res);
+            } else if (isset($res['result']) && $res['result'] == false) {
+                return $this->response->errorBadRequest($res['message']);
+            } else {
+                return $this->response->errorBadRequest('获取物流失败');
+            }
+
         } catch (\Exception $exception) {
             return $this->response->errorBadRequest('获取物流失败');
         }

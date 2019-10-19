@@ -26,6 +26,10 @@ trait HasOwnerHelper
 
     public function scopeIsOwner($query)
     {
-        return $query->where($this->getTable().'.'.$this->ownerForeignKey, \Auth::user()->id ?? 0);
+        $field = $this->ownerForeignKey;
+        if ($table = $this->getTable()) {
+            $field = $table.'.'.$field;
+        }
+        return $query->where($field, \Auth::user()->id ?? 0);
     }
 }

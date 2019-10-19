@@ -51,8 +51,14 @@ class Order extends Model
         $config = config('services.kuaidi100');
         $express = new \Puzzle9\Kuaidi100\Express($config['key'], $config['customer'], $config['callbackurl']);
 
+        if ($this->express->code === 'shunfeng') {
+            $rev_phone = $this->address->mobile;
+        } else {
+            $rev_phone = null;
+        }
+
         //实时查询
-        $list = $express->synquery($this->express->code, $this->express_number, $this->address->mobile); // 快递服务商 快递单号 手机号
+        $list = $express->synquery($this->express->code, $this->express_number, $rev_phone); // 快递服务商 快递单号 手机号
         return $list;
     }
 
