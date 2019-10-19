@@ -55,7 +55,28 @@ class RefundOrder extends Model
             $this->order->user->wallet->log($this->real_price, $this, "订单（{$this->order->order_number}）的售后订单（{$this->order_number}）退款退回余额");
         } else {
             // 退微信
+            if (! app()->isLocal()) {
+                $this->refund_order_number = self::generateOrderNumber();
+                $app = app('wechat.payment');
+                $result = $app->refund->byOutTradeNumber($this->order->order_number, $this->refund_order_number, $this->order->real_cost, $this->real_refund_cost, [
+                    // 可在此处传入其他参数，详细参数见微信支付文档
+                    'refund_desc' => "订单【{$this->order->order_number}】中商品退款成功",
+                ]);
+                Log::info("[wechat][payment][refund][{$this->order->order_number}][{$this->refund_order_number}]微信支付退款：" . json_encode($result, JSON_UNESCAPED_UNICODE));
 
+                if (($result['return_code'] ?? 'FAIL') == 'FAIL') {
+                    Log::error("[wechat][payment][refund][{$this->order->order_number}][{$this->refund_order_number}]微信支付退款失败：[{$result['return_code']}]{$result['return_msg']}");
+                    throw new \Exception('退款失败，' . $result['return_msg'], 200);
+                }
+                if (($result['result_code'] ?? 'FAIL') == 'FAIL') {
+                    Log::error("[wechat][payment][refund][{$this->order->order_number}][{$this->refund_order_number}]微信支付退款失败：[{$result['err_code']}]{$result['err_code_des']}");
+                    throw new \Exception('退款失败，' . $result['err_code_des'], 200);
+                }
+                Log::error("[wechat][payment][refund][{$this->order->order_number}][{$this->refund_order_number}]微信支付退款成功：{$this->real_refund_cost}");
+            } else {
+                // 本地直接成功
+                Log::error("[wechat][payment][refund][{$this->order->order_number}]微信支付local环境退款成功：{$this->real_refund_cost}");
+            }
         }
     }
 

@@ -157,12 +157,25 @@ class OrdersController extends AdminController
     // 确认发货
     public function cancel(Request $request)
     {
-        $orders = Order::where('status', '<>', 5)
+        $orders = Order::whereIn('status', [1, 2, 3, 4])
             ->whereIn('id', $request->ids)
             ->get();
         if (! $orders->isEmpty()) {
+            $info = [];
+            $code = 0;
             foreach ($orders as $order) {
-                $order->cancel();
+                try {
+                    $order->cancel();
+                    $info[] = "No.{$order->id}：{$order->order_number} 取消成功";
+                } catch (\Exception $exception) {
+                    $code = 1;
+                    $info[] = "No.{$order->id}：{$order->order_number} 取消失败，{$exception->getMessage()}";
+                }
+            }
+            if (! $code) {
+                admin_success('处理成功', implode("<br/>", $info));
+            } else {
+                admin_warning('处理完成，存在失败，请勿频繁重试', implode("<br/>", $info));
             }
         }
 
