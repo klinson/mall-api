@@ -252,7 +252,7 @@ class OrdersController extends Controller
     {
         $this->authorize('is-mine', $order);
 
-        if ( in_array($order->status, [1, 2])) {
+        if (! in_array($order->status, [1, 2])) {
             return $this->response->errorBadRequest('订单状态不可取消');
         }
 

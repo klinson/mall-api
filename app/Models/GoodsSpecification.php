@@ -29,7 +29,7 @@ class GoodsSpecification extends Model
         return $this->belongsTo(Goods::class, 'goods_id', 'id');
     }
 
-    public function sold($quantity = 1)
+    public function sold($quantity = 1, $is_refund = false)
     {
         try {
             // 减库存
@@ -37,10 +37,18 @@ class GoodsSpecification extends Model
                 $this->getKeyName(), $this->getKey()
             );
 
-            $columns = [
-                'quantity' => DB::raw("`quantity` - $quantity"),
-                'sold_quantity' => DB::raw("`sold_quantity` + $quantity"),
-            ];
+            if ($is_refund) {
+                $columns = [
+                    'quantity' => DB::raw("`quantity` + $quantity"),
+                    'sold_quantity' => DB::raw("`sold_quantity` - $quantity"),
+                ];
+            } else {
+                $columns = [
+                    'quantity' => DB::raw("`quantity` - $quantity"),
+                    'sold_quantity' => DB::raw("`sold_quantity` + $quantity"),
+                ];
+            }
+
             $res = $query->update($columns);
             if ($res === 1) {
                 return true;

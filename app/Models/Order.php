@@ -67,24 +67,89 @@ class Order extends Model
         return $this->belongsTo(Express::class, 'express_id', 'id');
     }
 
+    public function specifications()
+    {
+        return $this->belongsToMany(GoodsSpecification::class, 'order_goods', 'order_id', 'goods_specification_id', 'id', 'id')->withPivot(['quantity']);
+    }
+
+    public function resetSpecificationQuantity()
+    {
+        foreach ($this->specifications as $specification) {
+            $specification->sold($specification->pivot_quantity, true);
+        }
+    }
+
     // 取消订单
     public function cancel()
     {
-        $status = $this->status;
-        $this->status = 5;
+        if (! in_array($this->status, [1, 2, 3, 4])) {
+            throw new \Exception('订单状态无法取消');
+        }
+
+        if ($this->status == 1) {
+            try {
+                \DB::beginTransaction();
+
+                $this->status = 5;
+                $this->save();
+
+                // 恢复库存
+                $this->resetSpecificationQuantity();
+
+                \DB::commit();
+                return $this;
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                throw new \Exception('退款失败');
+            }
+        }
+
         try {
             \DB::beginTransaction();
-            if ($status > 1) {
-                // TODO: 退款处理
+
+            if ($this->used_balance > 0) {
+                $this->user->wallet->increment('balance', $this->used_balance);
+                $this->user->wallet->save();
+                $this->user->wallet->log($this->used_balance, $this, "取消订单（{$this->order_number}）退款入账");
+            } else {
+                $this->cancel_order_number = self::generateOrderNumber();
+                if (! app()->isLocal()) {
+                    $app = app('wechat.payment');
+                    $result = $app->refund->byOutTradeNumber($this->order_number, $this->cancel_order_number, $this->real_cost, $this->real_cost, [
+                        // 可在此处传入其他参数，详细参数见微信支付文档
+                        'refund_desc' => "用户本人操作订单【{$this->order_number}】进行商品订单取消并进行退款",
+                    ]);
+                    Log::info("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付退款：" . json_encode($result, JSON_UNESCAPED_UNICODE));
+
+                    if (($result['return_code'] ?? 'FAIL') == 'FAIL') {
+                        Log::error("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付退款失败：[{$result['return_code']}]{$result['return_msg']}");
+                        throw new \Exception('退款失败，' . $result['return_msg'], 200);
+                    }
+                    if (($result['result_code'] ?? 'FAIL') == 'FAIL') {
+                        Log::error("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付退款失败：[{$result['err_code']}]{$result['err_code_des']}");
+                        throw new \Exception('退款失败，' . $result['err_code_des'], 200);
+                    }
+                    Log::error("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付退款成功：{$this->real_cost}");
+                } else {
+                    // 本地直接成功
+                    Log::error("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付local环境退款成功：{$this->real_cost}");
+                }
             }
+
+            $this->status = 5;
             $this->save();
+
             \DB::commit();
-
-            // TODO: 日志记录
-            // TODO: 通知
         } catch (\Exception $exception) {
-
             DB::rollBack();
+
+            if ($exception->getCode() != 200) {
+                Log::error("[order][refund][error][{$this->order_number}]订单取消异常，{$exception->getMessage()}，{$exception->getCode()}，{$exception->getFile()}，{$exception->getLine()}");
+
+                throw new \Exception('退款失败');
+            } else {
+                throw new \Exception($exception->getMessage());
+            }
         }
     }
 
