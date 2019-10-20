@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
+use Log;
 
 class Order extends Model
 {
