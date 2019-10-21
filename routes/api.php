@@ -93,6 +93,12 @@ $api->version('v1', [
         $api->get('agency/rechargeThresholdOrders', 'AgencyController@rechargeThresholdOrders');
         $api->get('agency/rechargeThresholdOrders/{order}', 'AgencyController@rechargeThresholdOrder');
         $api->get('agency/qrcode', 'AgencyController@qrcode');
+        // 代理金库
+        $api->get('coffer', 'CoffersController@show');
+        $api->get('coffer/logs', 'CoffersController@logs');
+        $api->post('coffer/withdraw', 'CoffersController@withdraw');
+        $api->get('coffer/withdrawals', 'CoffersController@withdrawals');
+        $api->get('coffer/withdrawals/{withdrawal}', 'CoffersController@withdrawal')->where('withdrawal', '[0-9]+');
 
         //系统
         $api->get('system/configs', 'SystemController@getConfig');

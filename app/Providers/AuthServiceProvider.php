@@ -30,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
             return $user->id == $model->user_id;
         });
 
+        Gate::define('is-agency', function (User $user) {
+            return $user->isAgency();
+        });
+
         Gate::define('enabled', function (User $user, $model) {
             return $model->has_enabled === 1;
         });

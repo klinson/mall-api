@@ -133,6 +133,7 @@ class RechargeThresholdOrder extends Model
                 // 修改用户代理等级
                 $this->owner->agency_id = $this->agency_config_id;
                 $this->owner->save();
+                $this->owner->agencyInit();
                 $log_info = "充值'{$this->agencyConfig->title}'代理（{$this->order_number}）";
             } else {
                 $log_info = "充值钱包（{$this->order_number}）";

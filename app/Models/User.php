@@ -73,6 +73,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Wallet::class, 'user_id', 'id');
     }
 
+    public function coffer()
+    {
+        return $this->hasOne(Coffer::class, 'user_id', 'id');
+    }
+
     public function init()
     {
         $this->wallet()->create();
@@ -81,5 +86,17 @@ class User extends Authenticatable implements JWTSubject
     public function agency()
     {
         return $this->belongsTo(AgencyConfig::class, 'agency_id', 'id');
+    }
+
+    public function isAgency()
+    {
+        return ! ($this->agency_id === 0);
+    }
+
+    public function agencyInit()
+    {
+        if (! $this->coffer) {
+            $this->coffer()->create();
+        }
     }
 }
