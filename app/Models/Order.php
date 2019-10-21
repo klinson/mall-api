@@ -118,7 +118,7 @@ class Order extends Model
                     $app = app('wechat.payment');
                     $result = $app->refund->byOutTradeNumber($this->order_number, $this->cancel_order_number, $this->real_cost, $this->real_cost, [
                         // 可在此处传入其他参数，详细参数见微信支付文档
-                        'refund_desc' => "用户本人操作订单【{$this->order_number}】进行商品订单取消并进行退款",
+                        'refund_desc' => "订单【{$this->order_number}】取消自动退款",
                     ]);
                     Log::info("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付退款：" . json_encode($result, JSON_UNESCAPED_UNICODE));
 
