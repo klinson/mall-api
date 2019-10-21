@@ -13,13 +13,13 @@ class RechargeThresholdOrder extends Model
 {
     use SoftDeletes, HasOwnerHelper;
 
-    const wechat_pay_notify_route = 'RechargeThresholdOrder.wechat.pay.notify';
+    const wechat_pay_notify_route = '/api/wechat/RechargeThresholdOrderPaidNotify';
 
     protected $fillable = ['order_number', 'balance', 'user_id', 'agency_config_id', 'status'];
 
     public static function getWechatPayNotifyUrl()
     {
-        return app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route(self::wechat_pay_notify_route);
+        return config('app.url').self::wechat_pay_notify_route;
     }
 
     public static function generateOrder($user, AgencyConfig $agencyConfig)
