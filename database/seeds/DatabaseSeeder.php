@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AddressesTableSeeder::class);
         $this->call(AgencyConfigsTableSeeder::class);
         $this->call(ExpressesTableSeeder::class);
+        $this->call(ArticlesTableSeeder::class);
     }
 }

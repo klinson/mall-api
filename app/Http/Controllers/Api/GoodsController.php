@@ -60,7 +60,10 @@ class GoodsController extends Controller
             if (! \Storage::disk($disk)->exists($filename)) {
                 $scene = "goods_id={$goods->id}&inviter_id={$user_id}";
 
-                $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, ['width' => 430]);
+                $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, [
+                    'width' => 430,
+                    'page' => 'pages/goodsDetail/goodsDetail'
+                ]);
                 if ($stream instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
                     // 以内容 md5 为文件名存到本地
                     //      $stream->save('abc');
