@@ -257,6 +257,18 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-16 00:00:48',
                 'updated_at' => '2019-10-16 00:00:53',
             ),
+            20 => 
+            array (
+                'id' => 25,
+                'parent_id' => 19,
+                'order' => 0,
+                'title' => '资讯管理',
+                'icon' => 'fa-bars',
+                'uri' => 'articles',
+                'permission' => NULL,
+                'created_at' => '2019-10-23 00:50:17',
+                'updated_at' => '2019-10-23 00:50:17',
+            ),
         ));
         
         

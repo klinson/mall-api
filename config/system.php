@@ -8,4 +8,10 @@ return [
     ],
     // 寄快递公司id
     'express_company_id' => env('EXPRESS_COMPANY_ID', 1),
+
+    // 资讯关联
+    'articles' => [
+        'about_us' => 1,
+        'join_us' => 2,
+    ],
 ];

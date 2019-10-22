@@ -39,6 +39,7 @@ Route::group([
     $router->put('carouselAds/{ad}/items/{item}', 'CarouselAdsController@updateItems')->where('ad', '[0-9]+')->where('item', '[0-9]+');
     $router->delete('carouselAds/{ad}/items/{item}', 'CarouselAdsController@destroyItems')->where('ad', '[0-9]+')->where('item', '[0-9]+');
     $router->resource('carouselAds', CarouselAdsController::class);
+    $router->resource('articles', ArticlesController::class);
 
 
     $router->get('testFrom', 'TestFormController@index');
