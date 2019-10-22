@@ -196,7 +196,7 @@ class RefundOrdersController extends AdminController
                     $info[] = "No.{$order->id}：{$order->order_number} 退款失败，请重试";
                 } else {
                     $error_code = 2;
-                    $info[] = "No.{$order->id}：{$order->order_number} 退款异常，请联系管理员";
+                    $info[] = "No.{$order->id}：{$order->order_number} 退款异常，请联系管理员，错误信息：{$exception->getMessage()}";
                 }
 
                 DB::rollBack();
