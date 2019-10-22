@@ -32,7 +32,7 @@ class RefundOrder extends Model
                      }
                  }
                  if ($is_all_refund) {
-                     $model->order->stutus = 7;
+                     $model->order->status = 7;
                      $model->order->save();
                  }
              }
