@@ -29,6 +29,8 @@ class OrdersController extends AdminController
     {
         $grid = new Grid(new Order);
 
+        $grid->model()->recent();
+
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
         grid_display_relation($grid, 'user', 'nickname');

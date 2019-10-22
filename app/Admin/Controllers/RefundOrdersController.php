@@ -28,6 +28,7 @@ class RefundOrdersController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new RefundOrder);
+        $grid->model()->recent();
 
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
