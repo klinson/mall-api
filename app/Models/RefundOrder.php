@@ -22,6 +22,20 @@ class RefundOrder extends Model
     {
         self::saved(function ($model) {
              OrderGoods::where('id', $model->order_goods_id)->update(['refund_status' => $model->status]);
+
+             // 所有都退款需要标记订单已退款
+             if ($model->status == 4) {
+                 $is_all_refund = 1;
+                 foreach ($model->order->order_goods as $order_good) {
+                     if ($order_good->refund_status != 4) {
+                         $is_all_refund = 0;
+                     }
+                 }
+                 if ($is_all_refund) {
+                     $model->order->stutus = 7;
+                     $model->order->save();
+                 }
+             }
         });
         parent::boot();
     }
