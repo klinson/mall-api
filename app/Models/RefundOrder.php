@@ -26,7 +26,7 @@ class RefundOrder extends Model
              // 所有都退款需要标记订单已退款
              if ($model->status == 4) {
                  $is_all_refund = 1;
-                 foreach ($model->order->order_goods as $order_good) {
+                 foreach ($model->order->orderGoods as $order_good) {
                      if ($order_good->refund_status != 4) {
                          $is_all_refund = 0;
                      }

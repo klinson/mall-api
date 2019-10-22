@@ -146,7 +146,7 @@ class RefundOrdersController extends Controller
         $this->authorize('is-mine', $order);
 
         if (! in_array($order->status, [1, 6])) {
-            return $this->response->errorBadRequest('售后订单已发货或已完成，不可撤销');
+            return $this->response->errorBadRequest('售后订单状态不可编辑');
         }
 
         $this->validate($request, [
