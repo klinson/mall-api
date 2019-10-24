@@ -5,10 +5,12 @@ namespace App\Admin\Controllers;
 use App\Admin\Extensions\Actions\AjaxWithInputButton;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Order;
+use App\Models\RefundOrder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Table;
 use Illuminate\Http\Request;
 
 class OrdersController extends AdminController
@@ -29,10 +31,28 @@ class OrdersController extends AdminController
     {
         $grid = new Grid(new Order);
 
-        $grid->model()->recent();
+        $grid->model()->with(['orderGoods'])->recent();
 
         $grid->column('id', __('Id'));
-        $grid->column('order_number', __('Order number'));
+        $grid->column('order_number', __('Order number'))->expand(function () {
+            $goods = $this->orderGoods->map(function ($item) {
+                return [
+                    'goods_title' => $item->snapshot['goods']['title'],
+                    'goods_specification_title' => $item->snapshot['title'],
+                    'price' => $item->price * 0.01 . ' 元',
+                    'quantity' => $item->quantity,
+                    'is_refund' => RefundOrder::status_text[$item->refund_status]
+                ];
+            })->toArray();
+
+            return new Table([
+                '商品名称',
+                '商品规格',
+                '单价',
+                '数量',
+                '退款？',
+            ], $goods);
+        });
         grid_display_relation($grid, 'user', 'nickname');
         $grid->column('all_price', __('All price'))->currency();
         $grid->column('goods_price', __('Goods price'))->currency();
