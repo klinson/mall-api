@@ -49,7 +49,7 @@ class RefundOrdersController extends Controller
             return $this->response->errorBadRequest('请选择退款商品');
         }
 
-        if ($orderGoods->refund_status) {
+        if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
             return $this->response->errorBadRequest('该商品已经申请过退款');
         }
 
@@ -125,16 +125,16 @@ class RefundOrdersController extends Controller
         return $this->response->item($order, new RefundOrderTransformer());
     }
 
-    // 撤销申请,已发货(3)，已退款(4)和已拒绝退款(5)是不可撤销的
+    // 撤销申请,已发货(3)，已退款(4)和已拒绝退款(5),已撤销（7）是不可撤销的
     public function repeal(RefundOrder $order)
     {
         $this->authorize('is-mine', $order);
 
-        if (in_array($order->status, [3, 4, 5])) {
+        if (in_array($order->status, [3, 4, 5, 7])) {
             return $this->response->errorBadRequest('售后订单已发货或已完成，不可撤销');
         }
 
-        $order->status = 0;
+        $order->status = 7;
         $order->save();
 
         return $this->response->item($order, new RefundOrderTransformer());

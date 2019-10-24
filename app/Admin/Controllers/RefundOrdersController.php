@@ -162,7 +162,7 @@ class RefundOrdersController extends AdminController
     {
         RefundOrder::whereNotIn('status', [3, 4, 5])
             ->whereIn('id', $request->ids)
-            ->update(['status' => 0]);
+            ->update(['status' => 7]);
 
         $data = [
             'status'  => true,
