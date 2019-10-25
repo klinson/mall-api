@@ -10,6 +10,10 @@ class Order extends Model
 {
     use SoftDeletes;
 
+    protected $casts = [
+        'address_snapshot' => 'array'
+    ];
+
     const wechat_pay_notify_route = '/api/wechat/OrderPaidNotify';
 
     // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期，7退款
@@ -65,7 +69,10 @@ class Order extends Model
 
     public function express()
     {
-        return $this->belongsTo(Express::class, 'express_id', 'id');
+        return $this->belongsTo(Express::class, 'express_id', 'id')->withDefault([
+            'id' => 0,
+            'name' => '无'
+        ]);
     }
 
     public function specifications()

@@ -163,6 +163,7 @@ class OrdersController extends Controller
         $order->status = 1;
         $order->remarks = $request->remarks ?: '';
         $order->address_id = $request->address_id;
+        $order->address_snapshot = $address->toSnapshot();
         // 运费模板
         $order->freight_template_id = $freightTemplate->id;
 

@@ -36,6 +36,7 @@ class CreateOrdersTable extends Migration
             $table->timestamp('confirmed_at')->nullable();
             $table->unsignedInteger('express_id')->default(0);
             $table->string('express_number')->nullable();
+            $table->json('address_snapshot');
             $table->timestamps();
             $table->softDeletes();
         });

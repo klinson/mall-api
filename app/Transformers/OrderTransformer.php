@@ -35,6 +35,7 @@ class OrderTransformer extends TransformerAbstract
             'cancel_order_number' => $order->cancel_order_number,
             'express_id' => $order->express_id,
             'express_number' => $order->express_number,
+            'address' => $order->address_snapshot,
         ];
     }
 

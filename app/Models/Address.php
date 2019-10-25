@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Transformers\AddressTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
@@ -21,5 +22,23 @@ class Address extends Model
         });
 
         parent::boot();
+    }
+
+    public function getAllCityNameAttribute()
+    {
+        return $this->district->full_name;
+    }
+
+    public function toSnapshot()
+    {
+        $transformer = new AddressTransformer();
+        $info = $transformer->transform($this);
+        $info['city_name'] = $this->all_city_name;
+        return $info;
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(Area::class, 'district_code', 'code');
     }
 }
