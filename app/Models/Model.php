@@ -4,9 +4,36 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
+/**
+ * 模型基类
+ * 自动注册 creating, created, updating, updated, saving, saved, deleting, deleted, restoring, restored 事件，只需重构对应whenXXXX实践
+ * Class Model
+ * @package App\Models
+ * @method whenCreating
+ * @method whenCreated
+ * @method whenUpdating
+ * @method whenUpdated
+ * @method whenSaving
+ * @method whenSaved
+ * @method whenDeleting
+ * @method whenDeleted
+ * @method whenRestoring
+ * @method whenRestored
+ * @author klinson <klinson@163.com>
+ */
 class Model extends EloquentModel
 {
     protected $perPage = 10;
+    const hasDefaultObserver = false;
+
+    // 自动注册 creating, created, updating, updated, saving, saved, deleting, deleted, restoring, restored 事件，只需重构对应whenXXXX实践
+    protected static function boot()
+    {
+        if (static::hasDefaultObserver) {
+            static::observe(\App\Observers\ModelObserver::class);
+        }
+        parent::boot();
+    }
 
     public function scopeIsMine($query)
     {
