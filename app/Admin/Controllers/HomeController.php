@@ -149,7 +149,7 @@ class HomeController extends Controller
                 ],
                 [
                     'title' => '商场订单完成量',
-                    'width' => 2,
+                    'width' => 4,
                     'data' => [
                         [
                             'title' => '今日',
