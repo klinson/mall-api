@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasObserverHelper;
 use App\Models\Traits\HasOwnerHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
@@ -9,6 +10,7 @@ use Log;
 class RefundOrder extends Model
 {
     use SoftDeletes, HasOwnerHelper;
+    const hasDefaultObserver = true;
 
     protected $fillable = [
         'order_id', 'order_goods_id', 'order_number', 'user_id', 'goods_id', 'goods_specification_id', 'reason_text', 'reason_images', 'quantity', 'price', 'real_price', 'real_refund_cost', 'real_refund_balance', 'freight_price', 'status', 'reject_reason', 'refund_order_number', 'express_id', 'express_number', 'expressed_at', 'confirmed_at'
@@ -19,32 +21,72 @@ class RefundOrder extends Model
         '无', '待审核', '待买家发货', '待确认到货', '已退款', '拒绝退款', '驳回审核', '已撤销'
     ];
 
-    protected static function boot()
-    {
-        self::saved(function ($model) {
-             OrderGoods::where('id', $model->order_goods_id)->update(['refund_status' => $model->status]);
-
-             // 所有都退款需要标记订单已退款
-             if ($model->status == 4) {
-                 $is_all_refund = 1;
-                 foreach ($model->order->orderGoods as $order_good) {
-                     if ($order_good->refund_status != 4) {
-                         $is_all_refund = 0;
-                     }
-                 }
-                 if ($is_all_refund) {
-                     $model->order->status = 7;
-                     $model->order->save();
-                 }
-             }
-        });
-        parent::boot();
-    }
-
     protected $casts = [
         'reason_images' => 'array'
     ];
 
+    // 拒绝退款
+    public function rejectRefund()
+    {
+        if ($this->status !== 3) return false;
+
+        try {
+            $this->fill([
+                'status' => 5,
+                'confirmed_at' => date('Y-m-d H:i:s'),
+            ]);
+            $this->save();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    // 撤销
+    public function repeal()
+    {
+        if (! in_array($this->status, [3, 4, 5])) return false;
+
+        try {
+            $this->fill([
+                'status' => 7,
+            ]);
+            $this->save();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    // 拒绝
+    public function reject()
+    {
+        if ($this->status !== 1) return false;
+        try {
+            $this->fill([
+                'status' => 6,
+            ]);
+            $this->save();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    // 审核通过
+    public function pass()
+    {
+        if ($this->status !== 1) return false;
+        try {
+            $this->fill([
+                'status' => 2,
+            ]);
+            $this->save();
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
     public static function generateOrderNumber()
     {
         return date('YmdHis') . random_string(11);
@@ -119,5 +161,41 @@ class RefundOrder extends Model
     public function express()
     {
         return $this->belongsTo(Express::class, 'express_id', 'id');
+    }
+
+    /**
+     * 状态变更触发时间
+     * @author klinson <klinson@163.com>
+     */
+    public function whenStatusChange()
+    {
+        $model = $this;
+        OrderGoods::where('id', $model->order_goods_id)->update(['refund_status' => $model->status]);
+
+        // 所有都退款需要标记订单已退款
+        if ($model->status == 4) {
+            $is_all_refund = 1;
+            foreach ($model->order->orderGoods as $order_good) {
+                if ($order_good->refund_status != 4) {
+                    $is_all_refund = 0;
+                }
+            }
+            if ($is_all_refund) {
+                $model->order->status = 7;
+                $model->order->save();
+            }
+        }
+    }
+
+    public function whenSaved()
+    {
+        $this->whenStatusChange();
+    }
+    public function whenDeleted()
+    {
+        // 已退款不修改状态
+        if ($this->status != 4) {
+            OrderGoods::where('id', $this->order_goods_id)->update(['refund_status' => 0]);
+        }
     }
 }

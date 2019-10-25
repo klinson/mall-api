@@ -46,11 +46,11 @@ class RefundOrdersController extends AdminController
         $grid->tools(function (Grid\Tools $tools) {
             $tools->batch(function (Grid\Tools\BatchActions $batch) {
 //                $batch->disableDelete();
-                $batch->add('批量审核通过', new DefaultBatchTool('pass'));
-                $batch->add('批量审核不通过', new DefaultBatchTool('reject'));
-                $batch->add('批量退款', new DefaultBatchTool('refund'));
-                $batch->add('批量拒绝退款', new DefaultBatchTool('rejectRefund'));
-                $batch->add('批量撤销申请', new DefaultBatchTool('repeal'));
+                $batch->add('批量审核通过', new DefaultBatchTool('batch/pass'));
+                $batch->add('批量审核不通过', new DefaultBatchTool('batch/reject'));
+                $batch->add('批量退款', new DefaultBatchTool('batch/refund'));
+                $batch->add('批量拒绝退款', new DefaultBatchTool('batch/rejectRefund'));
+                $batch->add('批量撤销申请', new DefaultBatchTool('batch/repeal'));
             });
         });
 
@@ -128,51 +128,34 @@ class RefundOrdersController extends AdminController
         return $form;
     }
 
-    // 确认通过
-    public function pass(Request $request)
+    /**
+     * 批操作
+     * @param Request $request
+     * @param string $handle 确认通过-pass,确认拒绝reject,撤销申请repeal,拒绝退款rejectRefund
+     * @return \Illuminate\Http\JsonResponse
+     * @author klinson <klinson@163.com>
+     */
+    public function batch(Request $request, $handle)
     {
-        RefundOrder::where('status', 1)
-            ->whereIn('id', $request->ids)
-            ->update(['status' => 2]);
+        $orders = RefundOrder::whereIn('id', $request->ids)->get();
 
+        $info = [];
+        $error_count = 0;
+        foreach ($orders as $order) {
+            if ($order->$handle()) {
+                $info[] = "No.{$order->id}：{$order->order_number} 处理成功";
+            } else {
+                $error_count++;
+                $info[] = "No.{$order->id}：{$order->order_number} 处理失败";
+            }
+        }
 
-        $data = [
-            'status'  => true,
-            'message' => '操作成功',
-        ];
-        return response()->json($data);
+        return show_batch_result($error_count, $info);
     }
 
-    // 确认拒绝
-    public function reject(Request $request)
-    {
-        RefundOrder::where('status', 1)
-            ->whereIn('id', $request->ids)
-            ->update(['status' => 6]);
-
-        $data = [
-            'status'  => true,
-            'message' => '操作成功',
-        ];
-        return response()->json($data);
-    }
-
-    // 撤销申请
-    public function repeal(Request $request)
-    {
-        RefundOrder::whereNotIn('status', [3, 4, 5])
-            ->whereIn('id', $request->ids)
-            ->update(['status' => 7]);
-
-        $data = [
-            'status'  => true,
-            'message' => '操作成功',
-        ];
-        return response()->json($data);
-    }
 
     // 确认退款
-    public function refund(Request $request)
+    public function batchRefund(Request $request)
     {
         $orders = RefundOrder::where('status', 3)
             ->whereIn('id', $request->ids)
@@ -217,23 +200,6 @@ class RefundOrdersController extends AdminController
                 break;
 
         }
-
-        $data = [
-            'status'  => true,
-            'message' => '操作成功',
-        ];
-        return response()->json($data);
-    }
-
-    // 拒绝退款
-    public function rejectRefund(Request $request)
-    {
-        RefundOrder::where('status', 3)
-            ->whereIn('id', $request->ids)
-            ->update([
-                'status' => 5,
-                'confirmed_at' => date('Y-m-d H:i:s'),
-        ]);
 
         $data = [
             'status'  => true,

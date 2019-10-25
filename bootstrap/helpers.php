@@ -320,3 +320,25 @@ function record_inviter($model)
 
     return $model;
 }
+
+/**
+ * 显示批处理结果
+ * @param int $error_count
+ * @param array $info
+ * @return \Illuminate\Http\JsonResponse
+ * @author klinson <klinson@163.com>
+ */
+function show_batch_result($error_count = 0, $info = [])
+{
+    if ($error_count) {
+        admin_warning("处理完成，存在{$error_count}条失败", implode("<br/>", $info));
+    } else {
+        admin_success('处理成功', implode("<br/>", $info));
+    }
+
+    $data = [
+        'status'  => true,
+        'message' => '操作完成',
+    ];
+    return response()->json($data);
+}

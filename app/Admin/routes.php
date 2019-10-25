@@ -21,11 +21,8 @@ Route::group([
     $router->put('orders/cancel', 'OrdersController@cancel');
     $router->resource('orders', OrdersController::class);
 
-    $router->put('refundOrders/pass', 'RefundOrdersController@pass');
-    $router->put('refundOrders/repeal', 'RefundOrdersController@repeal');
-    $router->put('refundOrders/reject', 'RefundOrdersController@reject');
-    $router->put('refundOrders/refund', 'RefundOrdersController@refund');
-    $router->put('refundOrders/rejectRefund', 'RefundOrdersController@rejectRefund');
+    $router->put('refundOrders/batch/refund', 'RefundOrdersController@batchRefund');
+    $router->put('refundOrders/batch/{handle}', 'RefundOrdersController@batch')->where('handle', 'pass|reject|repeal|rejectRefund');
     $router->resource('refundOrders', RefundOrdersController::class);
 
     $router->resource('broadcasts', BroadcastsController::class);
