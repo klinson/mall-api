@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ScopeDateHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
 use Log;
 
 class Order extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, ScopeDateHelper;
 
     protected $casts = [
         'address_snapshot' => 'array'
