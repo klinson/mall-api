@@ -33,4 +33,10 @@ class OrderGoods extends Model
     {
         return $this->hasOne(RefundOrder::class, 'order_goods_id', 'id')->orderBy('id', 'desc');
     }
+
+    public function toString()
+    {
+        $status = RefundOrder::status_text[$this->refund_status];
+        return "{$this->snapshot['goods']['title']}-{$this->snapshot['title']}（{$this->price}）X {$this->quantity} 【{$status}】";
+    }
 }

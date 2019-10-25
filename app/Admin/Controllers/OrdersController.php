@@ -60,7 +60,7 @@ class OrdersController extends AdminController
         $grid->column('coupon_price', __('Coupon price'))->currency();
         $grid->column('freight_price', __('Freight price'))->currency();
         $grid->column('remarks', __('Remarks'));
-        $grid->column('status', __('Status'))->using(Order::status_text);
+        $grid->column('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
         $grid->column('created_at', __('Created at'));
         $grid->column('payed_at', __('Payed at'));
 
@@ -83,6 +83,10 @@ class OrdersController extends AdminController
                 // 暂时未对接快递，无法自动批量发货
 //                $batch->add('批量确认发货', new DefaultBatchTool('express'));
             });
+        });
+
+        $grid->filter(function(Grid\Filter $filter){
+            $filter->like('order_number', __('Order number'));
         });
 
         return $grid;

@@ -88,6 +88,12 @@
   "Payed at": "支付时间",
   "Reason text": "原因",
   "Expressed at": "寄出时间",
+  "Confirmed at": "确认时间",
+  "Express id": "快递公司",
   "Owner id": "所属用户",
-  "Order id": "订单"
+  "Order id": "订单",
+  "Reason images": "退款说明图",
+  "Express number": "快递单号",
+  "Real refund cost": "退款",
+  "Real refund balance": "退款到钱包"
 }

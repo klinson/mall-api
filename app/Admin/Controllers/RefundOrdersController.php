@@ -28,18 +28,23 @@ class RefundOrdersController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new RefundOrder);
-        $grid->model()->recent();
+        $grid->model()->with(['orderGoods', 'owner', 'order'])->recent();
 
         $grid->column('id', __('Id'));
-        $grid->column('order_number', __('Order number'));
+        $grid->column('order_number', '退款订单号');
         grid_display_relation($grid, 'owner', 'nickname');
         grid_display_relation($grid, 'order', 'order_number');
+        $grid->column('orderGoods', '退款商品')->display(function ($item) {
+            return $this->orderGoods->toString();
+        });
+
         $grid->column('quantity', __('Quantity'));
-        $grid->column('price', __('Price'));
-        $grid->column('real_price', '实际应退');
-        $grid->column('freight_price', __('Freight price'));
-        $grid->column('status', __('Status'))->using(RefundOrder::status_text);
+        $grid->column('price', __('Price'))->currency();
+        $grid->column('real_price', '实际应退')->currency();
+        $grid->column('freight_price', __('Freight price'))->currency();
+        $grid->column('status', __('Status'))->using(RefundOrder::status_text)->filter(RefundOrder::status_text);
         $grid->column('reason_text', __('Reason text'));
+        $grid->column('reason_images', __('Reason Images'))->image();
         $grid->column('expressed_at', __('Expressed at'));
         $grid->column('created_at', __('Created at'));
 
@@ -54,6 +59,14 @@ class RefundOrdersController extends AdminController
             });
         });
 
+        $grid->disableCreateButton();
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->disableEdit();
+        });
+
+        $grid->filter(function(Grid\Filter $filter){
+            $filter->like('order_number', __('Order number'));
+        });
         return $grid;
     }
 
@@ -68,29 +81,30 @@ class RefundOrdersController extends AdminController
         $show = new Show(RefundOrder::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('order_number', __('Order number'));
-        $show->field('user_id', __('User id'));
-        $show->field('order_id', __('Order id'));
-        $show->field('order_goods_id', __('Order goods id'));
-        $show->field('goods_id', __('Goods id'));
-        $show->field('goods_specification_id', __('Goods specification id'));
+        $show->field('order_number', '退款订单号');
+        show_display_relation($show, 'owner', 'nickname');
+        show_display_relation($show, 'order', 'order_number');
+        $show->field('orderGoods', '退款商品')->as(function ($item) {
+            return $this->orderGoods->toString();
+        });
+
         $show->field('quantity', __('Quantity'));
-        $show->field('price', __('Price'));
-        $show->field('real_price', __('Real price'));
-        $show->field('real_refund_cost', __('Real refund cost'));
-        $show->field('real_refund_balance', __('Real refund balance'));
-        $show->field('freight_price', __('Freight price'));
-        $show->field('status', __('Status'));
+        $show->field('price', __('Price'))->currency();
+        $show->field('real_price', __('Real price'))->currency();
+        $show->field('real_refund_cost', __('Real refund cost'))->currency();
+        $show->field('real_refund_balance', __('Real refund balance'))->currency();
+        $show->field('freight_price', __('Freight price'))->currency();
+        $show->field('status', __('Status'))->using(RefundOrder::status_text);
         $show->field('reason_text', __('Reason text'));
-        $show->field('reason_images', __('Reason images'));
-        $show->field('refund_order_number', __('Refund order number'));
+        $show->field('reason_images', __('Reason images'))->image();
+        $show->field('refund_order_number', '微信商户退款订单号');
         $show->field('expressed_at', __('Expressed at'));
         $show->field('confirmed_at', __('Confirmed at'));
         $show->field('express_id', __('Express id'));
+        show_display_relation($show, 'express', 'name');
         $show->field('express_number', __('Express number'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
