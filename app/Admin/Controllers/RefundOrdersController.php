@@ -38,15 +38,15 @@ class RefundOrdersController extends AdminController
             return $this->orderGoods->toString();
         });
 
-        $grid->column('quantity', __('Quantity'));
+        $grid->column('quantity', __('Quantity'))->sortable()->filter('range');
         $grid->column('price', __('Price'))->currency();
         $grid->column('real_price', '实际应退')->currency();
         $grid->column('freight_price', __('Freight price'))->currency();
-        $grid->column('status', __('Status'))->using(RefundOrder::status_text)->filter(RefundOrder::status_text);
+        $grid->column('status', __('Status'))->using(RefundOrder::status_text)->filter(RefundOrder::status_text)->filter(RefundOrder::status_text);
         $grid->column('reason_text', __('Reason text'));
         $grid->column('reason_images', __('Reason Images'))->image();
-        $grid->column('expressed_at', __('Expressed at'));
-        $grid->column('created_at', __('Created at'));
+        $grid->column('expressed_at', __('Expressed at'))->sortable()->filter('range', 'datetime');
+        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
 
         $grid->tools(function (Grid\Tools $tools) {
             $tools->batch(function (Grid\Tools\BatchActions $batch) {
@@ -66,6 +66,7 @@ class RefundOrdersController extends AdminController
 
         $grid->filter(function(Grid\Filter $filter){
             $filter->like('order_number', __('Order number'));
+            $filter->like('express_number', __('Express number'));
         });
         return $grid;
     }
@@ -100,7 +101,6 @@ class RefundOrdersController extends AdminController
         $show->field('refund_order_number', '微信商户退款订单号');
         $show->field('expressed_at', __('Expressed at'));
         $show->field('confirmed_at', __('Confirmed at'));
-        $show->field('express_id', __('Express id'));
         show_display_relation($show, 'express', 'name');
         $show->field('express_number', __('Express number'));
         $show->field('created_at', __('Created at'));

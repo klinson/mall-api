@@ -54,15 +54,22 @@ class OrdersController extends AdminController
             ], $goods);
         });
         grid_display_relation($grid, 'user', 'nickname');
-        $grid->column('all_price', __('All price'))->currency();
-        $grid->column('goods_price', __('Goods price'))->currency();
-        $grid->column('real_price', __('Real price'))->currency();
-        $grid->column('coupon_price', __('Coupon price'))->currency();
-        $grid->column('freight_price', __('Freight price'))->currency();
+        $grid->column('all_price', __('All price'))->currency()->sortable();;
+        $grid->column('goods_price', __('Goods price'))->currency()->sortable();;
+        $grid->column('real_price', __('Real price'))->currency()->sortable();;
+        $grid->column('coupon_price', __('Coupon price'))->currency()->sortable();;
+        $grid->column('freight_price', __('Freight price'))->currency()->sortable();;
         $grid->column('remarks', __('Remarks'));
+        $grid->column('address_snapshot', __('Address'))->display(function ($item) {
+            return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
+        });
+        grid_display_relation($grid, 'express', 'name');
+        $grid->column('express_number', __('Express number'));
         $grid->column('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('payed_at', __('Payed at'));
+        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
+        $grid->column('payed_at', __('Payed at'))->sortable()->filter('range', 'datetime');
+        $grid->column('expressed_at', __('Expressed at'))->sortable()->filter('range', 'datetime');
+        $grid->column('confirmed_at', __('Confirmed at'))->sortable()->filter('range', 'datetime');
 
         $grid->disableCreateButton();
         $grid->actions(function (Grid\Displayers\Actions $actions) {
@@ -87,6 +94,7 @@ class OrdersController extends AdminController
 
         $grid->filter(function(Grid\Filter $filter){
             $filter->like('order_number', __('Order number'));
+            $filter->like('express_number', __('Express number'));
         });
 
         return $grid;
@@ -105,16 +113,20 @@ class OrdersController extends AdminController
         $show->field('id', __('Id'));
         $show->field('order_number', __('Order number'));
         show_display_relation($show, 'user', 'nickname');
-        show_display_relation($show, 'address', 'address');
         $show->field('all_price', __('All price'))->currency();
         $show->field('goods_price', __('Goods price'))->currency();
         $show->field('real_price', __('Real price'))->currency();
         $show->field('coupon_price', __('Coupon price'))->currency();
         $show->field('freight_price', __('Freight price'))->currency();
+        $show->field('address_snapshot', __('Address'))->unescape()->as(function ($item) {
+            return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
+        });
         $show->field('remarks', __('Remarks'));
         $show->field('status', __('Status'))->using(Order::status_text);
         $show->field('created_at', __('Created at'));
         $show->field('payed_at', __('Payed at'));
+        $show->field('expressed_at', __('Expressed at'));
+        $show->field('confirmed_at', __('Confirmed at'));
         $show->field('updated_at', __('Updated at'));
 
         return $show;
