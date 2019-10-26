@@ -39,4 +39,9 @@ class OrderGoods extends Model
         $status = RefundOrder::status_text[$this->refund_status];
         return "{$this->snapshot['goods']['title']}-{$this->snapshot['title']}（{$this->price}）X {$this->quantity} 【{$status}】";
     }
+
+    public function inviter()
+    {
+        return $this->belongsTo(User::class, 'inviter_id');
+    }
 }

@@ -21,6 +21,8 @@ class CreateCofferLogsTable extends Migration
             $table->unsignedInteger('balance')->default(0);
             $table->unsignedTinyInteger('type')->default(0);
             $table->string('description')->default('');
+            $table->json('agency');
+            $table->unsignedTinyInteger('agency_level')->default(0);
             $table->unsignedInteger('ip')->default(0);
             $table->timestamp('created_at')->nullable();
             $table->index('user_id');

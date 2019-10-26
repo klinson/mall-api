@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Jobs\UnsettleOrderJob;
+use App\Models\Traits\HasOwnerHelper;
 use App\Models\Traits\ScopeDateHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
@@ -9,7 +11,7 @@ use Log;
 
 class Order extends Model
 {
-    use SoftDeletes, ScopeDateHelper;
+    use SoftDeletes, ScopeDateHelper, HasOwnerHelper;
 
     protected $casts = [
         'address_snapshot' => 'array'
@@ -199,6 +201,8 @@ class Order extends Model
         $this->status = 4;
         $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
+
+        dispatch(new UnsettleOrderJob($this));
     }
 
     /**
@@ -249,5 +253,29 @@ class Order extends Model
     public function refunds()
     {
         return $this->hasMany(RefundOrder::class, 'order_id', 'id');
+    }
+
+    // 待结算记录
+    public function unsettle()
+    {
+        // 自己是代理直接结算给自己，自己不是代理则按邀请购买人进行结算
+        if ($this->owner->isAgency()) {
+            // 计算出待结算金额
+            $balance = $this->owner->agency->unsettleOrder($this);
+
+            $this->owner->coffer->unsettle($balance, $this, $this->owner->agency, 1);
+        } else {
+            $orderGoods = $this->orderGoods()->with(['inviter'])->whereHas('inviter')->get();
+            foreach ($orderGoods as $orderGood) {
+                // 邀请人是代理才进行结算
+                if (! $orderGood->inviter->isAgency()) continue;
+
+                // 计算出待结算金额
+                $balance = $orderGood->inviter->agency->unsettleOrderGoods($orderGood);
+
+                // 待结算记录
+                $orderGood->inviter->coffer->unsettle($balance, $this, $orderGood->inviter->agency, 1);
+            }
+        }
     }
 }
