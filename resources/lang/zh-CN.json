@@ -100,5 +100,14 @@
   "Agency id": "代理",
   "Avatar": "头像",
   "Wxapp userinfo": "微信信息",
-  "Wallet": "用户钱包"
+  "Wallet": "用户钱包",
+  "Recharge threshold": "充值门槛",
+  "Direct profit mode": "直推利润结算方式",
+  "Direct profit": "直推利润结算比例",
+  "Indirect profit mode": "间接利润结算方式",
+  "Indirect profit": "间接利润结算比例",
+  "Direct agency mode": "直推被邀代理结算方式",
+  "Direct agency": "直推被邀代理结算比例",
+  "Indirect agency mode": "间接被邀代理结算方式",
+  "Indirect agency": "间接被邀代理结算比例"
 }
