@@ -265,6 +265,9 @@ function grid_display_relation($grid, $related, $title = 'title', $relate_column
         $relate_column = __(ucfirst(\Illuminate\Support\Str::snake($related, ' ')) . ' id');
     }
     return $grid->column($related, $relate_column)->display(function () use ($related, $title) {
+        if (empty($this->$related)) {
+            return '';
+        }
         return model2a($this->$related, $title);
     });
 }
@@ -283,6 +286,9 @@ function show_display_relation($show, $related, $title = 'title', $relate_column
         $relate_column = __(ucfirst(\Illuminate\Support\Str::snake($related, ' ')) . ' id');
     }
     return $show->field($related, $relate_column)->unescape()->as(function ($item) use ($title) {
+        if (empty($item)) {
+            return '';
+        }
         return model2a($item, $title);
     });
 }

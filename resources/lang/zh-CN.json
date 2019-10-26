@@ -96,5 +96,9 @@
   "Express number": "快递单号",
   "Real refund cost": "退款",
   "Address": "地址",
-  "Real refund balance": "退款到钱包"
+  "Real refund balance": "退款到钱包",
+  "Agency id": "代理",
+  "Avatar": "头像",
+  "Wxapp userinfo": "微信信息",
+  "Wallet": "用户钱包"
 }

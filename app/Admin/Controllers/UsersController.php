@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\AgencyConfig;
 use App\Models\User;
 use App\Rules\CnMobile;
 use Encore\Admin\Controllers\AdminController;
@@ -26,14 +27,32 @@ class UsersController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
+        $grid->model()->with(['agency', 'wallet', 'coffer'])->orderBy('created_at', 'desc');
 
         $grid->column('id', __('Id'));
-        $grid->column('wxapp_openid', __('Wxapp openid'));
         $grid->column('nickname', __('Nickname'));
-        $grid->column('sex', __('Sex'))->using(User::SEX2TEXT);
+        $grid->column('avatar', __('Avatar'))->image();
+        grid_display_relation($grid, 'agency', 'title');
+        $grid->column('sex', __('Sex'))->using(User::SEX2TEXT)->filter(User::SEX2TEXT);;
         $grid->column('mobile', __('Mobile'));
-        $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
-        $grid->column('created_at', __('Created at'));
+        $grid->column('wallet', __('Wallet'))->display(function ($item) {
+            return strval($this->wallet->balance * 0.01);
+        });
+        $grid->column('coffer', '金库(已结算/待结算)')->display(function ($item) {
+            if (empty($this->coffer)) return '';
+            return strval($this->coffer->balance * 0.01).'/'.strval($this->coffer->unsettle_balance * 0.01);
+        });
+
+        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
+
+        $grid->disableCreateButton();
+
+        $grid->filter(function(Grid\Filter $filter){
+            $filter->like('nickname', __('Nickname'));
+            $filter->like('mobile', __('Mobile'));
+            $filter->like('wxapp_openid', __('Wxapp openid'));
+            $filter->equal('agency_id', __('Agency id'))->select(AgencyConfig::all(['id', 'title'])->pluck('title', 'id')->toArray());
+        });
 
         return $grid;
     }
@@ -49,11 +68,12 @@ class UsersController extends AdminController
         $show = new Show(User::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('wxapp_openid', __('Wxapp openid'));
+        $show->field('avatar', __('Avatar'))->image();
         $show->field('nickname', __('Nickname'));
+        $show->field('wxapp_openid', __('Wxapp openid'));
         $show->field('sex', __('Sex'))->using(User::SEX2TEXT);
         $show->field('mobile', __('Mobile'));
-        $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+        $show->field('wxapp_userinfo', __('Wxapp userinfo'))->json();
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
