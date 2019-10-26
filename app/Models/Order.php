@@ -121,7 +121,7 @@ class Order extends Model
             if ($this->used_balance > 0) {
                 $this->user->wallet->increment('balance', $this->used_balance);
                 $this->user->wallet->save();
-                $this->user->wallet->log($this->used_balance, $this, "取消订单（{$this->order_number}）退款入账");
+                $this->user->wallet->log($this->used_balance, $this, "取消订单（{$this->order_number}）退款入账", 1);
             } else {
                 $this->cancel_order_number = self::generateOrderNumber();
                 if (! app()->isLocal()) {

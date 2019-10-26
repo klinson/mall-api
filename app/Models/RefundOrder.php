@@ -109,7 +109,7 @@ class RefundOrder extends Model
             // 退余额
             $this->order->user->wallet->increment('balance', $this->real_price);
             $this->order->user->wallet->save();
-            $this->order->user->wallet->log($this->real_price, $this, "订单（{$this->order->order_number}）的售后订单（{$this->order_number}）退款退回余额");
+            $this->order->user->wallet->log($this->real_price, $this, "订单（{$this->order->order_number}）的售后订单（{$this->order_number}）退款退回余额", 1);
         } else {
             // 退微信
             if (! app()->isLocal()) {
