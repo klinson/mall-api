@@ -20,6 +20,8 @@ class CreateAreasTable extends Migration
             $table->string('name', 100);
             $table->unsignedTinyInteger('type')->default(0);
             $table->string('full_name', 200)->nullable();
+
+            $table->unique('code');
         });
     }
 
