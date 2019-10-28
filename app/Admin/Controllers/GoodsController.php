@@ -29,7 +29,7 @@ class GoodsController extends AdminController
     {
         $grid = new Grid(new Goods);
 
-        $grid->model()->with(['specifications']);
+        $grid->model()->with(['specifications'])->recent();
 
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'category');
@@ -37,11 +37,16 @@ class GoodsController extends AdminController
         $grid->column('thumbnail', __('Thumbnail'))->image();
         $grid->column('max_price', __('Max price'))->currency();
         $grid->column('min_price', __('Min price'))->currency();
-        $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
-        $grid->column('has_recommended', __('Has recommended'))->using(YN2TEXT);
+
+        $states = [
+            'on'  => ['value' => 1, 'text' => '打开', 'color' => 'primary'],
+            'off' => ['value' => 0, 'text' => '关闭', 'color' => 'default'],
+        ];
+        $grid->column('has_enabled', __('Has enabled'))->switch($states)->filter(HAS_ENABLED2TEXT);
+        $grid->column('has_recommended', __('Has recommended'))->filter(YN2TEXT)->switch($states);
         $grid->column('sort', __('Sort'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
+        $grid->column('updated_at', __('Updated at'))->sortable()->filter('range', 'datetime');
 
         $grid->column('specifications', '商品规格')->display(function () {
             if (empty($this->specifications)) {
@@ -69,6 +74,12 @@ class GoodsController extends AdminController
                 '复制代码',
                 $this->row->ad_code
             ));
+        });
+
+        $grid->filter(function ($filter) {
+            $filter->like('title', '名称');
+            $filter->equal('category_id', '所属分类')->select(Category::all()->pluck('title', 'id')->toArray());
+
         });
         return $grid;
     }
