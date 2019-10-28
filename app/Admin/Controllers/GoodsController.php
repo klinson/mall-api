@@ -8,6 +8,8 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Admin\Extensions\Actions\CopyInfoButton;
+
 
 class GoodsController extends AdminController
 {
@@ -61,6 +63,12 @@ class GoodsController extends AdminController
             return $specifications;
         })->table();
 
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->append(new CopyInfoButton(
+                '复制',
+                'goods-111'
+            ));
+        });
         return $grid;
     }
 
