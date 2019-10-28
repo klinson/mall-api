@@ -2,8 +2,9 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Extensions\Actions\AjaxWithInputButton;
+use App\Admin\Extensions\Actions\AjaxWithFormButton;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
+use App\Models\Express;
 use App\Models\Order;
 use App\Models\RefundOrder;
 use Encore\Admin\Controllers\AdminController;
@@ -75,11 +76,27 @@ class OrdersController extends AdminController
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
             if ($this->row->status === 2) {
-                $actions->append(new AjaxWithInputButton(
-                    $actions->getResource() . '/' . $actions->getKey() . '/express',
+                $actions->append(new AjaxWithFormButton(
                     '发货',
-                    'express_number',
-                    '请输入快递单号'
+                    [
+                        'title' => '发货',
+                        'action' => $actions->getResource() . '/' . $actions->getKey() . '/express',
+                    ],
+                    [
+                        [
+                            'title' => '物流公司',
+                            'name' => 'express_id',
+                            'input' => 'select',
+                            'inputOptions' => Express::all(['id', 'name'])->pluck('name', 'id')->toArray(),
+                            'inputValue' => config('system.express_company_id', 1)
+                        ],
+                        [
+                            'title' => '物流单号',
+                            'name' => 'express_number',
+                            'input' => 'text',
+                            'text' => '请输入'
+                        ]
+                    ]
                 ));
             }
         });
@@ -175,15 +192,22 @@ class OrdersController extends AdminController
             return response()->json($data);
         }
 
-        if (empty($request->express_number)) {
+        if (empty($request->express_id)) {
             $data = [
                 'status'  => false,
                 'message' => '请输入快递单号',
             ];
             return response()->json($data);
         }
+        if (empty($request->express_id)) {
+            $data = [
+                'status'  => false,
+                'message' => '请选择快递公司',
+            ];
+            return response()->json($data);
+        }
 
-        $order->expressing($request->express_number);
+        $order->expressing($request->express_number, $request->express_id);
 
         $data = [
             'status'  => true,
