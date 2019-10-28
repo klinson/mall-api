@@ -56,4 +56,9 @@ class Goods extends Model
         $this->min_price = $specifications->min('price');
         $this->save();
     }
+
+    public function getAdCodeAttribute()
+    {
+        return 'goods-'.$this->id;
+    }
 }

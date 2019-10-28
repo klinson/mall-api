@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\CopyInfoButton;
 use App\Models\Category;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -32,6 +33,13 @@ class CategoriesController extends AdminController
         $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $grid->column('sort', __('Sort'));
         $grid->column('created_at', __('Created at'));
+
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->append(new CopyInfoButton(
+                '复制代码',
+                $this->row->ad_code
+            ));
+        });
 
         return $grid;
     }

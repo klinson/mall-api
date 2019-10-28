@@ -40,6 +40,7 @@ class GoodsController extends AdminController
         $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $grid->column('has_recommended', __('Has recommended'))->using(YN2TEXT);
         $grid->column('sort', __('Sort'));
+        $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
         $grid->column('specifications', '商品规格')->display(function () {
@@ -65,8 +66,8 @@ class GoodsController extends AdminController
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->append(new CopyInfoButton(
-                '复制',
-                'goods-111'
+                '复制代码',
+                $this->row->ad_code
             ));
         });
         return $grid;

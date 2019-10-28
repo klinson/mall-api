@@ -24,7 +24,12 @@ class CopyInfoButton
     protected function script()
     {
         return <<<JS
-new ClipboardJS('.clipboard-btn');
+var clipboard = new ClipboardJS('.clipboard-btn');
+
+clipboard.on('success', function(e) {
+    swal('复制代码成功', '', 'success');
+    e.clearSelection();
+});
 JS;
     }
 

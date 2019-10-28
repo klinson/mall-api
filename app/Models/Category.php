@@ -18,4 +18,10 @@ class Category extends Model
             return asset(Category::THUMBNAIL_TEMPLATE);
         }
     }
+
+
+    public function getAdCodeAttribute()
+    {
+        return 'goods-'.$this->id;
+    }
 }
