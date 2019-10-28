@@ -192,7 +192,7 @@ class OrdersController extends AdminController
             return response()->json($data);
         }
 
-        if (empty($request->express_id)) {
+        if (empty($request->express_number)) {
             $data = [
                 'status'  => false,
                 'message' => '请输入快递单号',

@@ -45,18 +45,21 @@ class AjaxWithFormButton
 
     protected function script()
     {
+        $ajax_data = '{';
+        foreach ($this->inputs as $key => &$input) {
+            $ajax_data .= $input['name'] . ': input_values['.$key.'],';
+            unset($input['name']);
+        }
+        $ajax_data .= '_token:LA.token}';
+
         if (($count = count($this->inputs)) === 1) {
-
+            $script = "
+";
         } else {
-            $ajax_data = '{';
-            foreach ($this->inputs as $key => &$input) {
-                $ajax_data .= $input['name'] . ': input_values['.$key.'],';
-                unset($input['name']);
-            }
-            $ajax_data .= '_token:LA.token}';
-
             $script = "
 $('.{$this->title}-class').unbind('click').click(function() {
+  var count = {$count};
+  var input_values = [];
   Swal.mixin({
     title: '{$this->form['title']}',
     input: 'text',
@@ -66,23 +69,32 @@ $('.{$this->title}-class').unbind('click').click(function() {
     showLoaderOnConfirm: true,
     closeOnConfirm: false,
     progressSteps: ".json_encode(range(1, $count)).",
-  }).queue(".json_encode($this->inputs).").then((result) => {
-    var input_values = result.value
-    $.ajax({
-        method: '{$this->form['method']}',
-        url: '{$this->form['action']}',
-        data: {$ajax_data},
-        success: function (data) {
-            if (typeof data === 'object') {
-                if (data.status) {
-                    swal(data.message, '', 'success');
-                    $.pjax.reload('#pjax-container');
-                } else {
-                    swal(data.message, '', 'error');
-                }
-            }
+    preConfirm: function(result) {
+        input_values.push(result)
+        if (input_values.length >= count) {
+            return new Promise(function(resolve) {
+                $.ajax({
+                    method: '{$this->form['method']}',
+                    url: '{$this->form['action']}',
+                    data: {$ajax_data},
+                    success: function (data) {
+                        resolve(data);
+                    }
+                });
+            });
         }
-    });
+    }
+  }).queue(".json_encode($this->inputs).").then((result) => {
+    var data = result.value[{$count}-1]
+
+    if (typeof data === 'object') {
+        if (data.status) {
+            swal(data.message, '', 'success');
+            $.pjax.reload('#pjax-container');
+        } else {
+            swal(data.message, '', 'error');
+        }
+    }
   });
 });
 ";
