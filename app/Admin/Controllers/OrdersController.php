@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\AjaxWithFormButton;
+use App\Admin\Extensions\Exporters\OrderExporter;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Express;
 use App\Models\Order;
@@ -113,6 +114,8 @@ class OrdersController extends AdminController
             $filter->like('order_number', __('Order number'));
             $filter->like('express_number', __('Express number'));
         });
+
+        $grid->exporter(new OrderExporter());
 
         return $grid;
     }
