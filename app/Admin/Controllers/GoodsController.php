@@ -166,7 +166,11 @@ class GoodsController extends AdminController
 
         $form->saving(function ($form) {
             if (is_null($form->images)) {
-                $form->images = [];
+                if ($form->thumbnail) {
+                    $form->images = [$form->thumbnail];
+                } else {
+                    $form->images = [];
+                }
             };
         });
 

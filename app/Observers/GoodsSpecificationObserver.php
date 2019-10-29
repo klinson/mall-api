@@ -15,6 +15,10 @@ class GoodsSpecificationObserver
 {
     public function saved(GoodsSpecification $model)
     {
+        if (! $model->thumbnail) {
+            $model->thumbnail = $model->goods->thumbnail;
+            $model->save();
+        }
         $model->goods->autoUpdate();
     }
 
