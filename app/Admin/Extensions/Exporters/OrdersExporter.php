@@ -16,7 +16,16 @@ class OrdersExporter extends ExcelExporter
 
     protected $columns = [
         'id'      => 'ID',
-        'title'   => '标题',
-        'content' => '内容',
+        'order_number'   => '订单号',
+        'all_price' => __('All price'),
+        'goods_price' => __('Goods price'),
+        'real_price' => __('Real price'),
+        'coupon_price' => __('Coupon price'),
+        'freight_price' => __('Freight price')
+        'status' => '订单状态',
+        'remarks' => '备注',
+        'address_snapshot' => '配送信息',
+        'created_at' => '下单时间',
+        'payed_at' => '付款时间',
     ];
 }
