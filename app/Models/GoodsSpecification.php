@@ -24,6 +24,14 @@ class GoodsSpecification extends Model
         }
     }
 
+    // 自动设置规格缩略图
+    public function setThumbnailAttribute()
+    {
+        if (empty($this->attributes['thumbnail']) && !empty($this->goods->thumbnail)) {
+            $this->attributes['thumbnail'] = $this->goods->thumbnail;
+        }
+    }
+
     public function goods()
     {
         return $this->belongsTo(Goods::class, 'goods_id', 'id');
