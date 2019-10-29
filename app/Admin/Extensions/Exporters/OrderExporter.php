@@ -29,12 +29,6 @@ class OrderExporter extends AbstractExporter
         parent::__construct($grid);
     }
 
-    public function header($sheet, &$row_number)
-    {
-
-
-    }
-
     public function export()
     {
         set_time_limit(0);
