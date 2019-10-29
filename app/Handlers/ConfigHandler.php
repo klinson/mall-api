@@ -9,7 +9,7 @@
 namespace App\Handlers;
 
 
-use Encore\Admin\Config\ConfigModel;
+use App\Models\Config;
 use Illuminate\Support\Facades\Cache;
 
 class ConfigHandler
@@ -30,7 +30,7 @@ class ConfigHandler
             }
 
             return Cache::remember($cache_key, 24*60, function () {
-                return ConfigModel::all(['name', 'value']);
+                return Config::all(['name', 'value']);
             });
         } catch (\Exception $exception) {
             return [];

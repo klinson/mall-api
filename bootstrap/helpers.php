@@ -348,3 +348,23 @@ function show_batch_result($error_count = 0, $info = [])
     ];
     return response()->json($data);
 }
+
+/**
+ * 批量或单个修改配置表
+ * @param $key
+ * @param null $value
+ * @author klinson <klinson@163.com>
+ */
+function update_config($key, $value = null)
+{
+    if (is_array($key)) {
+        foreach ($key as $k => $v) {
+            update_config($k, $v);
+        }
+    } else {
+        \App\Models\Config::updateOrCreate(
+            ['name' => $key],
+            ['value' => $value]
+        );
+    }
+}

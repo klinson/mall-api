@@ -39,6 +39,8 @@ Route::group([
     $router->resource('articles', ArticlesController::class);
     $router->resource('agencyConfigs', AgencyConfigsController::class);
 
+    // 系统
+    $router->get('system', 'SystemController@index');
 
 
     $router->get('testFrom', 'TestFormController@index');
