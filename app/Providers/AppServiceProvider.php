@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
         \Auth::guard('api')->factory()->setTTL(config('api.ttl'));
 
         $this->loadObserverConfig();
+
+        \Horizon::auth(function () {
+            return (\Auth::guard('admin')->user() && \Auth::guard('admin')->user()->id === 1);
+        });
     }
 
     /**
