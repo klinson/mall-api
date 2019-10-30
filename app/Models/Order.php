@@ -26,6 +26,10 @@ class Order extends Model
         '未知', '待支付', '待发货', '待收货', '已完成', '已取消', '超时过期', '已退款'
     ];
 
+    const express_status_text = [
+        0 => '在途', 1 => '揽收', 2 => '疑难', 3 => '签收', 4 => '退签', 5 => '派件', 6 => '退回', -1 => '未知'
+    ];
+
     public static function getWechatPayNotifyUrl()
     {
         return config('app.url').self::wechat_pay_notify_route;

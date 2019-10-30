@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\AjaxWithFormButton;
+use App\Admin\Extensions\Actions\GetButton;
 use App\Admin\Extensions\Exporters\OrderExporter;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Express;
@@ -11,7 +12,9 @@ use App\Models\RefundOrder;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Box;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Http\Request;
 
@@ -100,6 +103,12 @@ class OrdersController extends AdminController
                     ]
                 ));
             }
+            if ($this->row->status > 2) {
+                $actions->append(new GetButton(
+                    $actions->getResource() . '/' . $actions->getKey() . '/logistics',
+                    '物流查询'
+                ));
+            }
         });
         $grid->tools(function (Grid\Tools $tools) {
             $tools->batch(function (Grid\Tools\BatchActions $batch) {
@@ -150,6 +159,33 @@ class OrdersController extends AdminController
         $show->field('updated_at', __('Updated at'));
 
         return $show;
+    }
+
+    public function logistics(Order $order, Content $content)
+    {
+        try {
+            $res = $order->getLogistics();
+            $content->title($this->title);
+
+            $header = [
+                'id', '内容', '时间'
+            ];
+            $body = [];
+            foreach ($res['data'] as $key => $data) {
+                $body[] = [
+                    $key+1,
+                    $data['context'],
+                    $data['time'],
+                ];
+            }
+            $box = new Box("订单【{$order->order_number}】【{$res['com_name']}：{$order->express_number}】物流信息（最终状态：".Order::express_status_text[$res['state']]."）", new Table($header, $body));
+            $content->body($box);
+
+            return $content;
+        } catch (\Exception $exception) {
+            admin_toastr($exception->getMessage(), 'error');
+            return redirect()->back();
+        }
     }
 
     /**

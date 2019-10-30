@@ -17,6 +17,7 @@ Route::group([
     $router->resource('goods', GoodsController::class);
     $router->resource('addresses', AddressesController::class);
     $router->put('orders/express', 'OrdersController@batchExpress');
+    $router->get('orders/{order}/logistics', 'OrdersController@logistics')->where('order', '[0-9]+');
     $router->put('orders/{order}/express', 'OrdersController@express')->where('order', '[0-9]+');
     $router->put('orders/cancel', 'OrdersController@cancel');
     $router->resource('orders', OrdersController::class);
