@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Jobs\AutoReceiveOrderJob;
 use App\Jobs\UnsettleOrderJob;
 use App\Models\Traits\HasOwnerHelper;
 use App\Models\Traits\ScopeDateHelper;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
 use Log;
@@ -65,9 +67,22 @@ class Order extends Model
             $rev_phone = null;
         }
 
-        //实时查询
-        $list = $express->synquery($this->express->code, $this->express_number, $rev_phone); // 快递服务商 快递单号 手机号
-        return $list;
+        //实时查询 https://www.kuaidi100.com/openapi/api_post.shtml
+        $res = $express->synquery($this->express->code, $this->express_number, $rev_phone); // 快递服务商 快递单号 手机号
+
+        if (isset($res['status']) && $res['status'] == 200) {
+            $res['com_name'] = Express::getNameByCode($res['com']);
+            $express_status = intval($res['state']);
+            if ($express_status !== $this->express_status) {
+                $this->express_status = $express_status;
+                $this->save();
+            }
+            return $res;
+        } else if (isset($res['result']) && $res['result'] == false) {
+            throw new \Exception($res['message']);
+        } else {
+            throw new \Exception('获取物流失败');
+        }
     }
 
     public function express()
@@ -176,8 +191,9 @@ class Order extends Model
         $this->express_number = $express_number ?: '';
 
         $this->save();
-        // TODO: 日志记录
-        // TODO: 通知
+
+        // 定时N天去确认到货
+        dispatch(new AutoReceiveOrderJob($this->id))->delay(Carbon::now()->addDays(config('system.order_auto_receive_days', 7)));
     }
 
     /**
@@ -205,7 +221,7 @@ class Order extends Model
         $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
 
-        dispatch(new UnsettleOrderJob($this));
+//        dispatch(new UnsettleOrderJob($this));
     }
 
     /**

@@ -14,4 +14,7 @@ return [
         'about_us' => 1,
         'join_us' => 2,
     ],
+
+    // 订单发货后N天自动结算
+    'order_auto_receive_days' => env('ORDER_AUTO_RECEIVE_DAYS', 7),
 ];

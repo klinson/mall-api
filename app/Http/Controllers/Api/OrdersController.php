@@ -229,18 +229,9 @@ class OrdersController extends Controller
 
         try {
             $res = $order->getLogistics();
-
-            if (isset($res['status']) && $res['status'] == 200) {
-                $res['com_name'] = Express::getNameByCode($res['com']);
-                return $this->response->array($res);
-            } else if (isset($res['result']) && $res['result'] == false) {
-                return $this->response->errorBadRequest($res['message']);
-            } else {
-                return $this->response->errorBadRequest('获取物流失败');
-            }
-
+            return $this->response->array($res);
         } catch (\Exception $exception) {
-            return $this->response->errorBadRequest('获取物流失败');
+            return $this->response->errorBadRequest($exception->getMessage());
         }
     }
 
