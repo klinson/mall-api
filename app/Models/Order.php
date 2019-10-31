@@ -62,6 +62,10 @@ class Order extends Model
      */
     public function getLogistics()
     {
+        if (empty($this->express_id) || empty($this->express_number)) {
+            throw new \Exception('该订单未设置物流单号');
+        }
+
         $config = config('services.kuaidi100');
         $express = new \Puzzle9\Kuaidi100\Express($config['key'], $config['customer'], $config['callbackurl']);
 
