@@ -15,7 +15,17 @@ class CreateMemberRechargeActivitiesTable extends Migration
     {
         Schema::create('member_recharge_activities', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
+            $table->unsignedInteger('member_level_id')->default(0);
+            $table->unsignedTinyInteger('validity_type')->default(0);
+            $table->unsignedInteger('validity_times')->default(0);
+            $table->unsignedInteger('recharge_threshold')->default(0);
+            $table->unsignedTinyInteger('level')->default(0);
+            $table->unsignedTinyInteger('invite_award_mode')->default(0);
+            $table->unsignedInteger('invite_award')->default(0);
+            $table->unsignedTinyInteger('has_enabled')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

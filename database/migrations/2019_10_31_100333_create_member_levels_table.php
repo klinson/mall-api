@@ -15,7 +15,13 @@ class CreateMemberLevelsTable extends Migration
     {
         Schema::create('member_levels', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title', 50);
+            $table->string('logo')->nullable();
+            $table->unsignedInteger('discount')->default(0);
+            $table->unsignedTinyInteger('has_enabled')->default(0);
+            $table->unsignedTinyInteger('level')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
