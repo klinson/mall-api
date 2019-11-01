@@ -93,7 +93,16 @@ class User extends Authenticatable implements JWTSubject
         return ! ($this->agency_id === 0);
     }
 
+    // 代理初始化
     public function agencyInit()
+    {
+        if (! $this->coffer) {
+            $this->coffer()->create();
+        }
+    }
+
+    // 会员初始化
+    public function memberInit()
     {
         if (! $this->coffer) {
             $this->coffer()->create();

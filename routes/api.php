@@ -42,9 +42,19 @@ $api->version('v1', [
         $api->post('files', 'FilesController@upload');
 
         // 微信回调路由
-        $api->post('wechat/OrderPaidNotify', 'WechatController@OrderPaidNotify')->name('order.wechat.pay.notify');
-        $api->post('wechat/RechargeThresholdOrderPaidNotify', 'WechatController@RechargeThresholdOrderPaidNotify')->name('RechargeThresholdOrder.wechat.pay.notify');
+        $api->post('wechat/OrderPaidNotify', 'WechatController@OrderPaidNotify');
+        $api->post('wechat/RechargeThresholdOrderPaidNotify', 'WechatController@RechargeThresholdOrderPaidNotify');
+        $api->post('wechat/MemberRechargeOrderPaidNotify', 'WechatController@MemberRechargeOrderPaidNotify');
 
+        //系统
+        $api->get('system/configs', 'SystemController@getConfig');
+        $api->get('expresses', 'ExpressesController@index');
+
+        // 会员制查询
+        $api->get('memberLevels', 'MemberLevelsController@index');
+        $api->get('memberLevels/{memberLevel}', 'MemberLevelsController@show')->where('memberLevel', '[0-9]+');
+        $api->get('memberLevels/activities', 'MemberRechargeActivitiesController@index');
+        $api->get('memberLevels/activities/{activity}', 'MemberRechargeActivitiesController@show')->where('activity', '[0-9]+');
 
 
     });
@@ -100,9 +110,10 @@ $api->version('v1', [
         $api->get('coffer/withdrawals', 'CoffersController@withdrawals');
         $api->get('coffer/withdrawals/{withdrawal}', 'CoffersController@withdrawal')->where('withdrawal', '[0-9]+');
 
-        //系统
-        $api->get('system/configs', 'SystemController@getConfig');
-        $api->get('expresses', 'ExpressesController@index');
+
+        $api->post('memberRechargeOrders', 'memberRechargeOrdersController@store');
+
+
 
     });
 });

@@ -16,6 +16,7 @@ class CreateMemberRechargeActivitiesTable extends Migration
         Schema::create('member_recharge_activities', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->string('thumbnail')->nullable();
             $table->unsignedInteger('member_level_id')->default(0);
             $table->unsignedTinyInteger('validity_type')->default(0);
             $table->unsignedInteger('validity_times')->default(0);
