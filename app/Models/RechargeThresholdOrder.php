@@ -105,7 +105,7 @@ class RechargeThresholdOrder extends Model
             'appid' => $result['appid'],
             'order_number' => $this->order_number,
             'order_title' => $order_title,
-            'order_price' => $this->real_cost,
+            'order_price' => $this->balance,
         ];
 
         return $return;
