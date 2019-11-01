@@ -39,6 +39,11 @@ class MemberRechargeOrdersController extends Controller
     public function store(Request $request)
     {
         $activity = MemberRechargeActivity::find($request->activity_id);
+        if (\Auth::user()->memberLevels) {
+            if ($activity->level < \Auth::user()->memberLevels[0]->level) {
+                return $this->response->errorBadRequest('当前会员等级已高于或等于此充值活动的会员等级');
+            }
+        }
         if (empty($activity)) {
             return $this->response->errorBadRequest('充值活动不存在');
         }
