@@ -27,6 +27,11 @@ class MemberRechargeOrder extends Model
         'order_number', 'user_id', 'balance', 'member_recharge_activity_id', 'member_recharge_activity_snapshot', 'member_level_id', 'member_level_snapshot', 'status', 'inviter_id'
     ];
 
+    public function scopeHasPayed($query)
+    {
+        return $query->where('status', 2);
+    }
+
     public static function generateOrderNumber()
     {
         return date('YmdHis') . random_string(11);

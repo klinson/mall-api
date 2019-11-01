@@ -18,16 +18,22 @@ use Illuminate\Http\Request;
 
 class MemberRechargeOrdersController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = MemberRechargeOrder::query();
 
+        if ($request->order_number) {
+            $query->where('order_number', "like", "%{$request->order_number}%");
+        }
+        $page = $query->isOwner()->hasPayed()->recent()->paginate($request->per_page);
+        return $this->response->paginator($page, new MemberRechargeOrderTransformer());
     }
 
     public function show(MemberRechargeOrder $order)
     {
         $this->authorize('is-mine', $order);
 
-        return $this->response->item($order, new MemberRechargeActivityTransformer());
+        return $this->response->item($order, new MemberRechargeOrderTransformer());
     }
 
     public function store(Request $request)
