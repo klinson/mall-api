@@ -108,4 +108,9 @@ class User extends Authenticatable implements JWTSubject
             $this->coffer()->create();
         }
     }
+
+    public function memberLevels()
+    {
+        return $this->hasMany(UserHasMemberLevel::class, 'user_id', 'id')->orderBy('level', 'desc');
+    }
 }

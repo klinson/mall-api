@@ -10,8 +10,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Category;
 use App\Models\MemberLevel;
+use App\Models\UserHasMemberLevel;
 use App\Transformers\CategoryTransformer;
 use App\Transformers\MemberLevelTransformer;
+use App\Transformers\UserHasMemberLevelTransformer;
 
 class MemberLevelsController extends Controller
 {
@@ -29,5 +31,11 @@ class MemberLevelsController extends Controller
     {
         return $this->response->collection(MemberLevel::enabled()->levelBy()->get(), new MemberLevelTransformer());
 
+    }
+
+    // 我目前拥有的会员
+    public function mine()
+    {
+        return $this->response->collection(\Auth::user()->memberLevels, new UserHasMemberLevelTransformer());
     }
 }
