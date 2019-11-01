@@ -128,6 +128,9 @@ class OrdersController extends Controller
                 'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
             ];
 
+            // TODO 计算单品会员优惠
+            $item_all_goods_price = $goods_price * $info['quantity'];
+
             $order_goods[] = $order_goods_item;
             $all_goods_price += $goods_price * $info['quantity'];
             $goods_count += $info['quantity'];
