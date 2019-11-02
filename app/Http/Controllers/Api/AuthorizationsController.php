@@ -22,7 +22,7 @@ class AuthorizationsController extends Controller
         $app = app('wechat.mini_program');
         $wechat_info = $app->auth->session($request->code);
 //        $wechat_info = [
-//            'openid' => 2111111111,
+//            'openid' => random_string(10),
 //            'session_key' => 'SESSION_KEY'
 //        ];
         if (isset($wechat_info['openid'])) {
@@ -72,7 +72,7 @@ class AuthorizationsController extends Controller
                 // 记录获取抽奖机会
                 $this->dispatch(new AddLotteryChanceJob($user->id, LotteryChance::FIRST_LOGIN_TYPE));
                 if ($inviter_id) {
-                    $this->dispatch(new AddLotteryChanceJob($inviter_id->id, LotteryChance::INVITE_USER_REGISTER_TYPE));
+                    $this->dispatch(new AddLotteryChanceJob($inviter_id, LotteryChance::INVITE_USER_REGISTER_TYPE));
                 }
             } else {
                 // 已绑定
