@@ -15,7 +15,16 @@ class CreatePrizesTable extends Migration
     {
         Schema::create('prizes', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
+            $table->string('thumbnail')->nullable();
+            $table->unsignedInteger('origin_quantity')->default(0);
+            $table->unsignedInteger('quantity')->default(0);
+            $table->unsignedInteger('price')->default(0);
+            $table->unsignedTinyInteger('level')->default(0);
+            $table->unsignedInteger('rate')->default(0);
+            $table->unsignedTinyInteger('has_enabled')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

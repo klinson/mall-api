@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\AuthorizationsRequest;
+use App\Jobs\AddLotteryChanceJob;
+use App\Models\LotteryChance;
 use App\Models\User;
 use App\Transformers\UserTransformer;
 use Auth;
@@ -48,6 +50,13 @@ class AuthorizationsController extends Controller
                     }
                 }
 
+                $inviter_id = $request->inviter_id;
+                if ($inviter = User::find($inviter_id)) {
+                    $inviter_id = $inviter->id;
+                } else {
+                    $inviter_id = 0;
+                }
+
                 $user = new User([
                     'wxapp_openid' => $wechat_info['openid'],
                     'nickname' => $info['nickName'],
@@ -56,9 +65,14 @@ class AuthorizationsController extends Controller
                     'wxapp_userinfo' => json_encode($info),
                     'has_enabled' => 1,
                     'mobile' => '',
-                    'inviter_id' => $request->inviter_id ?: 0,
+                    'inviter_id' => $inviter_id,
                 ]);
                 $user->save();
+
+                $this->dispatch(new AddLotteryChanceJob($user->id, LotteryChance::FIRST_LOGIN_TYPE));
+                if ($inviter_id) {
+                    $this->dispatch(new AddLotteryChanceJob($inviter_id->id, LotteryChance::INVITE_USER_REGISTER_TYPE));
+                }
             } else {
                 // 已绑定
 
