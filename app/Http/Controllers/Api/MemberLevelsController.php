@@ -36,6 +36,6 @@ class MemberLevelsController extends Controller
     // 我目前拥有的会员
     public function mine()
     {
-        return $this->response->collection(\Auth::user()->memberLevels, new UserHasMemberLevelTransformer());
+        return $this->response->collection(\Auth::user()->validMemberLevels, new UserHasMemberLevelTransformer());
     }
 }

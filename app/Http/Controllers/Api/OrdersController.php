@@ -83,10 +83,13 @@ class OrdersController extends Controller
         }
         $goods_specification_by_key_list = $goods_specification_list->keyBy('id');
 
+        // 获取用户会员折扣
+        $member_discount = \Auth::user()->getMaxMemberDiscount();
         //TODO: 验证优惠券
 
         $order_goods = [];
         $all_goods_price = 0;
+        $all_member_discount_price = 0;
         $goods_count = 0;
         $goods_weight = 0;
         $sub_quantity = [];
@@ -118,6 +121,14 @@ class OrdersController extends Controller
                 'quantity' => $info['quantity']
             ];
 
+            // 计算单品会员优惠
+            $item_goods_all_price = $goods_price * $info['quantity'];
+            if ($member_discount == 100) {
+                $item_goods_real_price = $item_goods_all_price;
+            } else {
+                $item_goods_real_price = ceil(strval($item_goods_all_price * $member_discount * 0.01));
+            }
+
             $order_goods_item = [
                 'goods_id' => $goods_id,
                 'goods_specification_id' => $specification_id,
@@ -125,14 +136,14 @@ class OrdersController extends Controller
                 'snapshot' => $specification->toSnapshot(),
                 'price' => $goods_price,
                 'quantity' => $info['quantity'],
+                'real_price' => $item_goods_real_price,
                 'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
             ];
 
-            // TODO 计算单品会员优惠
-            $item_all_goods_price = $goods_price * $info['quantity'];
 
             $order_goods[] = $order_goods_item;
-            $all_goods_price += $goods_price * $info['quantity'];
+            $all_member_discount_price += $item_goods_real_price;
+            $all_goods_price += $item_goods_all_price;
             $goods_count += $info['quantity'];
             $goods_weight += $specification->weight * $info['quantity'];
 
@@ -141,15 +152,16 @@ class OrdersController extends Controller
         $goods_weight = floatval(strval($goods_weight));
         $goods_count = intval(strval($goods_count));
         $all_goods_price = intval(strval($all_goods_price));
+        $all_member_discount_price = intval(strval($all_member_discount_price));
 
         // 根据地区计算配送费和运费模板
-        $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_goods_price);
+        $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_member_discount_price);
 
         //TODO: 优惠金额
         $coupon_price = 0;
 
         // 总费用
-        $all_price = $all_goods_price + $freight_price;
+        $all_price = $all_member_discount_price + $freight_price;
         // 支付费用
         $real_price = $all_price - $coupon_price;
 
@@ -157,6 +169,8 @@ class OrdersController extends Controller
         $order->order_number = Order::generateOrderNumber();
         $order->user_id = $this->user->id;
         $order->goods_price = $all_goods_price;
+        $order->member_discount_price = $all_member_discount_price;
+        $order->member_discount = $member_discount;
         $order->freight_price = $freight_price;
         $order->all_price = $all_price;
         $order->coupon_price = $coupon_price;

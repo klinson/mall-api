@@ -18,6 +18,8 @@ class OrderTransformer extends TransformerAbstract
             'all_price' => $order->all_price,
             'goods_price' => $order->goods_price,
             'real_price' => $order->real_price,
+            'member_discount_price' => $order->member_discount_price,
+            'member_discount' => $order->member_discount,
             'coupon_price' => $order->coupon_price,
             'freight_price' => $order->freight_price,
             'freight_template_id' => $order->freight_template_id,

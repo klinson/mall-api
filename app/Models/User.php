@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\IntTimestampsHelper;
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -112,5 +113,29 @@ class User extends Authenticatable implements JWTSubject
     public function memberLevels()
     {
         return $this->hasMany(UserHasMemberLevel::class, 'user_id', 'id')->orderBy('level', 'desc');
+    }
+
+    public function validMemberLevels()
+    {
+        return $this->memberLevels()->where(function ($query) {
+            $query->where('validity_ended_at', '>', Carbon::now()->toDateTimeString())
+                ->orWhereNull('validity_ended_at');
+        });
+    }
+
+    // 获取用户当前会员最大折扣
+    public function getMaxMemberDiscount()
+    {
+        // 100->原价 10折
+        $discount = 100;
+        if ($this->validMemberLevels) {
+            foreach ($this->validMemberLevels as $memberLevel) {
+                // 88->8.8折
+                if ($memberLevel->member_level_snapshot['discount'] < $discount) {
+                    $discount = $memberLevel->member_level_snapshot['discount'];
+                }
+            }
+        }
+        return $discount;
     }
 }

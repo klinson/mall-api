@@ -66,6 +66,8 @@ class RefundOrdersController extends Controller
         if ($orderGoods->quantity < $request->quantity) {
             return $this->response->errorBadRequest('退款数量不合法');
         }
+        // 按购买数量和退款数量比例退
+        $real_price = intval(strval($orderGoods->real_price * (floatval($request->quantity) / $orderGoods->quantity)));
 
         $data = [
             'order_number' => RefundOrder::generateOrderNumber(),
@@ -78,7 +80,7 @@ class RefundOrdersController extends Controller
             'quantity' => $request->quantity,
             'price' => $orderGoods->price,
             // 优惠需按比例扣除
-            'real_price' => $request->quantity * $orderGoods->price,
+            'real_price' => $real_price,
             'status' => 1,
         ];
         if ($order->used_balance) {

@@ -18,6 +18,7 @@ class OrderGoodsTransformer extends TransformerAbstract
             'goods_specification_id' => $orderGoods->goods_specification_id,
             'price' => $orderGoods->price,
             'quantity' => $orderGoods->quantity,
+            'real_price' => $orderGoods->real_price,
             'snapshot' => $orderGoods->snapshot,
             'refund_status' => $orderGoods->refund_status,
         ];
