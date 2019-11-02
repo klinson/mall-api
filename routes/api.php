@@ -57,6 +57,9 @@ $api->version('v1', [
         $api->get('memberLevels/activities/{activity}', 'MemberRechargeActivitiesController@show')->where('activity', '[0-9]+');
         $api->get('memberLevels/activities/{activity}/qrcode', 'MemberRechargeActivitiesController@qrcode')->where('activity', '[0-9]+');
 
+        // 抽奖
+        $api->get('prizes', 'LotteryController@prizes');
+
 
     });
 
