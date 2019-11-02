@@ -15,7 +15,7 @@ class Category extends Model
         if ($this->thumbnail) {
             return get_admin_file_url($this->thumbnail);
         } else {
-            return asset(Category::THUMBNAIL_TEMPLATE);
+            return asset(self::THUMBNAIL_TEMPLATE);
         }
     }
 
