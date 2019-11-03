@@ -115,9 +115,9 @@ $api->version('v1', [
         $api->get('coffer/withdrawals/{withdrawal}', 'CoffersController@withdrawal')->where('withdrawal', '[0-9]+');
 
 
-        $api->get('memberRechargeOrders', 'memberRechargeOrdersController@index');
-        $api->post('memberRechargeOrders', 'memberRechargeOrdersController@store');
-        $api->get('memberRechargeOrders/{order}', 'memberRechargeOrdersController@show')->where('order', '[0-9]+');
+        $api->get('memberRechargeOrders', 'MemberRechargeOrdersController@index');
+        $api->post('memberRechargeOrders', 'MemberRechargeOrdersController@store');
+        $api->get('memberRechargeOrders/{order}', 'MemberRechargeOrdersController@show')->where('order', '[0-9]+');
         $api->get('user/memberLevels', 'MemberLevelsController@mine');
 
 
