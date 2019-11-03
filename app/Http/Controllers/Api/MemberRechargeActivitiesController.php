@@ -9,7 +9,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\MemberRechargeActivity;
+use App\Models\MemberRechargeOrder;
+use App\Models\User;
 use App\Transformers\MemberRechargeActivityTransformer;
+use App\Transformers\UserTransformer;
+use DB;
+use Illuminate\Http\Request;
 
 class MemberRechargeActivitiesController extends Controller
 {
@@ -66,6 +71,31 @@ class MemberRechargeActivitiesController extends Controller
             return $this->response->errorBadRequest('生成小程序码失败，请稍后重试');
         }
 
+    }
+
+    // 邀请排行
+    public function inviteRank(Request $request)
+    {
+        $count = $request->count ?: 10;
+        $list = DB::table('coffer_logs')->where('type', 2)->where('data_type', MemberRechargeOrder::class)->selectRaw("`user_id`, sum(`balance`) as total_balance, count(*) as total_number")->groupBy('user_id')->orderBy('total_balance', 'desc')->limit($count)->get();
+
+        $user_ids = $list->pluck('user_id')->toArray();
+        $users = User::whereIn('id', $user_ids)->get()->keyBy('id');
+        $list = $list->toArray();
+        $transformer = new UserTransformer('hidden');
+        $res = [];
+        foreach ($list as $item) {
+            if (isset($users[$item->user_id])) {
+                $res[] = [
+                    'user_id' => $item->user_id,
+                    'total_balance' => $item->total_balance,
+                    'total_number' => $item->total_number,
+                    'user' => $transformer->transform($users[$item->user_id]),
+                ];
+            }
+        }
+
+        return $this->response->array($res);
     }
 
 }

@@ -54,6 +54,7 @@ $api->version('v1', [
         $api->get('memberLevels', 'MemberLevelsController@index');
         $api->get('memberLevels/{memberLevel}', 'MemberLevelsController@show')->where('memberLevel', '[0-9]+');
         $api->get('memberLevels/activities', 'MemberRechargeActivitiesController@index');
+        $api->get('memberLevels/activities/inviteRank', 'MemberRechargeActivitiesController@inviteRank');
         $api->get('memberLevels/activities/{activity}', 'MemberRechargeActivitiesController@show')->where('activity', '[0-9]+');
         $api->get('memberLevels/activities/{activity}/qrcode', 'MemberRechargeActivitiesController@qrcode')->where('activity', '[0-9]+');
 
