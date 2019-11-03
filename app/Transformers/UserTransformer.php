@@ -69,11 +69,7 @@ class UserTransformer extends TransformerAbstract
 
     public function includeValidMemberLevels(Model $model)
     {
-        if ($model->validMemberLevels) {
-            return $this->item($model->validMemberLevels, new MemberLevelTransformer());
-        } else {
-            return null;
-        }
+        return $this->collection($model->validMemberLevels, new UserHasMemberLevelTransformer());
     }
 
 }
