@@ -59,6 +59,8 @@ $api->version('v1', [
 
         // 抽奖
         $api->get('prizes', 'LotteryController@prizes');
+        $api->post('lottery', 'LotteryController@lottery');
+        $api->post('user/lotteryChanceCount', 'LotteryController@myChanceCount');
 
 
     });

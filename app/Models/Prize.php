@@ -23,4 +23,11 @@ class Prize extends Model
     {
         return $query->orderBy('level', 'desc');
     }
+
+    // 抽奖
+    public static function lottery()
+    {
+        // TODO: 抽奖算法待实现
+        return self::find(1);
+    }
 }

@@ -29,6 +29,12 @@ class LotteryChance extends Model
         self::INVITE_USER_REGISTER_TYPE => '邀请用户注册',
     ];
 
+
+    public static function getMyChance()
+    {
+        return self::isOwner()->unused()->first();
+    }
+
     public static function generateChance($user_id, $type)
     {
         $chance = new self([
@@ -89,5 +95,27 @@ class LotteryChance extends Model
     public static function getLimitCount($type)
     {
         return isset(self::TYPE_LIMIT_COUNTS[$type]) ? self::TYPE_LIMIT_COUNTS[$type] : 0;
+    }
+
+    public static function getUnusedCount($user_id)
+    {
+        return self::where('user_id', $user_id)->unused()->count();
+    }
+
+    public function scopeUnused($query)
+    {
+        return $query->whereNull('used_at');
+    }
+
+    // 设置已使用
+    public function setUsed()
+    {
+        if ($this->used_at) {
+            return false;
+        } else {
+            $this->used_at = date('Y-m-d H:i:s');
+            $this->save();
+            return $this;
+        }
     }
 }

@@ -20,11 +20,15 @@ class AuthorizationsController extends Controller
         }
 
         $app = app('wechat.mini_program');
-        $wechat_info = $app->auth->session($request->code);
-//        $wechat_info = [
-//            'openid' => random_string(10),
-//            'session_key' => 'SESSION_KEY'
-//        ];
+        if (app()->isLocal()) {
+            $wechat_info = [
+                'openid' => random_string(10),
+                'session_key' => 'SESSION_KEY'
+            ];
+        } else {
+            $wechat_info = $app->auth->session($request->code);
+        }
+
         if (isset($wechat_info['openid'])) {
             $user = User::where('wxapp_openid', $wechat_info['openid'])->first();
 
