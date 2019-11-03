@@ -295,6 +295,7 @@ class Order extends Model
             $orderGoods = $this->orderGoods()->with(['inviter'])->whereHas('inviter')->get();
             foreach ($orderGoods as $orderGood) {
                 // 邀请人是代理才进行结算
+                if (! $orderGood->inviter) continue;
                 if (! $orderGood->inviter->isAgency()) continue;
 
                 // 计算出待结算金额
