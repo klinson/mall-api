@@ -21,6 +21,8 @@ class CreateLotteryRecordsTable extends Migration
             $table->unsignedInteger('chance_id')->default(0);
             $table->unsignedInteger('express_id')->default(0);
             $table->string('express_number')->nullable();
+            $table->unsignedInteger('address_id')->default(0);
+            $table->json('address_snapshot');
             $table->timestamp('expressed_at')->nullable();
             $table->unsignedTinyInteger('status')->default(0);
             $table->timestamps();

@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\LotteryChance;
 use App\Models\LotteryRecord;
 use App\Models\Prize;
+use App\Transformers\LotteryRecordTransformer;
 use App\Transformers\PrizeTransformer;
 use DB;
 
@@ -34,17 +35,17 @@ class LotteryController extends Controller
 
         try {
             $chance->setUsed();
-//            $prize = Prize::lottery();
-            $prize = null;
+            $prize = Prize::lottery();
+//            $prize = null;
             if ($prize) {
                 // 中奖
-                LotteryRecord::generateRecord(\Auth::user(), $prize, $chance);
+                $record = LotteryRecord::generateRecord(\Auth::user(), $prize, $chance);
             }
 
             DB::commit();
 
-            if ($prize) {
-                return $this->response->item($prize, new PrizeTransformer());
+            if (isset($record) && !empty($record)) {
+                return $this->response->item($record, new LotteryRecordTransformer());
             } else {
                 return $this->response->noContent();
             }

@@ -59,9 +59,6 @@ $api->version('v1', [
 
         // 抽奖
         $api->get('prizes', 'LotteryController@prizes');
-        $api->post('lottery', 'LotteryController@lottery');
-        $api->post('user/lotteryChanceCount', 'LotteryController@myChanceCount');
-
 
     });
 
@@ -116,12 +113,19 @@ $api->version('v1', [
         $api->get('coffer/withdrawals', 'CoffersController@withdrawals');
         $api->get('coffer/withdrawals/{withdrawal}', 'CoffersController@withdrawal')->where('withdrawal', '[0-9]+');
 
-
+        // 会员
         $api->get('memberRechargeOrders', 'MemberRechargeOrdersController@index');
         $api->post('memberRechargeOrders', 'MemberRechargeOrdersController@store');
         $api->get('memberRechargeOrders/{order}', 'MemberRechargeOrdersController@show')->where('order', '[0-9]+');
         $api->get('user/memberLevels', 'MemberLevelsController@mine');
 
+        // 抽奖
+        $api->post('lottery', 'LotteryController@lottery');
+        $api->get('user/lotteryChanceCount', 'LotteryController@myChanceCount');
+        $api->get('lottery/records', 'LotteryRecordsController@index');
+        $api->get('lottery/records/{record}', 'LotteryRecordsController@show')->where('record', '[0-9]+');
+        $api->put('lottery/records/{record}', 'LotteryRecordsController@setAddress')->where('record', '[0-9]+');
+        $api->get('lottery/records/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
 
 
     });
