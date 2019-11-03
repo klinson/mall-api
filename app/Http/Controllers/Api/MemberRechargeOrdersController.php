@@ -48,7 +48,7 @@ class MemberRechargeOrdersController extends Controller
             return $this->response->errorBadRequest('充值活动不存在');
         }
         $inviter_id = 0;
-        if ($request->inviter_id && ($inviter = User::find($request->inviter_id))) {
+        if ($request->inviter_id && ($inviter = User::find($request->inviter_id)) && $inviter->isMember()) {
             $inviter_id = $inviter->id;
         }
 

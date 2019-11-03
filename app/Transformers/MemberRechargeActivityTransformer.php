@@ -25,6 +25,8 @@ class MemberRechargeActivityTransformer extends TransformerAbstract
             'recharge_threshold' => $model->recharge_threshold,
             'level' => $model->level,
             'invite_real_award' => $model->invite_real_award,
+            'invite_award_mode' => $model->invite_award_mode,
+            'invite_award' => $model->invite_award,
             'has_enabled' => $model->has_enabled,
             'created_at' => $model->created_at->toDateTimeString(),
         ];

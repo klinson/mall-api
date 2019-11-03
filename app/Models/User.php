@@ -110,6 +110,12 @@ class User extends Authenticatable implements JWTSubject
         }
     }
 
+    // 是否是会员
+    public function isMember()
+    {
+        return ($this->validMemberLevels()->count() > 0);
+    }
+
     public function memberLevels()
     {
         return $this->hasMany(UserHasMemberLevel::class, 'user_id', 'id')->orderBy('level', 'desc');

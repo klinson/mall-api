@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\SettleMemberRechargeOrderJob;
 use App\Models\Traits\HasOwnerHelper;
 use App\Transformers\MemberLevelTransformer;
 use App\Transformers\MemberRechargeActivityTransformer;
@@ -158,8 +159,8 @@ class MemberRechargeOrder extends Model
 
             DB::commit();
             // 发起邀请结算
-            if ($this->inviter_id) {
-
+            if ($this->inviter_id && $this->inviter) {
+                dispatch(new SettleMemberRechargeOrderJob($this));
             }
         } catch (Exception $exception) {
             DB::rollBack();
@@ -170,5 +171,18 @@ class MemberRechargeOrder extends Model
     public function inviter()
     {
         return $this->belongsTo(User::class, 'inviter_id');
+    }
+
+    public function settle()
+    {
+        if ($this->inviter) {
+            $this->inviter->coffer->settleMemberRechargeOrder($this->invite_real_award, $this);
+        }
+    }
+
+    // 实际佣金
+    public function getInviteRealAwardAttribute()
+    {
+        return $this->member_recharge_activity_snapshot['invite_real_award'];
     }
 }

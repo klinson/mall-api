@@ -60,6 +60,9 @@ class Coffer extends Model
             case CofferWithdrawal::class:
                 $desc = '【'.CofferLog::type_text[$type]."】订单({$model->order_number})金额{$model->balance}";
                 break;
+            case MemberRechargeOrder::class:
+                $desc = '【'.CofferLog::type_text[$type]."】邀请会员订单({$model->order_number})佣金{$balance}";
+                break;
             default:
                 $desc = '';
                 break;
@@ -76,6 +79,16 @@ class Coffer extends Model
         }
 
         $this->log($balance, $model, 1, $agency, $agency_level);
+    }
+
+    public function settleMemberRechargeOrder($balance, $model)
+    {
+        if ($balance > 0) {
+            $this->increment('balance', $balance);
+            $this->save();
+        }
+
+        $this->log($balance, $model, 2);
     }
 
     public function withdrawals()
