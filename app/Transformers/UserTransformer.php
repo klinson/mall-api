@@ -9,7 +9,7 @@ class UserTransformer extends TransformerAbstract
 {
     protected $token;
 
-    protected $availableIncludes = ['agency'];
+    protected $availableIncludes = ['agency', 'validMemberLevels'];
 
     public function __construct($token = '')
     {
@@ -66,4 +66,14 @@ class UserTransformer extends TransformerAbstract
             return null;
         }
     }
+
+    public function includeValidMemberLevels(Model $model)
+    {
+        if ($model->validMemberLevels) {
+            return $this->item($model->validMemberLevels, new MemberLevelTransformer());
+        } else {
+            return null;
+        }
+    }
+
 }
