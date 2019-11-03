@@ -29,7 +29,7 @@ class LotteryController extends Controller
     // 赠送抽奖（生产环境不可用，便于测试)
     public function presentChance(Request $request)
     {
-        if (! \App::environment(['local', 'dev'])) {
+        if (! \App::environment(['local', 'dev', 'development'])) {
             return $this->response->errorBadRequest('当前环境不支持');
         }
 
