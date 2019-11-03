@@ -123,6 +123,7 @@ $api->version('v1', [
         $api->post('lottery', 'LotteryController@lottery');
         $api->get('user/lotteryChanceCount', 'LotteryController@myChanceCount');
         $api->get('lottery/records', 'LotteryRecordsController@index');
+        $api->get('lottery/records/recent', 'LotteryRecordsController@recent');
         $api->get('lottery/records/{record}', 'LotteryRecordsController@show')->where('record', '[0-9]+');
         $api->put('lottery/records/{record}', 'LotteryRecordsController@setAddress')->where('record', '[0-9]+');
         $api->get('lottery/records/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');

@@ -58,4 +58,11 @@ class LotteryRecordsController extends Controller
         }
     }
 
+    // 最近中奖记录，用于播报
+    public function recent(Request $request)
+    {
+        $count = $request->count ?: 5;
+        $list = LotteryRecord::recent()->limit($count)->get();
+        return $this->response->collection($list, new LotteryRecordTransformer('hidden'));
+    }
 }

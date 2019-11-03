@@ -40,6 +40,20 @@ class UserTransformer extends TransformerAbstract
                     'avatar' => $avatar,
                 ];
                 break;
+            case 'hidden':
+                $firstStr = mb_substr($model->nickname, 0, 1, 'utf-8');
+                if (mb_strlen($model->nickname, 'utf-8') === 1) {
+                    $nickname = $firstStr . '***' . $firstStr;
+                } else {
+                    $lastStr = mb_substr($model->nickname, -1, 1, 'utf-8');
+                    $nickname = $firstStr . '***' . $lastStr;
+                }
+                return [
+                    'id' => $model->id,
+                    'nickname' => $nickname,
+                    'avatar' => $avatar,
+                ];
+                break;
             default:
                 return [
                     'user' => [
