@@ -16,17 +16,20 @@ class LotteryChance extends Model
     // 获取抽奖机会方式
     const FIRST_LOGIN_TYPE = 1;
     const INVITE_USER_REGISTER_TYPE = 2;
+    const SYSTEM_PRESENT = 3;
 
-    // 获取方式对应可获取抽奖机会次数
+    // 获取方式对应可获取抽奖机会次数, -1不限制
     const TYPE_LIMIT_COUNTS = [
         self::FIRST_LOGIN_TYPE => 1,
         self::INVITE_USER_REGISTER_TYPE => 2,
+        self::SYSTEM_PRESENT => -1,
     ];
 
     // 获取抽奖机会方式对应中文注释
     const DESCRIPTIONS = [
         self::FIRST_LOGIN_TYPE => '用户首次注册赠送',
         self::INVITE_USER_REGISTER_TYPE => '邀请用户注册',
+        self::SYSTEM_PRESENT => '系统赠送',
     ];
 
 
@@ -44,6 +47,24 @@ class LotteryChance extends Model
         $chance->save();
 
         return $chance;
+    }
+
+    // 系统赠送
+    public static function present($user, $count = 1)
+    {
+        if ($user instanceof User) {
+            $user_id = $user->id;
+        } else {
+            $user_id = intval($user);
+        }
+
+        $number = $count;
+        $res = [];
+        while ($number) {
+            $res[] = self::generateChance($user_id, self::SYSTEM_PRESENT);
+            $number--;
+        }
+        return $res;
     }
 
     public static function whenInviteUserRegister($user)
@@ -78,6 +99,9 @@ class LotteryChance extends Model
     // 验证指定方式的获得机会次数是否超了
     public static function overCount($user_id, $type)
     {
+        if (self::getLimitCount($type) === -1) {
+            return false;
+        }
         if (self::getCount($user_id, $type) >= self::getLimitCount($type)) {
             return true;
         } else {

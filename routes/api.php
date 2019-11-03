@@ -127,7 +127,7 @@ $api->version('v1', [
         $api->get('lottery/records/{record}', 'LotteryRecordsController@show')->where('record', '[0-9]+');
         $api->put('lottery/records/{record}', 'LotteryRecordsController@setAddress')->where('record', '[0-9]+');
         $api->get('lottery/records/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
-
+        $api->post('lottery/presentChance', 'LotteryController@presentChance');
 
     });
 });

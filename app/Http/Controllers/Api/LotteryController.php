@@ -11,9 +11,11 @@ namespace App\Http\Controllers\Api;
 use App\Models\LotteryChance;
 use App\Models\LotteryRecord;
 use App\Models\Prize;
+use App\Models\User;
 use App\Transformers\LotteryRecordTransformer;
 use App\Transformers\PrizeTransformer;
 use DB;
+use Illuminate\Http\Request;
 
 class LotteryController extends Controller
 {
@@ -23,6 +25,25 @@ class LotteryController extends Controller
 
         return $this->response->collection($prizes, new PrizeTransformer());
     }
+
+    // 赠送抽奖（生产环境不可用，便于测试)
+    public function presentChance(Request $request)
+    {
+        if (! \App::environment(['local', 'dev'])) {
+            return $this->response->errorBadRequest('当前环境不支持');
+        }
+
+        if (empty($request->user_id) || ! $user = User::find($request->user_id)) {
+            return $this->response->errorBadRequest('未选择赠送指定人');
+        }
+
+        $count = $request->count ?: 1;
+
+        LotteryChance::present($user, $count);
+
+        return $this->response->noContent();
+    }
+
 
     // 抽奖
     public function lottery()
