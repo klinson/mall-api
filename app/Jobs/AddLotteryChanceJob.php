@@ -43,4 +43,9 @@ class AddLotteryChanceJob implements ShouldQueue
         $method = self::type2methods[$this->type];
         LotteryChance::$method($this->user_id);
     }
+
+    public function tags()
+    {
+        return ['AddLotteryChanceJob', 'user_id:'.$this->user_id, 'type:'.$this->type];
+    }
 }
