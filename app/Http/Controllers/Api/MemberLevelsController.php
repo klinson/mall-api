@@ -8,11 +8,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Category;
 use App\Models\MemberLevel;
-use App\Models\UserHasMemberLevel;
-use App\Transformers\CategoryTransformer;
 use App\Transformers\MemberLevelTransformer;
+use App\Transformers\MemberRechargeActivityTransformer;
 use App\Transformers\UserHasMemberLevelTransformer;
 
 class MemberLevelsController extends Controller
@@ -25,6 +23,22 @@ class MemberLevelsController extends Controller
     public function show(MemberLevel $memberLevel)
     {
         return $this->response->item($memberLevel, new MemberLevelTransformer());
+    }
+
+    // 获取最大优惠的会员
+    public function max()
+    {
+        $member = MemberLevel::enabled()->orderBy('discount', 'desc')->levelBy()->first();
+        if (empty($member)) {
+            return $this->response->noContent();
+        }
+        $activity = $member->activities()->orderBy('level', 'desc')->first();
+        $res = [
+            'member_level' => (new MemberLevelTransformer())->transform($member),
+            'activity' => $activity ? (new MemberRechargeActivityTransformer())->transform($activity) : [],
+        ];
+
+        return $this->response->array($res);
     }
 
     public function activities()

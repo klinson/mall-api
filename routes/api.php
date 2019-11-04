@@ -52,6 +52,7 @@ $api->version('v1', [
 
         // 会员制查询
         $api->get('memberLevels', 'MemberLevelsController@index');
+        $api->get('memberLevels/max', 'MemberLevelsController@max');
         $api->get('memberLevels/{memberLevel}', 'MemberLevelsController@show')->where('memberLevel', '[0-9]+');
         $api->get('memberLevels/activities', 'MemberRechargeActivitiesController@index');
         $api->get('memberLevels/activities/inviteRank', 'MemberRechargeActivitiesController@inviteRank');

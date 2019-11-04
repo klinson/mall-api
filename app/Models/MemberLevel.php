@@ -23,4 +23,9 @@ class MemberLevel extends Model
             return asset(static::THUMBNAIL_TEMPLATE);
         }
     }
+
+    public function activities()
+    {
+        return $this->hasMany(MemberRechargeActivity::class, 'member_level_id');
+    }
 }
