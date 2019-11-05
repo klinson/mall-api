@@ -37,11 +37,36 @@ class GoodsController extends Controller
 
     public function show(Goods $goods)
     {
-        if ($goods->has_enabled != 1) {
-            return $this->response->errorNotFound();
-        }
+        $this->authorize('enabled', $goods);
 
         return $this->response->item($goods, new GoodsTransformer('show'));
+    }
+
+    public function favour(Goods $goods)
+    {
+        \Auth::user()->favourGoods()->syncWithoutDetaching([
+            $goods->id => [
+                'created_at' => date('Y-m-d H:i:s')
+            ]
+        ]);
+
+        return $this->response->noContent();
+    }
+
+    public function unfavour(Request $request)
+    {
+
+        \Auth::user()->favourGoods()->detach($request->goods_ids);
+
+        return $this->response->noContent();
+    }
+
+    public function favours(Request $request)
+    {
+
+        $list = \Auth::user()->favourGoods()->enabled()->paginate($request->per_page);
+
+        return $this->response->paginator($list, new GoodsTransformer());
     }
 
     // 生成二维码

@@ -75,6 +75,12 @@ $api->version('v1', [
         $api->put('user', 'UserController@update');
         $api->resource('addresses', 'AddressesController', ['only' => ['index', 'update', 'store', 'destroy', 'show']]);
 
+        // 商品收藏
+        $api->get('goods/favours', 'GoodsController@favours');
+        $api->post('goods/{goods}/favours', 'GoodsController@favour');
+        $api->delete('goods/unfavours', 'GoodsController@unfavours');
+
+
         // 购物车
         $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);
         $api->delete('shoppingCarts', 'ShoppingCartsController@clearAll');
