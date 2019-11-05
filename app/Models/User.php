@@ -151,6 +151,22 @@ class User extends Authenticatable implements JWTSubject
         });
     }
 
+    public function hasFeeFreight()
+    {
+        $is_fee_freight = 0;
+        if ($this->validMemberLevels) {
+            foreach ($this->validMemberLevels as $memberLevel) {
+                // 88->8.8折
+                if ($memberLevel->member_level_snapshot['is_fee_freight']) {
+                    $is_fee_freight = 1;
+                    break;
+                }
+            }
+        }
+
+        return $is_fee_freight;
+    }
+
     public function favourGoods()
     {
         return $this->belongsToMany(Goods::class, 'user_favour_goods')->orderBy('user_favour_goods.created_at', 'desc');

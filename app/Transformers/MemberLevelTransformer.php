@@ -18,6 +18,7 @@ class MemberLevelTransformer extends TransformerAbstract
             'title' => $model->title,
             'logo_url' => $model->logo_url,
             'discount' => $model->discount,
+            'is_fee_freight' => $model->is_fee_freight,
             'level' => $model->level,
         ];
     }

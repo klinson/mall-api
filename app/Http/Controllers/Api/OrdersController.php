@@ -85,6 +85,8 @@ class OrdersController extends Controller
 
         // 获取用户会员折扣
         $member_discount = \Auth::user()->getBestMemberDiscount(true);
+        // 获取用户会员是否包邮
+        $is_fee_freight = \Auth::user()->hasFeeFreight();
         //TODO: 验证优惠券
 
         $order_goods = [];
@@ -154,8 +156,13 @@ class OrdersController extends Controller
         $all_goods_price = intval(strval($all_goods_price));
         $all_member_discount_price = intval(strval($all_member_discount_price));
 
-        // 根据地区计算配送费和运费模板
-        $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_member_discount_price);
+        // 获取用户会员是否包邮
+        if ($is_fee_freight) {
+            $freight_price = 0;
+        } else {
+            // 根据地区计算配送费和运费模板
+            $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $all_member_discount_price);
+        }
 
         //TODO: 优惠金额
         $coupon_price = 0;
@@ -182,7 +189,7 @@ class OrdersController extends Controller
         $order->address_id = $request->address_id;
         $order->address_snapshot = $address->toSnapshot();
         // 运费模板
-        $order->freight_template_id = $freightTemplate->id;
+        $order->freight_template_id = $is_fee_freight ? 0 : $freightTemplate->id;
 
         DB::beginTransaction();
 
