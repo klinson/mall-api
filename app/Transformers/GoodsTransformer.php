@@ -18,7 +18,9 @@ class GoodsTransformer extends TransformerAbstract
         $this->type = $type;
         if (\Auth::check()) {
             $this->discount = \Auth::user()->getBestMemberDiscount();
-        } else {
+        }
+        // 没登录没会员的默认显示优惠价
+        if ($this->discount == 100) {
             $this->discount = MemberLevel::getMaxDiscount();
         }
     }
