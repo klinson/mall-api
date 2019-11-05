@@ -28,4 +28,21 @@ class MemberLevel extends Model
     {
         return $this->hasMany(MemberRechargeActivity::class, 'member_level_id');
     }
+
+    public static function getMaxDiscount($reset = false)
+    {
+        $cache_key = 'member_best_discount';
+
+        if ($reset || app()->isLocal()) cache()->delete($cache_key);
+
+        return cache()->remember($cache_key, 10, function () {
+            // 100->原价 10折
+            $discount = 100;
+            $member = self::enabled()->orderBy('discount', 'asc')->first();
+            if ($member) {
+                $discount = intval($member->discount);
+            }
+            return $discount;
+        });
+    }
 }

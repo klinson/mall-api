@@ -84,7 +84,7 @@ class OrdersController extends Controller
         $goods_specification_by_key_list = $goods_specification_list->keyBy('id');
 
         // 获取用户会员折扣
-        $member_discount = \Auth::user()->getMaxMemberDiscount();
+        $member_discount = \Auth::user()->getBestMemberDiscount(true);
         //TODO: 验证优惠券
 
         $order_goods = [];

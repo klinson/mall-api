@@ -129,19 +129,25 @@ class User extends Authenticatable implements JWTSubject
         });
     }
 
-    // 获取用户当前会员最大折扣
-    public function getMaxMemberDiscount()
+    // 获取用户当前会员最佳折扣
+    public function getBestMemberDiscount($reset = false)
     {
-        // 100->原价 10折
-        $discount = 100;
-        if ($this->validMemberLevels) {
-            foreach ($this->validMemberLevels as $memberLevel) {
-                // 88->8.8折
-                if ($memberLevel->member_level_snapshot['discount'] < $discount) {
-                    $discount = $memberLevel->member_level_snapshot['discount'];
+        $cache_key = 'user_member_best_discount_'.$this->id;
+
+        if ($reset || app()->isLocal()) cache()->delete($cache_key);
+
+        return cache()->remember($cache_key, 10, function () {
+            // 100->原价 10折
+            $discount = 100;
+            if ($this->validMemberLevels) {
+                foreach ($this->validMemberLevels as $memberLevel) {
+                    // 88->8.8折
+                    if ($memberLevel->member_level_snapshot['discount'] < $discount) {
+                        $discount = $memberLevel->member_level_snapshot['discount'];
+                    }
                 }
             }
-        }
-        return $discount;
+            return intval($discount);
+        });
     }
 }
