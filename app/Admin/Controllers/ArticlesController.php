@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\CopyInfoButton;
 use \App\Models\Article;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -30,6 +31,17 @@ class ArticlesController extends AdminController
         $grid->column('title', __('Title'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
+
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->append(new CopyInfoButton(
+                '复制代码',
+                $this->row->ad_code
+            ));
+        });
+
+        $grid->filter(function ($filter) {
+            $filter->like('title', __('Title'));
+        });
 
         return $grid;
     }

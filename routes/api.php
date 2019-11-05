@@ -40,6 +40,7 @@ $api->version('v1', [
         $api->get('broadcast', 'BroadcastsController@show');
         $api->get('carouselAd', 'CarouselAdsController@show');
         $api->post('files', 'FilesController@upload');
+        $api->get('articles/{article}', 'ArticlesController@show')->where('article', '[0-9]+');
 
         // 微信回调路由
         $api->post('wechat/OrderPaidNotify', 'WechatController@OrderPaidNotify');
