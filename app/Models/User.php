@@ -150,4 +150,9 @@ class User extends Authenticatable implements JWTSubject
             return intval($discount);
         });
     }
+
+    public function favourGoods()
+    {
+        $this->belongsToMany(Goods::class, 'user_favour_goods');
+    }
 }
