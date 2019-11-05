@@ -153,6 +153,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function favourGoods()
     {
-        $this->belongsToMany(Goods::class, 'user_favour_goods');
+        return $this->belongsToMany(Goods::class, 'user_favour_goods')->orderBy('user_favour_goods.created_at', 'desc');
     }
 }

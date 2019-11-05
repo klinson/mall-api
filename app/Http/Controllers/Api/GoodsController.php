@@ -66,6 +66,7 @@ class GoodsController extends Controller
 
         $list = \Auth::user()->favourGoods()->enabled()->paginate($request->per_page);
 
+
         return $this->response->paginator($list, new GoodsTransformer());
     }
 

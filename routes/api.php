@@ -77,8 +77,8 @@ $api->version('v1', [
 
         // 商品收藏
         $api->get('goods/favours', 'GoodsController@favours');
-        $api->post('goods/{goods}/favours', 'GoodsController@favour');
-        $api->delete('goods/unfavours', 'GoodsController@unfavours');
+        $api->post('goods/{goods}/favour', 'GoodsController@favour')->where('goods', '[0-9]+');
+        $api->delete('goods/unfavour', 'GoodsController@unfavour');
 
 
         // 购物车
