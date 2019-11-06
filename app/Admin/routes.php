@@ -43,6 +43,9 @@ Route::group([
     // 系统
     $router->get('system', 'SystemController@index');
 
+    $router->resource('memberLevels', MemberLevelsController::class);
+
+
 
     $router->get('testFrom', 'TestFormController@index');
     $router->post('testFrom', 'TestFormController@store');
