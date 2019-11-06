@@ -44,6 +44,8 @@ Route::group([
     $router->get('system', 'SystemController@index');
 
     $router->resource('memberLevels', MemberLevelsController::class);
+    $router->resource('memberRechargeActivities', MemberRechargeActivitiesController::class);
+    $router->resource('memberRechargeOrders', MemberRechargeOrdersController::class);
 
 
 
