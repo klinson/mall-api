@@ -12,6 +12,7 @@ class GoodsTransformer extends TransformerAbstract
 
     protected $type;
     protected $discount = 100;
+    protected $user;
 
     public function __construct($type = 'list')
     {
@@ -22,6 +23,9 @@ class GoodsTransformer extends TransformerAbstract
         // 没登录没会员的默认显示优惠价
         if ($this->discount == 100) {
             $this->discount = MemberLevel::getMaxDiscount();
+        }
+        if ($type == 'show' && \Auth::check()) {
+            $this->user = \Auth::user();
         }
     }
 
@@ -41,6 +45,7 @@ class GoodsTransformer extends TransformerAbstract
                 'created_at' => $model->created_at->toDateTimeString(),
                 'images' => $model->images_url,
                 'detail' => $model->detail,
+                'is_favour' => ($this->user && $this->user->isMyFavourGoods($model->id)) ? 1 : 0,
             ];
         } else {
             return [
