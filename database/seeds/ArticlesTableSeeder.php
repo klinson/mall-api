@@ -35,6 +35,15 @@ class ArticlesTableSeeder extends Seeder
                 'updated_at' => '2019-10-23 00:49:36',
                 'deleted_at' => NULL,
             ),
+            2 => 
+            array (
+                'id' => 3,
+                'title' => '抽奖公告',
+                'content' => '<p><span style="font-size: 20px;"><strong>抽奖机会获得方式：</strong></span></p><ol class=" list-paddingleft-2" style="list-style-type: decimal;"><li><p>&nbsp;关注3个商品获得一次抽奖机会<br/></p></li><li><p>邀请宝妈好友扫码注册并关注2个商品，还可以再得一次抽奖机会，最多可以获得三次抽奖机会</p></li></ol><p><br/></p><p><span style="font-size: 20px;"><strong>活动说明：</strong></span></p><ol class=" list-paddingleft-2" style="list-style-type: decimal;"><li><p></p>抽奖100%中奖</li><li><p>中奖后请填写快递地址</p></li></ol><p><br/></p><p>感谢您对我们的支持</p><p><br/></p><p><br/></p><p><br/></p><p style="text-align: center;">技术支持 klinson.com</p>',
+                'created_at' => '2019-11-06 12:56:19',
+                'updated_at' => '2019-11-06 12:56:19',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

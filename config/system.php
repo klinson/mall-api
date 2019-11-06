@@ -11,8 +11,9 @@ return [
 
     // 资讯关联
     'articles' => [
-        'about_us' => 1,
-        'join_us' => 2,
+        'about_us' => 1, //关于我们
+        'join_us' => 2,  // 入驻我们
+        'lottery_intro' => 3, //抽奖公告
     ],
 
     // 订单发货后N天自动结算

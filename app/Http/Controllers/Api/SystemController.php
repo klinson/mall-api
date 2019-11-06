@@ -24,6 +24,7 @@ class SystemController extends Controller
             // 资讯（关于我们，入驻我们）
             case 'articles.about_us':
             case 'articles.join_us':
+            case 'articles.lottery_intro':
                 $id = config('system.'.$request->key, 0);
                 $return = ['content' => ''];
                 if ($id && $article = Article::find($id)) {
