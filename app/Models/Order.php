@@ -95,10 +95,7 @@ class Order extends Model
 
     public function express()
     {
-        return $this->belongsTo(Express::class, 'express_id', 'id')->withDefault([
-            'id' => 0,
-            'name' => '无'
-        ]);
+        return $this->belongsTo(Express::class, 'express_id', 'id');
     }
 
     public function specifications()
