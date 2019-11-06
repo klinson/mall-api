@@ -8,7 +8,7 @@ class Prize extends Model
 {
     use SoftDeletes;
 
-    const THUMBNAIL_TEMPLATE = 'images/template.jpg';
+    const THUMBNAIL_TEMPLATE = 'images/prize.png';
 
     public function getThumbnailUrlAttribute()
     {
