@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\MemberLevel;
 use App\Models\MemberRechargeActivity;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -15,7 +16,7 @@ class MemberRechargeActivitiesController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\MemberRechargeActivity';
+    protected $title = '会员充值活动管理';
 
     /**
      * Make a grid builder.
@@ -28,18 +29,20 @@ class MemberRechargeActivitiesController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('title', __('Title'));
-        $grid->column('thumbnail', __('Thumbnail'));
-        $grid->column('member_level_id', __('Member level id'));
-        $grid->column('validity_type', __('Validity type'));
-        $grid->column('validity_times', __('Validity times'));
-        $grid->column('recharge_threshold', __('Recharge threshold'));
+        $grid->column('thumbnail', __('Thumbnail'))->image();
+        grid_display_relation($grid, 'memberLevel');
+
+        $grid->column('validity_times', __('Validity times'))->display(function ($item) {
+            return $this->real_validity_time;
+        });
+        $grid->column('recharge_threshold', __('Recharge threshold'))->currency();
         $grid->column('level', __('Level'));
-        $grid->column('invite_award_mode', __('Invite award mode'));
-        $grid->column('invite_award', __('Invite award'));
-        $grid->column('has_enabled', __('Has enabled'));
+        $grid->column('invite_award', __('Invite award'))->display(function ($item) {
+            return $this->invite_real_award;
+        });
+        grid_has_enabled($grid);
+
         $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('deleted_at', __('Deleted at'));
 
         return $grid;
     }
@@ -56,18 +59,20 @@ class MemberRechargeActivitiesController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('title', __('Title'));
-        $show->field('thumbnail', __('Thumbnail'));
-        $show->field('member_level_id', __('Member level id'));
-        $show->field('validity_type', __('Validity type'));
-        $show->field('validity_times', __('Validity times'));
-        $show->field('recharge_threshold', __('Recharge threshold'));
+        $show->field('thumbnail', __('Thumbnail'))->image();
+        show_display_relation($show, 'memberLevel');
+
+        $show->field('validity_times', __('Validity times'))->as(function ($item) {
+            return $item->real_validity_time;
+        });
+        $show->field('recharge_threshold', __('Recharge threshold'))->currency();
         $show->field('level', __('Level'));
-        $show->field('invite_award_mode', __('Invite award mode'));
-        $show->field('invite_award', __('Invite award'));
-        $show->field('has_enabled', __('Has enabled'));
+        $show->field('invite_award', __('Invite award'))->as(function ($item) {
+            return $item->invite_real_award;
+        });
+        $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
@@ -81,16 +86,16 @@ class MemberRechargeActivitiesController extends AdminController
     {
         $form = new Form(new MemberRechargeActivity);
 
-        $form->text('title', __('Title'));
-        $form->text('thumbnail', __('Thumbnail'));
-        $form->number('member_level_id', __('Member level id'));
-        $form->switch('validity_type', __('Validity type'));
-        $form->number('validity_times', __('Validity times'));
-        $form->number('recharge_threshold', __('Recharge threshold'));
-        $form->switch('level', __('Level'));
-        $form->switch('invite_award_mode', __('Invite award mode'));
-        $form->number('invite_award', __('Invite award'));
-        $form->switch('has_enabled', __('Has enabled'));
+        $form->text('title', __('Title'))->required();
+        $form->image('thumbnail', __('Thumbnail'))->uniqueName();
+        MemberLevel::form_display_select($form, 'member_level_id')->required();
+        $form->select('validity_type', __('Validity type'))->options(MemberRechargeActivity::validity_type_text)->required();
+        $form->number('validity_times', __('Validity times'))->default(0)->required();
+        $form->currency('recharge_threshold', __('Recharge threshold'))->required();
+        $form->number('level', __('Level'))->default(0)->required();
+        $form->select('invite_award_mode', __('Invite award mode'))->options(MemberRechargeActivity::invite_award_mode_text)->required();
+        $form->number('invite_award', __('Invite award'))->default(0)->required();
+        $form->switch('has_enabled', __('Has enabled'))->default(1);
 
         return $form;
     }

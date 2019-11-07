@@ -368,3 +368,12 @@ function update_config($key, $value = null)
         );
     }
 }
+
+function grid_has_enabled($grid)
+{
+    $states = [
+        'on'  => ['value' => 1, 'text' => '打开', 'color' => 'primary'],
+        'off' => ['value' => 0, 'text' => '关闭', 'color' => 'default'],
+    ];
+    $grid->column('has_enabled', __('Has enabled'))->switch($states)->filter(HAS_ENABLED2TEXT);
+}

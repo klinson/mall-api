@@ -46,6 +46,9 @@ Route::group([
     $router->resource('memberLevels', MemberLevelsController::class);
     $router->resource('memberRechargeActivities', MemberRechargeActivitiesController::class);
     $router->resource('memberRechargeOrders', MemberRechargeOrdersController::class);
+    $router->resource('prizes', PrizesController::class);
+    $router->resource('lotteryRecords', LotteryRecordsController::class);
+    $router->resource('lotteryChances', LotteryChancesController::class);
 
 
 

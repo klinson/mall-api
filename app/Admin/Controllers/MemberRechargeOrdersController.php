@@ -15,7 +15,7 @@ class MemberRechargeOrdersController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\MemberRechargeOrder';
+    protected $title = '会员充值订单管理';
 
     /**
      * Make a grid builder.
@@ -28,21 +28,27 @@ class MemberRechargeOrdersController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
-        $grid->column('balance', __('Balance'));
-        $grid->column('user_id', __('User id'));
-        $grid->column('member_recharge_activity_id', __('Member recharge activity id'));
-        $grid->column('member_recharge_activity_snapshot', __('Member recharge activity snapshot'));
-        $grid->column('member_level_id', __('Member level id'));
-        $grid->column('member_level_snapshot', __('Member level snapshot'));
+        grid_display_relation($grid, 'owner', 'nickname');
+
+        $grid->column('balance', __('Balance'))->currency();
+        $grid->column('member_recharge_activity_snapshot', __('Member recharge activity snapshot'))->display(function ($item) {
+            return $item['title'];
+        });
+        $grid->column('member_level_snapshot', __('Member level snapshot'))->display(function ($item) {
+            return $item['title'];
+        });
         $grid->column('validity_started_at', __('Validity started at'));
         $grid->column('validity_ended_at', __('Validity ended at'));
-        $grid->column('status', __('Status'));
+        $grid->column('status', __('Status'))->using(MemberRechargeOrder::status_text);
+        grid_display_relation($grid, 'inviter', 'nickname');
+
         $grid->column('inviter_id', __('Inviter id'));
         $grid->column('payed_at', __('Payed at'));
         $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('deleted_at', __('Deleted at'));
 
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->disableEdit();
+        });
         return $grid;
     }
 
@@ -58,20 +64,23 @@ class MemberRechargeOrdersController extends AdminController
 
         $show->field('id', __('Id'));
         $show->field('order_number', __('Order number'));
-        $show->field('balance', __('Balance'));
-        $show->field('user_id', __('User id'));
-        $show->field('member_recharge_activity_id', __('Member recharge activity id'));
+        $show->field('balance', __('Balance'))->currency();
+        show_display_relation($show, 'owner', 'nickname');
+
+        show_display_relation($show, 'memberRechargeActivity');
         $show->field('member_recharge_activity_snapshot', __('Member recharge activity snapshot'));
-        $show->field('member_level_id', __('Member level id'));
+
+        show_display_relation($show, 'memberLevel');
         $show->field('member_level_snapshot', __('Member level snapshot'));
+
         $show->field('validity_started_at', __('Validity started at'));
         $show->field('validity_ended_at', __('Validity ended at'));
-        $show->field('status', __('Status'));
-        $show->field('inviter_id', __('Inviter id'));
+        $show->field('status', __('Status'))->using(MemberRechargeOrder::status_text);
+        show_display_relation($show, 'inviter', 'nickname');
+
         $show->field('payed_at', __('Payed at'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
@@ -84,19 +93,6 @@ class MemberRechargeOrdersController extends AdminController
     protected function form()
     {
         $form = new Form(new MemberRechargeOrder);
-
-        $form->text('order_number', __('Order number'));
-        $form->number('balance', __('Balance'));
-        $form->number('user_id', __('User id'));
-        $form->number('member_recharge_activity_id', __('Member recharge activity id'));
-        $form->text('member_recharge_activity_snapshot', __('Member recharge activity snapshot'));
-        $form->number('member_level_id', __('Member level id'));
-        $form->text('member_level_snapshot', __('Member level snapshot'));
-        $form->datetime('validity_started_at', __('Validity started at'))->default(date('Y-m-d H:i:s'));
-        $form->datetime('validity_ended_at', __('Validity ended at'))->default(date('Y-m-d H:i:s'));
-        $form->switch('status', __('Status'));
-        $form->number('inviter_id', __('Inviter id'));
-        $form->datetime('payed_at', __('Payed at'))->default(date('Y-m-d H:i:s'));
 
         return $form;
     }

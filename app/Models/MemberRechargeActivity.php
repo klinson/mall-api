@@ -16,6 +16,17 @@ class MemberRechargeActivity extends Model
         3 => 'addYears'
     ];
 
+    const validity_type_text = [
+        1 => '天',
+        2 => '月',
+        3 => '年',
+        4 => '永久'
+    ];
+    const invite_award_mode_text = [
+        1 => '固定佣金',
+        2 => '比例佣金'
+    ];
+
     public function getThumbnailUrlAttribute()
     {
         if ($this->thumbnail) {
@@ -24,6 +35,17 @@ class MemberRechargeActivity extends Model
             return asset(self::THUMBNAIL_TEMPLATE);
         }
     }
+
+
+    public function getRealValidityTimeAttribute()
+    {
+        if ($this->validity_type == 4) {
+            return self::validity_type_text[$this->validity_type];
+        } else {
+            return $this->validity_times . self::validity_type_text[$this->validity_type];
+        }
+    }
+
 
     // 实际佣金
     public function getInviteRealAwardAttribute()

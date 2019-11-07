@@ -19,6 +19,10 @@ class MemberRechargeOrder extends Model
 
     const wechat_pay_notify_route = '/api/wechat/MemberRechargeOrderPaidNotify';
 
+    const status_text = [
+
+    ];
+
     protected $casts = [
         'member_level_snapshot' => 'array',
         'member_recharge_activity_snapshot' => 'array'
@@ -184,5 +188,15 @@ class MemberRechargeOrder extends Model
     public function getInviteRealAwardAttribute()
     {
         return $this->member_recharge_activity_snapshot['invite_real_award'];
+    }
+
+    public function memberRechargeActivity()
+    {
+        return $this->belongsTo(MemberRechargeActivity::class);
+    }
+
+    public function memberLevel()
+    {
+        return $this->belongsTo(MemberLevel::class);
     }
 }

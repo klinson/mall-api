@@ -14,6 +14,11 @@ class LotteryRecord extends Model
         'user_id', 'prize_id', 'prize_snapshot', 'chance_id', 'status', 'address_snapshot', 'address_id'
     ];
 
+    // 1待发货，2已发货，3已完成
+    const status_text = [
+        '未知', '待发货', '已发货', '已完成'
+    ];
+
     protected $casts = [
         'prize_snapshot' => 'array',
         'address_snapshot' => 'array',
