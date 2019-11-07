@@ -32,7 +32,8 @@ class AjaxWithFormButton
         'method' => 'put',
         'confirm' => '确认',
         'cancel' => '取消',
-        'fields' => []
+        'fields' => [],
+        'footer' => '',
     ];
 
     public function __construct($title, $form, $inputs, $btn_type = 'primary')
@@ -63,6 +64,7 @@ $('.{$this->title}-class').unbind('click').click(function() {
   Swal.mixin({
     title: '{$this->form['title']}',
     input: 'text',
+    footer: '{$this->form['footer']}',
     confirmButtonText: '{$this->form['confirm']}',
     cancelButtonText: '{$this->form['cancel']}',
     showCancelButton: true,

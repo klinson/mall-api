@@ -187,9 +187,6 @@ class Order extends Model
     // 发货
     public function expressing($express_number = null, $express_id = 0)
     {
-        if (empty($express_id)) {
-            $express_id = config('system.express_company_id', 0);
-        }
         $this->status = 3;
         $this->expressed_at = date('Y-m-d H:i:s');
         $this->express_id = $express_id;

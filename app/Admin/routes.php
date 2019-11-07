@@ -47,6 +47,8 @@ Route::group([
     $router->resource('memberRechargeActivities', MemberRechargeActivitiesController::class);
     $router->resource('memberRechargeOrders', MemberRechargeOrdersController::class);
     $router->resource('prizes', PrizesController::class);
+    $router->get('lotteryRecords/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
+    $router->put('lotteryRecords/{record}/express', 'LotteryRecordsController@express')->where('record', '[0-9]+');
     $router->resource('lotteryRecords', LotteryRecordsController::class);
     $router->resource('lotteryChances', LotteryChancesController::class);
 

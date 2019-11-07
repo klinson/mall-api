@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Jobs\AutoReceiveLotteryRecordJob;
 use App\Models\Traits\HasOwnerHelper;
 use App\Transformers\PrizeTransformer;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LotteryRecord extends Model
@@ -16,7 +18,13 @@ class LotteryRecord extends Model
 
     // 1待发货，2已发货，3已完成
     const status_text = [
-        '未知', '待发货', '已发货', '已完成'
+        1 => '待发货',
+        2 => '已发货',
+        3 => '已完成'
+    ];
+
+    const express_status_text = [
+        0 => '在途', 1 => '揽收', 2 => '疑难', 3 => '签收', 4 => '退签', 5 => '派件', 6 => '退回', -1 => '未知'
     ];
 
     protected $casts = [
@@ -84,5 +92,25 @@ class LotteryRecord extends Model
     public function prize()
     {
         return $this->belongsTo(Prize::class);
+    }
+
+    // 发货
+    public function expressing($express_number = null, $express_id = 0)
+    {
+        $this->status = 2;
+        $this->expressed_at = date('Y-m-d H:i:s');
+        $this->express_id = $express_id;
+        $this->express_number = $express_number ?: '';
+
+        $this->save();
+
+        // 定时N天去确认到货
+        dispatch(new AutoReceiveLotteryRecordJob($this->id))->delay(Carbon::now()->addDays(config('system.order_auto_receive_days', 7)));
+    }
+
+    public function receive()
+    {
+        $this->status = 3;
+        $this->save();
     }
 }

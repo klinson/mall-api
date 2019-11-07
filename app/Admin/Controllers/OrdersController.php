@@ -85,20 +85,22 @@ class OrdersController extends AdminController
                     [
                         'title' => '发货',
                         'action' => $actions->getResource() . '/' . $actions->getKey() . '/express',
+                        'footer' => '上门自提或其他非快递配送，可选择无需物流',
                     ],
                     [
                         [
                             'title' => '物流公司',
                             'name' => 'express_id',
                             'input' => 'select',
-                            'inputOptions' => Express::all(['id', 'name'])->pluck('name', 'id')->toArray(),
+                            'inputOptions' => array_merge(['无需物流'], Express::all(['id', 'name'])->pluck('name', 'id')->toArray()),
                             'inputValue' => config('system.express_company_id', 1)
                         ],
                         [
                             'title' => '物流单号',
                             'name' => 'express_number',
                             'input' => 'text',
-                            'text' => '请输入'
+                            'text' => '请输入',
+                            'inputPlaceholder' => '无需物流可不填'
                         ]
                     ]
                 ));
@@ -231,22 +233,17 @@ class OrdersController extends AdminController
             return response()->json($data);
         }
 
-        if (empty($request->express_number)) {
-            $data = [
-                'status'  => false,
-                'message' => '请输入快递单号',
-            ];
-            return response()->json($data);
-        }
-        if (empty($request->express_id)) {
-            $data = [
-                'status'  => false,
-                'message' => '请选择快递公司',
-            ];
-            return response()->json($data);
+        if (! empty($request->express_id)) {
+            if (empty($request->express_number)) {
+                $data = [
+                    'status'  => false,
+                    'message' => '请输入快递单号',
+                ];
+                return response()->json($data);
+            }
         }
 
-        $order->expressing($request->express_number, $request->express_id);
+        $order->expressing($request->express_number, $request->express_id ?: 0);
 
         $data = [
             'status'  => true,
@@ -255,7 +252,7 @@ class OrdersController extends AdminController
         return response()->json($data);
     }
 
-    // 确认发货
+    // 取消订单
     public function cancel(Request $request)
     {
         $orders = Order::whereIn('status', [1, 2, 3, 4])
