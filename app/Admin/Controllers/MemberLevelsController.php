@@ -30,7 +30,9 @@ class MemberLevelsController extends AdminController
         $grid->column('level', __('Level'));
         $grid->column('title', __('Title'));
         $grid->column('logo', __('Logo'))->image();
-        $grid->column('discount', __('Discount'));
+        $grid->column('discount', __('Discount'))->display(function ($item) {
+            return $item * 0.1 . '折';
+        });
         $grid->column('is_fee_freight', __('Is fee freight'))->using(YN2TEXT);
 
         grid_has_enabled($grid);
@@ -55,7 +57,9 @@ class MemberLevelsController extends AdminController
         $show->field('level', __('Level'));
         $show->field('title', __('Title'));
         $show->field('logo', __('Logo'))->image();
-        $show->field('discount', __('Discount'));
+        $show->field('discount', __('Discount'))->as(function ($item) {
+            return $item * 0.1 . '折';
+        });
         $show->field('is_fee_freight', __('Is fee freight'))->using(YN2TEXT);
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('created_at', __('Created at'));

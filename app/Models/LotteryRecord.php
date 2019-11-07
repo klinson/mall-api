@@ -73,10 +73,7 @@ class LotteryRecord extends Model
 
     public function express()
     {
-        return $this->belongsTo(Express::class, 'express_id', 'id')->withDefault([
-            'id' => 0,
-            'name' => '无'
-        ]);
+        return $this->belongsTo(Express::class, 'express_id', 'id');
     }
 
     public function address()
@@ -84,4 +81,8 @@ class LotteryRecord extends Model
         return $this->belongsTo(Address::class, 'address_id', 'id')->withDefault(['address' => '[已删除]', 'mobile' => '']);
     }
 
+    public function prize()
+    {
+        return $this->belongsTo(Prize::class);
+    }
 }

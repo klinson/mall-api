@@ -176,4 +176,17 @@ class User extends Authenticatable implements JWTSubject
     {
         return \DB::table('user_favour_goods')->where('user_id', $this->id)->where('goods_id', $goods_id)->first() ? true : false;
     }
+
+    public function getAdminLinkAttribute()
+    {
+        if (! $this->id) {
+            return '';
+        }
+        $route_name = 'admin::'.lcfirst(\Illuminate\Support\Str::plural((class_basename(get_called_class())))).'.show';
+        if (app('router')->has($route_name)) {
+            return route($route_name, ['id' => $this]);
+        } else {
+            return '';
+        }
+    }
 }

@@ -33,7 +33,7 @@ class LotteryRecordsController extends Controller
             return $this->response->errorBadRequest('此订单已经设置了发货地址');
         }
         $record->address_id = $request->address_id;
-        $record->address_snapshot = (new AddressTransformer())->transform($address);
+        $record->address_snapshot = $address->toSnapshot();
         $record->save();
         return $this->response->item($record, new LotteryRecordTransformer());
     }

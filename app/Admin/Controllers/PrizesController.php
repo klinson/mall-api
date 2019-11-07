@@ -62,7 +62,6 @@ class PrizesController extends AdminController
         $show->field('rate', __('Rate'));
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
 
         return $show;
     }

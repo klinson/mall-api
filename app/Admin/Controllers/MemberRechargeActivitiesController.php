@@ -39,7 +39,7 @@ class MemberRechargeActivitiesController extends AdminController
         $grid->column('level', __('Level'));
         $grid->column('invite_award', __('Invite award'))->display(function ($item) {
             return $this->invite_real_award;
-        });
+        })->currency();
         grid_has_enabled($grid);
 
         $grid->column('created_at', __('Created at'));
@@ -63,13 +63,13 @@ class MemberRechargeActivitiesController extends AdminController
         show_display_relation($show, 'memberLevel');
 
         $show->field('validity_times', __('Validity times'))->as(function ($item) {
-            return $item->real_validity_time;
+            return $this->real_validity_time;
         });
         $show->field('recharge_threshold', __('Recharge threshold'))->currency();
         $show->field('level', __('Level'));
         $show->field('invite_award', __('Invite award'))->as(function ($item) {
-            return $item->invite_real_award;
-        });
+            return $this->invite_real_award;
+        })->currency();
         $show->field('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
@@ -94,7 +94,7 @@ class MemberRechargeActivitiesController extends AdminController
         $form->currency('recharge_threshold', __('Recharge threshold'))->required();
         $form->number('level', __('Level'))->default(0)->required();
         $form->select('invite_award_mode', __('Invite award mode'))->options(MemberRechargeActivity::invite_award_mode_text)->required();
-        $form->number('invite_award', __('Invite award'))->default(0)->required();
+        $form->number('invite_award', __('Invite award'))->default(0)->required()->help('依据邀请利润模式，固定佣金则288=>2.88元(单位分)，比例佣金则288=>门槛金*0.288佣金');
         $form->switch('has_enabled', __('Has enabled'))->default(1);
 
         return $form;

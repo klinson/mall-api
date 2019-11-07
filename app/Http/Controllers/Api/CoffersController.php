@@ -18,10 +18,6 @@ use Illuminate\Http\Request;
 
 class CoffersController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorize('is-agency');
-    }
 
     public function show()
     {

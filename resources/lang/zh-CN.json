@@ -127,5 +127,9 @@
   "Validity ended at": "有效期结束时间",
   "Inviter id": "邀请人",
   "Member recharge activity id": "会员充值活动",
-  "Checked at": "审核时间"
+  "Checked at": "审核时间",
+  "Balance": "金额",
+  "Prize snapshot": "奖品快照",
+  "Address snapshot": "地址快照",
+  "Prize id": "奖品"
 }

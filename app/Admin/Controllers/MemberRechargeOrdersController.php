@@ -38,11 +38,12 @@ class MemberRechargeOrdersController extends AdminController
             return $item['title'];
         });
         $grid->column('validity_started_at', __('Validity started at'));
-        $grid->column('validity_ended_at', __('Validity ended at'));
-        $grid->column('status', __('Status'))->using(MemberRechargeOrder::status_text);
+        $grid->column('validity_ended_at', __('Validity ended at'))->display(function ($item) {
+            return $item ?: '永久';
+        });
+        $grid->column('status', __('Status'))->using(MemberRechargeOrder::status_text)->filter(MemberRechargeOrder::status_text);
         grid_display_relation($grid, 'inviter', 'nickname');
 
-        $grid->column('inviter_id', __('Inviter id'));
         $grid->column('payed_at', __('Payed at'));
         $grid->column('created_at', __('Created at'));
 
@@ -68,13 +69,15 @@ class MemberRechargeOrdersController extends AdminController
         show_display_relation($show, 'owner', 'nickname');
 
         show_display_relation($show, 'memberRechargeActivity');
-        $show->field('member_recharge_activity_snapshot', __('Member recharge activity snapshot'));
+        $show->field('member_recharge_activity_snapshot', __('Member recharge activity snapshot'))->unescape()->array2json();
 
         show_display_relation($show, 'memberLevel');
-        $show->field('member_level_snapshot', __('Member level snapshot'));
+        $show->field('member_level_snapshot', __('Member level snapshot'))->unescape()->array2json();
 
         $show->field('validity_started_at', __('Validity started at'));
-        $show->field('validity_ended_at', __('Validity ended at'));
+        $show->field('validity_ended_at', __('Validity ended at'))->as(function ($item) {
+            return $item ?: '永久';
+        });
         $show->field('status', __('Status'))->using(MemberRechargeOrder::status_text);
         show_display_relation($show, 'inviter', 'nickname');
 

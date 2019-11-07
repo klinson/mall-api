@@ -32,11 +32,14 @@ class LotteryRecordsController extends AdminController
         });
         grid_display_relation($grid, 'owner', 'nickname');
 
-        grid_display_relation($grid, 'express', 'name');
-        $grid->column('express_number', __('Express number'));
         $grid->column('address_snapshot', __('Address'))->display(function ($item) {
+            if (empty($item)) return '';
             return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
         });
+
+        grid_display_relation($grid, 'express', 'name');
+        $grid->column('express_number', __('Express number'));
+
         $grid->column('expressed_at', __('Expressed at'));
         $grid->column('status', __('Status'))->using(LotteryRecord::status_text)->filter(LotteryRecord::status_text);
         $grid->column('created_at', __('Created at'));
@@ -58,14 +61,15 @@ class LotteryRecordsController extends AdminController
         $show = new Show(LotteryRecord::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('prize_snapshot', __('Prize snapshot'))->as(function ($item) {
-            return "{$item['title']}";
-        });
+        show_display_relation($show, 'prize');
+        $show->field('prize_snapshot', __('Prize snapshot'))->unescape()->array2json();
         show_display_relation($show, 'owner', 'nickname');
         show_display_relation($show, 'express', 'name');
 
         $show->field('express_number', __('Express number'));
-        $show->field('address_snapshot', __('Address snapshot'))->as(function ($item) {
+        $show->field('address_snapshot', __('Address snapshot'))->unescape()->as(function ($item) {
+            if (empty($item)) return '';
+
             return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
         });
         $show->field('expressed_at', __('Expressed at'));

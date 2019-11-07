@@ -26,12 +26,20 @@ class CofferWithdrawalsController extends AdminController
     {
         $grid = new Grid(new CofferWithdrawal);
 
+        $grid->model()->recent();
+
+        admin_warning('注意', '暂不支持自动提现，请审核通过后记得进行微信或支付宝打款');
+
+        $grid->header(function ($query) {
+            return '注意：暂不支持自动提现，请审核通过后记得进行微信或支付宝打款';
+        });
+
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
         grid_display_relation($grid, 'owner', 'nickname');
         $grid->column('balance', __('Balance'))->currency();
         $grid->column('status', __('Status'))->using(CofferWithdrawal::status_text)->filter(CofferWithdrawal::status_text);
-        $grid->column('ip', __('Ip'));
+        $grid->column('ip', __('Ip'))->ip();
         $grid->column('checked_at', __('Checked at'));
         $grid->column('created_at', __('Created at'));
 
@@ -57,7 +65,7 @@ class CofferWithdrawalsController extends AdminController
         show_display_relation($show, 'owner', 'nickname');
         $show->field('balance', __('Balance'))->currency();
         $show->field('status', __('Status'))->using(CofferWithdrawal::status_text);
-        $show->field('ip', __('Ip'));
+        $show->field('ip', __('Ip'))->ip();
         $show->field('checked_at', __('Checked at'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));

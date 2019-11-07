@@ -40,5 +40,8 @@ Form::extend('areaCheckbox', \App\Admin\Extensions\Form\AreaCheckbox::class);
 //Column::extend('qrcode', \App\Admin\Extensions\Column\Qrcode::class);
 Admin::js('/vendor/clipboard/dist/clipboard.min.js');
 Column::extend('urlWrapper', \App\Admin\Extensions\Column\UrlWrapper::class);
+Column::extend('ip', \App\Admin\Extensions\Column\Ip::class);
 
 show::extend('currency', \App\Admin\Extensions\Show\Currency::class);
+show::extend('array2json', \App\Admin\Extensions\Show\Array2json::class);
+show::extend('ip', \App\Admin\Extensions\Show\Ip::class);
