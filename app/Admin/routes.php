@@ -49,6 +49,8 @@ Route::group([
     $router->resource('prizes', PrizesController::class);
     $router->resource('lotteryRecords', LotteryRecordsController::class);
     $router->resource('lotteryChances', LotteryChancesController::class);
+
+    $router->put('cofferWithdrawals/batch/{handle}', 'CofferWithdrawalsController@batch')->where('handle', 'pass|reject');
     $router->resource('cofferWithdrawals', CofferWithdrawalsController::class);
 
 

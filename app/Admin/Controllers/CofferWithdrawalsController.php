@@ -2,11 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\CofferWithdrawal;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
 class CofferWithdrawalsController extends AdminController
 {
@@ -28,8 +30,6 @@ class CofferWithdrawalsController extends AdminController
 
         $grid->model()->recent();
 
-        admin_warning('注意', '暂不支持自动提现，请审核通过后记得进行微信或支付宝打款');
-
         $grid->header(function ($query) {
             return '注意：暂不支持自动提现，请审核通过后记得进行微信或支付宝打款';
         });
@@ -47,7 +47,40 @@ class CofferWithdrawalsController extends AdminController
             $actions->disableEdit();
         });
 
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->batch(function (Grid\Tools\BatchActions $batch) {
+                $batch->add('批量通过', new DefaultBatchTool('batch/pass'));
+                $batch->add('批量不通过', new DefaultBatchTool('batch/reject'));
+            });
+        });
+
+
         return $grid;
+    }
+
+    /**
+     * 批操作
+     * @param Request $request
+     * @param string $handle 确认通过-pass,确认拒绝reject
+     * @return \Illuminate\Http\JsonResponse
+     * @author klinson <klinson@163.com>
+     */
+    public function batch(Request $request, $handle)
+    {
+        $orders = CofferWithdrawal::whereIn('id', $request->ids)->get();
+
+        $info = [];
+        $error_count = 0;
+        foreach ($orders as $order) {
+            if ($order->$handle()) {
+                $info[] = "No.{$order->id}: 处理成功";
+            } else {
+                $error_count++;
+                $info[] = "No.{$order->id}：处理失败";
+            }
+        }
+
+        return show_batch_result($error_count, $info);
     }
 
     /**

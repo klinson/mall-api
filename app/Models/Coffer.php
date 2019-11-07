@@ -91,6 +91,14 @@ class Coffer extends Model
         $this->log($balance, $model, 2);
     }
 
+    public function withdrawal($withdraw)
+    {
+        $this->decrement('balance', $withdraw->balance);
+        $this->save();
+
+        $this->log($withdraw->balance, $withdraw);
+    }
+
     public function withdrawals()
     {
         return $this->hasMany(CofferWithdrawal::class, 'user_id', 'user_id');
