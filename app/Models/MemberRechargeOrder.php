@@ -19,8 +19,11 @@ class MemberRechargeOrder extends Model
 
     const wechat_pay_notify_route = '/api/wechat/MemberRechargeOrderPaidNotify';
 
+    // 1待支付，2已支付，3已过期
     const status_text = [
-
+        1 => '待支付',
+        2 => '已支付',
+        3 => '已过期'
     ];
 
     protected $casts = [

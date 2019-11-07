@@ -49,7 +49,7 @@ Route::group([
     $router->resource('prizes', PrizesController::class);
     $router->resource('lotteryRecords', LotteryRecordsController::class);
     $router->resource('lotteryChances', LotteryChancesController::class);
-
+    $router->resource('cofferWithdrawals', CofferWithdrawalsController::class);
 
 
     $router->get('testFrom', 'TestFormController@index');
