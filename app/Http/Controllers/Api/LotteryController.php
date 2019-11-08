@@ -65,8 +65,8 @@ class LotteryController extends Controller
 
             DB::commit();
 
-            if (isset($record) && !empty($record)) {
-                return $this->response->item($record, new LotteryRecordTransformer());
+            if (isset($prize) && !empty($prize)) {
+                return $this->response->item($prize, new PrizeTransformer());
             } else {
                 return $this->response->noContent();
             }

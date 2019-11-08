@@ -23,15 +23,27 @@ class LotteryRecordsController extends Controller
         return $this->response->paginator($list, new LotteryRecordTransformer());
     }
 
-    public function setAddress(Request $request, LotteryRecord $record)
+    public function setAddress(Request $request)
     {
-        $this->authorize('is-mine', $record);
+        if ($request->record_id) {
+            $query = LotteryRecord::where('id', $request->record_id);
+        } else if ($request->prize_id) {
+            $query = LotteryRecord::where('prize_id', $request->prize_id)->where('user_id', \Auth::user()->id)->first();
+        } else {
+            return $this->response->errorBadRequest('不存在该中奖记录');
+        }
+        $record = $query->where('user_id', \Auth::user()->id)
+            ->where('address_id', 0)
+            ->recent()
+            ->first();
+        if (empty($record)) {
+            return $this->response->errorBadRequest('不存在该中奖记录或已经设置过配送地址');
+        }
+
         if (empty($request->address_id) || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
             return $this->response->errorBadRequest('请选择配送地址');
         }
-        if ($record->address_id) {
-            return $this->response->errorBadRequest('此订单已经设置了发货地址');
-        }
+
         $record->address_id = $request->address_id;
         $record->address_snapshot = $address->toSnapshot();
         $record->save();
