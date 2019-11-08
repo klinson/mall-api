@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Jobs\RecordLotteryJob;
 use App\Models\LotteryChance;
 use App\Models\LotteryRecord;
 use App\Models\Prize;
@@ -48,30 +49,25 @@ class LotteryController extends Controller
     // 抽奖
     public function lottery()
     {
-        $chance = LotteryChance::getMyChance();
-        if (empty($chance)) {
+        $user_id = \Auth::user()->id;
+        if (LotteryChance::getUnusedCountByCache($user_id) <= 0) {
             return $this->response->errorBadRequest('您的抽奖次数已经用完');
         }
-        DB::beginTransaction();
+        if (! LotteryChance::useOne($user_id)) {
+            return $this->response->errorBadRequest('您的抽奖次数已经用完');
+        }
 
         try {
-            $chance->setUsed();
             $prize = Prize::lottery();
-//            $prize = null;
-            if ($prize) {
-                // 中奖
-                $record = LotteryRecord::generateRecord(\Auth::user(), $prize, $chance);
-            }
 
-            DB::commit();
+            if (!empty($prize)) {
+                $this->dispatch(new RecordLotteryJob($user_id, $prize));
 
-            if (isset($prize) && !empty($prize)) {
                 return $this->response->item($prize, new PrizeTransformer());
             } else {
                 return $this->response->noContent();
             }
         } catch (\Exception $exception) {
-            DB::rollBack();
             return $this->response->errorBadRequest('抽奖失败，' . $exception->getMessage());
         }
     }
@@ -79,8 +75,9 @@ class LotteryController extends Controller
     // 我的抽奖机会次数
     public function myChanceCount()
     {
+        $count = LotteryChance::getUnusedCountByCache(\Auth::user()->id);
         return $this->response->array([
-            'count' => LotteryChance::getUnusedCount(\Auth::user()->id)
+            'count' => $count > 0 ? $count : 0
         ]);
     }
 

@@ -32,13 +32,18 @@ class LotteryRecord extends Model
         'address_snapshot' => 'array',
     ];
 
-    public static function generateRecord(User $user, Prize $prize, LotteryChance $chance)
+    public static function generateRecord($user, Prize $prize, LotteryChance $chance)
     {
+        if ($user instanceof User) {
+            $user_id = $user->id;
+        } else {
+            $user_id = intval($user);
+        }
         $prize->decrement('quantity', 1);
         $prize->save();
 
         $record = new self([
-            'user_id' => $user->id,
+            'user_id' => $user_id,
             'prize_id' => $prize->id,
             'prize_snapshot' => (new PrizeTransformer())->transform($prize),
             'chance_id' => $chance->id,

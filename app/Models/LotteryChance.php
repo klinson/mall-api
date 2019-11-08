@@ -4,10 +4,14 @@ namespace App\Models;
 
 use App\Models\Traits\HasOwnerHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Redis;
+use DB;
 
 class LotteryChance extends Model
 {
     use SoftDeletes, HasOwnerHelper;
+
+    const redis_cache_key = 'lottery_chance_count';
 
     protected $fillable = [
         'user_id', 'type', 'description', 'used_at'
@@ -33,19 +37,22 @@ class LotteryChance extends Model
     ];
 
 
-    public static function getMyChance()
+    public static function getChance($user_id)
     {
-        return self::isOwner()->unused()->first();
+        return self::where('user_id', $user_id)->orderBy('id')->unused()->first();
     }
 
     public static function generateChance($user_id, $type)
     {
+        DB::beginTransaction();
         $chance = new self([
             'user_id' => $user_id,
             'type' => $type,
         ]);
         $chance->save();
 
+        Redis::hincrby(self::redis_cache_key, $user_id, 1);
+        DB::commit();
         return $chance;
     }
 
@@ -126,6 +133,23 @@ class LotteryChance extends Model
         return self::where('user_id', $user_id)->unused()->count();
     }
 
+    public static function getUnusedCountByCache($user_id)
+    {
+        return intval(Redis::hget(self::redis_cache_key, $user_id));
+    }
+
+    // 重置缓存中的抽奖次数，慎重操作
+    public static function resetRedisCacheCount()
+    {
+        DB::table('lottery_chances')->whereNull('used_at')->groupBy('user_id')->orderBy('user_id')->select(['user_id', DB::raw('count(*) as count')])->having('count', '>', 0)->chunk(100, function ($users) {
+            Redis::pipeline(function ($pipe) use ($users) {
+                foreach ($users  as $user) {
+                    $pipe->hset(self::redis_cache_key, $user->user_id, $user->count);
+                }
+            });
+        });
+    }
+
     public function scopeUnused($query)
     {
         return $query->whereNull('used_at');
@@ -140,6 +164,22 @@ class LotteryChance extends Model
             $this->used_at = date('Y-m-d H:i:s');
             $this->save();
             return $this;
+        }
+    }
+
+    /**
+     * @param $user_id
+     * @return bool
+     * @author klinson <klinson@163.com>
+     */
+    public static function useOne($user_id)
+    {
+        $number = intval(Redis::hincrby(self::redis_cache_key, $user_id, -1));
+        if ($number < 0) {
+            Redis::hincrby(self::redis_cache_key, $user_id, 1);
+            return false;
+        } else {
+            return true;
         }
     }
 }

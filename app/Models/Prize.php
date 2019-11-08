@@ -28,6 +28,19 @@ class Prize extends Model
     public static function lottery()
     {
         // TODO: 抽奖算法待实现
+        // 抽完库存减1
         return self::find(1);
+    }
+
+    public function allByCache($reset = false)
+    {
+        $key = 'enabled_prizes';
+        if ($reset || app()->isLocal()) {
+            cache()->delete($key);
+        }
+
+        return cache()->remember($key, 30, function () {
+            return self::enabled()->levelBy()->ById()->get();
+        });
     }
 }

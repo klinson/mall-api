@@ -2,24 +2,25 @@
 
 namespace App\Console\Commands;
 
+use App\Models\LotteryChance;
 use App\Models\User;
 use Illuminate\Console\Command;
 
-class GenerateToken extends Command
+class ResetLotteryChanceCountCache extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'jwt:generate';
+    protected $signature = 'reset-cache:lottery-chance';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '快速为用户生成 token';
+    protected $description = '重置抽奖次数缓存';
 
     /**
      * Create a new command instance.
@@ -38,16 +39,7 @@ class GenerateToken extends Command
      */
     public function handle()
     {
-        $userId = $this->ask('输入用户 id');
-
-        $user = User::find($userId);
-
-        if (!$user) {
-            return $this->error('用户不存在');
-        }
-
-        // 一年以后过期
-        $ttl = 365*24*60;
-        $this->info(\Auth::guard('api')->setTTL($ttl)->fromUser($user));
+        LotteryChance::resetRedisCacheCount();
+        $this->info('重置完成');
     }
 }
