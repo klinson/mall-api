@@ -31,89 +31,77 @@ class AdminMenuTableSeeder extends Seeder
             ),
             1 => 
             array (
-                'id' => 2,
-                'parent_id' => 3,
-                'order' => 34,
-                'title' => '用户管理',
-                'icon' => 'fa-users',
-                'uri' => 'users',
-                'permission' => NULL,
-                'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
-            ),
-            2 => 
-            array (
                 'id' => 3,
                 'parent_id' => 0,
-                'order' => 25,
+                'order' => 24,
                 'title' => '系统管理',
                 'icon' => 'fa-tasks',
                 'uri' => '',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            3 => 
+            2 => 
             array (
                 'id' => 4,
                 'parent_id' => 3,
-                'order' => 26,
+                'order' => 25,
                 'title' => '管理员管理',
                 'icon' => 'fa-users',
                 'uri' => 'auth/users',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            4 => 
+            3 => 
             array (
                 'id' => 5,
                 'parent_id' => 3,
-                'order' => 28,
+                'order' => 27,
                 'title' => '管理员角色管理',
                 'icon' => 'fa-user',
                 'uri' => 'auth/roles',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            5 => 
+            4 => 
             array (
                 'id' => 6,
                 'parent_id' => 3,
-                'order' => 29,
+                'order' => 28,
                 'title' => '管理员角色权限管理',
                 'icon' => 'fa-ban',
                 'uri' => 'auth/permissions',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            6 => 
+            5 => 
             array (
                 'id' => 7,
                 'parent_id' => 3,
-                'order' => 30,
+                'order' => 29,
                 'title' => '系统菜单管理',
                 'icon' => 'fa-bars',
                 'uri' => 'auth/menu',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            7 => 
+            6 => 
             array (
                 'id' => 8,
                 'parent_id' => 3,
-                'order' => 33,
+                'order' => 32,
                 'title' => '系统操作日志',
                 'icon' => 'fa-history',
                 'uri' => 'auth/logs',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            8 => 
+            7 => 
             array (
                 'id' => 9,
                 'parent_id' => 0,
@@ -125,7 +113,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2017-11-04 11:15:46',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            9 => 
+            8 => 
             array (
                 'id' => 10,
                 'parent_id' => 9,
@@ -137,7 +125,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2017-11-04 11:15:46',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            10 => 
+            9 => 
             array (
                 'id' => 11,
                 'parent_id' => 9,
@@ -149,43 +137,43 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2017-11-04 11:15:46',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            11 => 
+            10 => 
             array (
                 'id' => 12,
                 'parent_id' => 3,
-                'order' => 31,
+                'order' => 30,
                 'title' => '资源管理',
                 'icon' => 'fa-file',
                 'uri' => 'media',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            12 => 
+            11 => 
             array (
                 'id' => 13,
                 'parent_id' => 3,
-                'order' => 27,
+                'order' => 26,
                 'title' => '系统配置管理',
                 'icon' => 'fa-toggle-on',
                 'uri' => 'config',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            13 => 
+            12 => 
             array (
                 'id' => 14,
                 'parent_id' => 3,
-                'order' => 32,
+                'order' => 31,
                 'title' => '备份管理',
                 'icon' => 'fa-copy',
                 'uri' => 'backup',
                 'permission' => NULL,
                 'created_at' => '2017-11-04 11:15:46',
-                'updated_at' => '2019-11-07 23:53:05',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
-            14 => 
+            13 => 
             array (
                 'id' => 19,
                 'parent_id' => 0,
@@ -197,7 +185,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-01-01 22:53:23',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            15 => 
+            14 => 
             array (
                 'id' => 20,
                 'parent_id' => 19,
@@ -209,7 +197,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-01-01 22:58:52',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            16 => 
+            15 => 
             array (
                 'id' => 21,
                 'parent_id' => 19,
@@ -221,7 +209,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-08-18 00:09:15',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            17 => 
+            16 => 
             array (
                 'id' => 22,
                 'parent_id' => 9,
@@ -233,7 +221,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-08 09:04:11',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            18 => 
+            17 => 
             array (
                 'id' => 23,
                 'parent_id' => 9,
@@ -245,7 +233,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-08 09:05:14',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            19 => 
+            18 => 
             array (
                 'id' => 24,
                 'parent_id' => 9,
@@ -257,7 +245,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-16 00:00:48',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            20 => 
+            19 => 
             array (
                 'id' => 25,
                 'parent_id' => 19,
@@ -269,7 +257,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-23 00:50:17',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            21 => 
+            20 => 
             array (
                 'id' => 26,
                 'parent_id' => 0,
@@ -281,31 +269,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-10-26 19:12:27',
                 'updated_at' => '2019-10-26 19:59:27',
             ),
-            22 => 
-            array (
-                'id' => 27,
-                'parent_id' => 0,
-                'order' => 23,
-                'title' => '代理管理',
-                'icon' => 'fa-user-secret',
-                'uri' => NULL,
-                'permission' => NULL,
-                'created_at' => '2019-10-26 19:57:26',
-                'updated_at' => '2019-11-07 23:53:05',
-            ),
-            23 => 
-            array (
-                'id' => 28,
-                'parent_id' => 27,
-                'order' => 24,
-                'title' => '代理配置管理',
-                'icon' => 'fa-cogs',
-                'uri' => 'agencyConfigs',
-                'permission' => NULL,
-                'created_at' => '2019-10-26 19:59:00',
-                'updated_at' => '2019-11-07 23:53:05',
-            ),
-            24 => 
+            21 => 
             array (
                 'id' => 29,
                 'parent_id' => 0,
@@ -317,7 +281,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:54:07',
                 'updated_at' => '2019-11-07 23:53:05',
             ),
-            25 => 
+            22 => 
             array (
                 'id' => 30,
                 'parent_id' => 29,
@@ -329,7 +293,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:54:56',
                 'updated_at' => '2019-11-07 23:53:05',
             ),
-            26 => 
+            23 => 
             array (
                 'id' => 31,
                 'parent_id' => 29,
@@ -341,7 +305,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:55:29',
                 'updated_at' => '2019-11-07 23:53:05',
             ),
-            27 => 
+            24 => 
             array (
                 'id' => 32,
                 'parent_id' => 29,
@@ -353,7 +317,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:56:14',
                 'updated_at' => '2019-11-07 23:53:05',
             ),
-            28 => 
+            25 => 
             array (
                 'id' => 33,
                 'parent_id' => 0,
@@ -365,7 +329,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:56:59',
                 'updated_at' => '2019-11-07 12:59:01',
             ),
-            29 => 
+            26 => 
             array (
                 'id' => 34,
                 'parent_id' => 33,
@@ -377,7 +341,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:57:46',
                 'updated_at' => '2019-11-07 12:59:01',
             ),
-            30 => 
+            27 => 
             array (
                 'id' => 35,
                 'parent_id' => 33,
@@ -389,7 +353,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:58:21',
                 'updated_at' => '2019-11-07 12:59:01',
             ),
-            31 => 
+            28 => 
             array (
                 'id' => 36,
                 'parent_id' => 33,
@@ -401,7 +365,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 12:58:46',
                 'updated_at' => '2019-11-07 12:59:01',
             ),
-            32 => 
+            29 => 
             array (
                 'id' => 37,
                 'parent_id' => 0,
@@ -413,7 +377,7 @@ class AdminMenuTableSeeder extends Seeder
                 'created_at' => '2019-11-07 23:52:20',
                 'updated_at' => '2019-11-07 23:53:05',
             ),
-            33 => 
+            30 => 
             array (
                 'id' => 38,
                 'parent_id' => 37,
@@ -424,6 +388,18 @@ class AdminMenuTableSeeder extends Seeder
                 'permission' => NULL,
                 'created_at' => '2019-11-07 23:52:54',
                 'updated_at' => '2019-11-07 23:53:05',
+            ),
+            31 => 
+            array (
+                'id' => 39,
+                'parent_id' => 0,
+                'order' => 23,
+                'title' => '系统设置',
+                'icon' => 'fa-cogs',
+                'uri' => 'system',
+                'permission' => NULL,
+                'created_at' => '2019-11-09 02:48:50',
+                'updated_at' => '2019-11-09 02:48:59',
             ),
         ));
         
