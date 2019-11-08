@@ -18,4 +18,7 @@ return [
 
     // 订单发货后N天自动结算
     'order_auto_receive_days' => env('ORDER_AUTO_RECEIVE_DAYS', 7),
+
+    // 谢谢参与抽奖的权值
+    'non_prize_rate' => env('NON_PRIZE_RATE', 0),
 ];

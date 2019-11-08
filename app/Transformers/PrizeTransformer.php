@@ -18,7 +18,7 @@ class PrizeTransformer extends TransformerAbstract
             'title' => $model->title,
             'thumbnail_url' => $model->thumbnail_url,
             'origin_quantity' => $model->origin_quantity,
-            'quantity' => $model->quantity,
+            'quantity' => $model->real_quantity,
             'price' => $model->price,
             'level' => $model->level,
         ];
