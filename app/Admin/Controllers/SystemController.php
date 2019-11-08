@@ -9,11 +9,9 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Forms\ExpressAddressConfig;
+use App\Admin\Forms\LotteryConfig;
 use Encore\Admin\Config\ConfigModel;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Widgets\Box;
-use Encore\Admin\Widgets\Form;
 use Encore\Admin\Widgets\Tab;
 use Illuminate\Http\Request;
 
@@ -28,20 +26,12 @@ class SystemController extends Controller
 
 
         $forms = [
-            '退货配置' => ExpressAddressConfig::class
+            '退货配置' => ExpressAddressConfig::class,
+            '抽奖配置' => LotteryConfig::class,
         ];
 
 
         return $content->body(Tab::forms($forms));
-
-        return Admin::content(function (Content $content) {
-            $this->_setPageDefault($content);
-
-
-
-
-            $content->body(new Box($this->pageHeader, $form));
-        });
     }
 
     public function store(Request $request)

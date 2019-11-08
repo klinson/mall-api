@@ -81,7 +81,7 @@ class PrizesController extends AdminController
         $form->number('quantity', __('Quantity'))->default(1)->required();
         $form->currency('price', __('Price'))->required();
         $form->number('level', __('Level'))->default(1)->required();
-        $form->number('rate', __('Rate'))->required();
+        $form->number('rate', __('Rate'))->required()->min(0)->help('中奖概率=当前奖品权值/（所有奖品总权值+【谢谢参与】权值('.config('system.non_prize_rate', 0).')）');
         $form->switch('has_enabled', __('Has enabled'))->default(1);
 
         return $form;

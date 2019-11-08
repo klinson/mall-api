@@ -111,7 +111,7 @@
   "Indirect agency mode": "间接被邀代理结算方式",
   "Indirect agency": "间接被邀代理结算比例",
   "Origin quantity": "原始库存",
-  "Rate": "概率",
+  "Rate": "权值",
   "Level": "等级",
   "Used at": "使用时间",
   "Is fee freight": "包邮？",
