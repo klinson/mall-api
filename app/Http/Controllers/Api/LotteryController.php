@@ -72,7 +72,7 @@ class LotteryController extends Controller
             }
         } catch (\Exception $exception) {
             DB::rollBack();
-            return $this->response->errorBadRequest('抽奖识别，' . $exception->getMessage());
+            return $this->response->errorBadRequest('抽奖失败，' . $exception->getMessage());
         }
     }
 
