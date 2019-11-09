@@ -26,8 +26,8 @@ class SystemController extends Controller
 
 
         $forms = [
-            '退货配置' => ExpressAddressConfig::class,
-            '抽奖配置' => LotteryConfig::class,
+            'express' => ExpressAddressConfig::class,
+            'lottery' => LotteryConfig::class,
         ];
 
 

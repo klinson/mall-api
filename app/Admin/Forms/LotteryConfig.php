@@ -44,7 +44,7 @@ class LotteryConfig extends Form
      */
     public function form()
     {
-        $this->number('system|non_prize_rate', '【谢谢参与】权值')->rules(['required|min:0'])->setElementClass('s')->help('【谢谢参与】的概率=【谢谢参与】权值/（所有奖品总权值+【谢谢参与】权值）');
+        $this->number('system|non_prize_rate', '【谢谢参与】权值')->required()->min(0)->setElementClass('s')->help('【谢谢参与】的概率=【谢谢参与】权值/（所有奖品总权值+【谢谢参与】权值）');
     }
 
     /**

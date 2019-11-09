@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redis;
 class Prize extends Model
 {
     use SoftDeletes;
+    const hasDefaultObserver = true;
 
     const redis_cache_quantity_key = 'prize_quantity_list';
     const THUMBNAIL_TEMPLATE = 'images/prize.png';
@@ -64,6 +65,12 @@ class Prize extends Model
     public static function getNonPrizeRate()
     {
         return config('system.non_prize_rate', 0);
+    }
+
+    public static function getNonPrizeRealRate()
+    {
+        $rate = self::getNonPrizeRate();
+        return round(strval(floatval($rate) / (self::enabled()->sum('rate')+$rate) * 100), 2) . '%';
     }
 
     public static function allByCache($reset = false)
@@ -135,5 +142,10 @@ class Prize extends Model
         }
 
         return $result;
+    }
+
+    public function getRealRateAttribute()
+    {
+        return round(strval(floatval($this->rate) / (self::enabled()->sum('rate')+self::getNonPrizeRate()) * 100), 2) . '%';
     }
 }
