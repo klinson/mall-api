@@ -146,6 +146,18 @@ class Prize extends Model
 
     public function getRealRateAttribute()
     {
+        if (! $this->has_enabled) return '0%';
         return round(strval(floatval($this->rate) / (self::enabled()->sum('rate')+self::getNonPrizeRate()) * 100), 2) . '%';
+    }
+
+    public function updateQuantity($quantity)
+    {
+        if ($quantity > 0) {
+            $this->increment('quantity', $quantity);
+        } else {
+            $this->decrement('quantity', abs($quantity));
+        }
+        $this->save();
+        Redis::hincrby(self::redis_cache_quantity_key, $this->id, $quantity);
     }
 }

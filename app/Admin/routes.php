@@ -46,6 +46,7 @@ Route::group([
     $router->resource('memberLevels', MemberLevelsController::class);
     $router->resource('memberRechargeActivities', MemberRechargeActivitiesController::class);
     $router->resource('memberRechargeOrders', MemberRechargeOrdersController::class);
+    $router->put('prizes/{prize}/updateQuantity', 'PrizesController@updateQuantity')->where('prize', '[0-9]+');
     $router->resource('prizes', PrizesController::class);
     $router->get('lotteryRecords/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
     $router->put('lotteryRecords/{record}/express', 'LotteryRecordsController@express')->where('record', '[0-9]+');
