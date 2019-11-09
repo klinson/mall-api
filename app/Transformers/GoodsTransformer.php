@@ -42,6 +42,7 @@ class GoodsTransformer extends TransformerAbstract
                 'discount_max_price' => $this->discount < 100 ? ceil(strval($model->max_price * $this->discount * 0.01)) : $model->max_price,
                 'discount_min_price' => $this->discount < 100 ? ceil(strval($model->min_price * $this->discount * 0.01)) : $model->min_price,
                 'has_recommended' => $model->has_recommended,
+                'has_enabled' => $model->has_enabled,
                 'created_at' => $model->created_at->toDateTimeString(),
                 'images' => $model->images_url,
                 'detail' => $model->detail,
@@ -58,6 +59,7 @@ class GoodsTransformer extends TransformerAbstract
                 'discount_max_price' => $this->discount < 100 ? ceil(strval($model->max_price * $this->discount * 0.01)) : $model->max_price,
                 'discount_min_price' => $this->discount < 100 ? ceil(strval($model->min_price * $this->discount * 0.01)) : $model->min_price,
                 'has_recommended' => $model->has_recommended,
+                'has_enabled' => $model->has_enabled,
                 'created_at' => $model->created_at->toDateTimeString(),
             ];
         }

@@ -37,8 +37,6 @@ class GoodsController extends Controller
 
     public function show(Goods $goods)
     {
-        $this->authorize('enabled', $goods);
-
         return $this->response->item($goods, new GoodsTransformer('show'));
     }
 
@@ -74,7 +72,7 @@ class GoodsController extends Controller
     public function qrcode(Goods $goods)
     {
         if ($goods->has_enabled != 1) {
-            return $this->response->errorNotFound();
+            return $this->response->errorBadRequest('当前商品已下架');
         }
 
         $disk = 'qrcode';
