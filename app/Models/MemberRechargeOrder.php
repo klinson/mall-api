@@ -128,9 +128,13 @@ class MemberRechargeOrder extends Model
         return $return;
     }
 
-    public function generateValidityDate()
+    public function generateValidityDate($start_date = null)
     {
-        $this->validity_started_at = $this->payed_at;
+        if ($start_date) {
+            $this->validity_started_at = $start_date;
+        } else {
+            $this->validity_started_at = $this->payed_at;
+        }
         $activity = $this->member_recharge_activity_snapshot;
         if ($activity['validity_type'] == 4) {
             $this->validity_ended_at = null;
@@ -138,6 +142,11 @@ class MemberRechargeOrder extends Model
             $method = MemberRechargeActivity::VALIDITY_TYPE2METHODS[$activity['validity_type']];
             $this->validity_ended_at = Carbon::createFromTimestamp(strtotime($this->validity_started_at))->$method($activity['validity_times'])->toDateTimeString();
         }
+    }
+
+    public function scopeHasPaid($query)
+    {
+        return $query->where('status', 2);
     }
 
     // 设置支付成功
@@ -149,7 +158,15 @@ class MemberRechargeOrder extends Model
             // 修改订单状态
             $this->status = 2;
             $this->payed_at = date('Y-m-d H:i:s');
-            $this->generateValidityDate();
+
+            $last_member_level = $this->owner->getLastMemberLevel($this->member_level_id);
+
+            if ($last_member_level && $last_member_level->validity_ended_at && $last_member_level->validity_ended_at > $this->payed_at) {
+                $this->generateValidityDate($last_member_level->validity_ended_at);
+            } else {
+                $this->generateValidityDate();
+            }
+
             $this->save();
 
             $activity = $this->member_recharge_activity_snapshot;

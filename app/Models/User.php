@@ -126,7 +126,26 @@ class User extends Authenticatable implements JWTSubject
         return $this->memberLevels()->where(function ($query) {
             $query->where('validity_ended_at', '>', Carbon::now()->toDateTimeString())
                 ->orWhereNull('validity_ended_at');
-        });
+        })->orderBy('validity_started_at');
+    }
+
+    public function getRealMemberLevelsAttribute()
+    {
+        $res = collect();
+        if ($this->validMemberLevels->isNotEmpty()) {
+            $memberLevels = $this->validMemberLevels->groupBy('member_level_id');
+            foreach ($memberLevels as $memberLevelArr) {
+                if (count($memberLevelArr) === 1) {
+                    $res->push($memberLevelArr[0]);
+                } else {
+                    $last = $memberLevelArr->last();
+                    $first = $memberLevelArr[0];
+                    $first->validity_ended_at = $last->validity_ended_at;
+                    $res->push($first);
+                }
+            }
+        }
+        return $res;
     }
 
     // 获取用户当前会员最佳折扣
@@ -175,6 +194,11 @@ class User extends Authenticatable implements JWTSubject
     public function isMyFavourGoods($goods_id)
     {
         return \DB::table('user_favour_goods')->where('user_id', $this->id)->where('goods_id', $goods_id)->first() ? true : false;
+    }
+
+    public function getLastMemberLevel($member_level_id)
+    {
+        return self::memberLevels()->where('member_level_id', $member_level_id)->orderBy(\DB::raw('if(isnull(`validity_ended_at`), "9999-12-12", `validity_ended_at`)'), 'desc')->first();
     }
 
     public function getAdminLinkAttribute()
