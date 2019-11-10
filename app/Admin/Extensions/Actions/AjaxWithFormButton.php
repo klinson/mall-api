@@ -23,12 +23,12 @@ class AjaxWithFormButton
     // "text", "email", "password", "number", "tel", "select", "radio", "checkbox", "textarea", "file" or "url"
 
     protected $id;
+    protected $action;
     protected $title;
     protected $btn_type;
     protected $icon;
     protected $form = [
         'title' => '提交表单',
-        'action' => '',
         'method' => 'put',
         'confirm' => '确认',
         'cancel' => '取消',
@@ -36,8 +36,9 @@ class AjaxWithFormButton
         'footer' => '',
     ];
 
-    public function __construct($title, $form, $inputs, $btn_type = 'primary')
+    public function __construct($action, $title, $form, $inputs, $btn_type = 'primary')
     {
+        $this->action = $action;
         $this->title = $title;
         $this->form = array_merge($this->form, $form);
         $this->inputs = $inputs;
@@ -59,6 +60,8 @@ class AjaxWithFormButton
         } else {
             $script = "
 $('.{$this->title}-class').unbind('click').click(function() {
+  var url = $(this).data('action');
+
   var count = {$count};
   var input_values = [];
   Swal.mixin({
@@ -77,7 +80,7 @@ $('.{$this->title}-class').unbind('click').click(function() {
             return new Promise(function(resolve) {
                 $.ajax({
                     method: '{$this->form['method']}',
-                    url: '{$this->form['action']}',
+                    url: url,
                     data: {$ajax_data},
                     success: function (data) {
                         resolve(data);
@@ -113,7 +116,7 @@ $('.{$this->title}-class').unbind('click').click(function() {
         Admin::script($this->script());
 
         return <<<EOT
-&nbsp;<a href="javascript:void(0);" data-action="{$this->form['action']}" class="{$this->title}-class btn btn-xs btn-{$this->btn_type}">
+&nbsp;<a href="javascript:void(0);" data-action="{$this->action}" class="{$this->title}-class btn btn-xs btn-{$this->btn_type}">
     {$this->title}
 </a>&nbsp;
 EOT;

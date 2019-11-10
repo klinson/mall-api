@@ -57,10 +57,10 @@ class LotteryRecordsController extends AdminController
             $actions->disableEdit();
             if ($this->row->status === 1) {
                 $actions->append(new AjaxWithFormButton(
+                    $actions->getResource() . '/' . $actions->getKey() . '/express',
                     '发货',
                     [
                         'title' => '发货',
-                        'action' => $actions->getResource() . '/' . $actions->getKey() . '/express',
                         'footer' => '上门自提或其他非快递配送，可选择无需物流',
                     ],
                     [
