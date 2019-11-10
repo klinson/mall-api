@@ -56,16 +56,14 @@ class UserTransformer extends TransformerAbstract
                 break;
             default:
                 return [
-                    'user' => [
-                        'id' => $model->id,
-                        'wxapp_openid' => $model->wxapp_openid,
-                        'nickname' => $model->nickname,
-                        'mobile' => $model->mobile,
-                        'sex' => $model->sex,
-                        'agency_id' => $model->agency_id,
-                        'avatar' => $avatar,
-                        'created_at' => $model->created_at->toDateTimeString(),
-                    ],
+                    'id' => $model->id,
+                    'wxapp_openid' => $model->wxapp_openid,
+                    'nickname' => $model->nickname,
+                    'mobile' => $model->mobile,
+                    'sex' => $model->sex,
+                    'agency_id' => $model->agency_id,
+                    'avatar' => $avatar,
+                    'created_at' => $model->created_at->toDateTimeString(),
                     'token' => $this->token,
                 ];
                 break;
