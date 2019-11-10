@@ -67,6 +67,11 @@ class Prize extends Model
         return config('system.non_prize_rate', 0);
     }
 
+    public static function getLotteryStatus()
+    {
+        return intval(config('system.enabled_lottery', 1)) === 1;
+    }
+
     public static function getNonPrizeRealRate()
     {
         $rate = self::getNonPrizeRate();

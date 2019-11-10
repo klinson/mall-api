@@ -29,7 +29,8 @@ class PrizesController extends AdminController
         $grid = new Grid(new Prize);
 
         $grid->header(function ($query) {
-            return "<b>当前【谢谢参与】的权值：". Prize::getNonPrizeRate() . '，实际概率：'.Prize::getNonPrizeRealRate() . '</b> <a href="/admin/system?active=lottery" target="_blank" class="btn btn-primary btn-xs">点击修改</a>';
+            return "<b>当前抽奖开关：</b>".(Prize::getLotteryStatus() ? "<span class='label label-success'>√</span>" : "<span class='label label-danger'>X</span>")."  <a href=\"/admin/system?active=lottery\" target=\"_blank\" class=\"btn btn-primary btn-xs\">点击修改</a><br>
+<b>当前【谢谢参与】的权值：". Prize::getNonPrizeRate() . '，实际概率：'.Prize::getNonPrizeRealRate() . "</b> <a href=\"/admin/system?active=lottery\" target=\"_blank\" class=\"btn btn-primary btn-xs\">点击修改</a>";
         });
         $grid->footer(function () {
             return '<b>概率算法：概率=当前奖品权值/（所有奖品总权值+【谢谢参与】权值）</b>';
@@ -37,7 +38,7 @@ class PrizesController extends AdminController
         });
 
         $grid->column('id', __('Id'));
-        $grid->column('title', __('Title'));
+        $grid->column('title', __('Title'))->label();
         $grid->column('thumbnail', __('Thumbnail'))->image();
         $grid->column('origin_quantity', __('Origin quantity'));
         $grid->column('quantity', __('Quantity'))->display(function () {
