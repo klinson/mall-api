@@ -6,6 +6,7 @@ use App\Models\Traits\IntTimestampsHelper;
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use phpDocumentor\Reflection\Types\Self_;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -184,6 +185,11 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return $is_fee_freight;
+    }
+
+    public function inviter()
+    {
+        return $this->belongsTo(self::class, 'inviter_id');
     }
 
     public function favourGoods()

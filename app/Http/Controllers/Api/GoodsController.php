@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Goods;
+use App\Models\LotteryChance;
 use App\Transformers\GoodsTransformer;
 use Illuminate\Http\Request;
 
@@ -48,6 +49,7 @@ class GoodsController extends Controller
             ]
         ]);
 
+        LotteryChance::whenFavourGoods(\Auth::user());
         return $this->response->noContent();
     }
 

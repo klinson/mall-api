@@ -74,10 +74,7 @@ class AuthorizationsController extends Controller
                 $user->save();
 
                 // 记录获取抽奖机会
-                $this->dispatch(new AddLotteryChanceJob($user->id, LotteryChance::FIRST_LOGIN_TYPE));
-                if ($inviter_id) {
-                    $this->dispatch(new AddLotteryChanceJob($inviter_id, LotteryChance::INVITE_USER_REGISTER_TYPE));
-                }
+                LotteryChance::whenRegister($user);
             } else {
                 // 已绑定
 

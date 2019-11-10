@@ -28,8 +28,9 @@ class LotteryChancesController extends AdminController
 
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'owner', 'nickname');
-        $grid->column('used_at', __('Used at'));
+        grid_display_relation($grid, 'byUser', 'nickname', '触发用户');
         $grid->column('type', __('Type'))->using(LotteryChance::DESCRIPTIONS)->filter(LotteryChance::DESCRIPTIONS);;
+        $grid->column('used_at', __('Used at'));
         $grid->column('created_at', __('Created at'));
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();

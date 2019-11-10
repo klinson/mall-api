@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\AddLotteryChanceJob;
 use App\Models\Traits\HasOwnerHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Redis;
@@ -14,26 +15,32 @@ class LotteryChance extends Model
     const redis_cache_key = 'lottery_chance_count';
 
     protected $fillable = [
-        'user_id', 'type', 'description', 'used_at'
+        'user_id', 'type', 'description', 'used_at', 'by_user_id'
     ];
 
     // 获取抽奖机会方式
     const FIRST_LOGIN_TYPE = 1;
     const INVITE_USER_REGISTER_TYPE = 2;
     const SYSTEM_PRESENT = 3;
+    const INVITE_USER_FAVOUR3GOODS = 4;
+    const SELF_FAVOUR3GOODS = 5;
 
     // 获取方式对应可获取抽奖机会次数, -1不限制
     const TYPE_LIMIT_COUNTS = [
         self::FIRST_LOGIN_TYPE => 1,
-        self::INVITE_USER_REGISTER_TYPE => 2,
+        self::INVITE_USER_REGISTER_TYPE => 1,
+        self::INVITE_USER_FAVOUR3GOODS => 3,
+        self::SELF_FAVOUR3GOODS => 1,
         self::SYSTEM_PRESENT => -1,
     ];
 
     // 获取抽奖机会方式对应中文注释
     const DESCRIPTIONS = [
-        self::FIRST_LOGIN_TYPE => '用户首次注册赠送',
-        self::INVITE_USER_REGISTER_TYPE => '邀请用户注册',
+        self::FIRST_LOGIN_TYPE => '用户注册',
+        self::INVITE_USER_REGISTER_TYPE => '邀请用户成功注册',
         self::SYSTEM_PRESENT => '系统赠送',
+        self::INVITE_USER_FAVOUR3GOODS => '邀请用户注册并收藏3个商品',
+        self::SELF_FAVOUR3GOODS => '收藏3个商品',
     ];
 
 
@@ -42,11 +49,12 @@ class LotteryChance extends Model
         return self::where('user_id', $user_id)->orderBy('id')->unused()->first();
     }
 
-    public static function generateChance($user_id, $type)
+    public static function generateChance($user_id, $type, $by_user_id = 0)
     {
         DB::beginTransaction();
         $chance = new self([
             'user_id' => $user_id,
+            'by_user_id' => $by_user_id,
             'type' => $type,
         ]);
         $chance->save();
@@ -74,37 +82,81 @@ class LotteryChance extends Model
         return $res;
     }
 
-    public static function whenInviteUserRegister($user)
+    public static function whenRegister($user)
     {
-        if ($user instanceof User) {
-            $user_id = $user->id;
-        } else {
-            $user_id = intval($user);
-        }
-        if (self::overCount($user_id, self::INVITE_USER_REGISTER_TYPE)) {
-            return false;
-        }
+        dispatch(new AddLotteryChanceJob($user->id, self::FIRST_LOGIN_TYPE));
 
-        return self::generateChance($user, self::INVITE_USER_REGISTER_TYPE);
+        if ($user->inviter_id) {
+            dispatch(new AddLotteryChanceJob($user->id, self::INVITE_USER_REGISTER_TYPE));
+        }
+    }
+
+    public static function whenFavourGoods($user)
+    {
+        dispatch(new AddLotteryChanceJob($user->id, self::SELF_FAVOUR3GOODS));
+
+        if ($user->inviter_id) {
+            dispatch(new AddLotteryChanceJob($user->id, self::INVITE_USER_FAVOUR3GOODS));
+        }
     }
 
     // 用户注册赠送一次
-    public static function whenUserFirstLogin($user)
+    public static function whenEvent($user, $event)
     {
-        if ($user instanceof User) {
-            $user_id = $user->id;
-        } else {
-            $user_id = intval($user);
+        if (! ($user instanceof User)) {
+            $user = User::find(intval($user));
         }
-        if (self::overCount($user_id, self::FIRST_LOGIN_TYPE)) {
+        if (! $user) {
             return false;
         }
+        $by_user_id = $user->id;
+        $user_id = $user->id;
+        switch ($event) {
+            case self::SYSTEM_PRESENT:
+                break;
+            case self::FIRST_LOGIN_TYPE:
+                if (self::overCount($user_id, $event)) {
+                    return false;
+                }
+                break;
+            case self::INVITE_USER_REGISTER_TYPE:
+                if (! $user->inviter) {
+                    return false;
+                }
+                $user_id = $user->inviter->id;
+                if (self::overCount($user_id, $event, $by_user_id)) {
+                    return false;
+                }
+                break;
+            case self::SELF_FAVOUR3GOODS:
+                if ($user->favourGoods()->count() < 3) {
+                    return false;
+                }
+                if (self::overCount($user_id, $event)) {
+                    return false;
+                }
+                break;
+            case self::INVITE_USER_FAVOUR3GOODS:
 
-        return self::generateChance($user, self::FIRST_LOGIN_TYPE);
+                if ($user->favourGoods()->count() < 3) {
+                    return false;
+                }
+                if (! $user->inviter) {
+                    return false;
+                }
+                $user_id = $user->inviter->id;
+
+                if (self::overCount($user_id, $event, $by_user_id)) {
+                    return false;
+                }
+                break;
+        }
+
+        return self::generateChance($user_id, $event, $by_user_id);
     }
 
     // 验证指定方式的获得机会次数是否超了
-    public static function overCount($user_id, $type)
+    public static function overCount($user_id, $type, $by_user = 0)
     {
         if (self::getLimitCount($type) === -1) {
             return false;
@@ -112,14 +164,21 @@ class LotteryChance extends Model
         if (self::getCount($user_id, $type) >= self::getLimitCount($type)) {
             return true;
         } else {
+            if ($by_user && self::getCount($user_id, $type, $by_user)) {
+                return true;
+            }
             return false;
         }
     }
 
     // 获取指定方式的获得机会次数
-    public static function getCount($user_id, $type)
+    public static function getCount($user_id, $type, $by_user = 0)
     {
-        return self::where('user_id', $user_id)->where('type', $type)->count();
+        $query = self::where('user_id', $user_id)->where('type', $type);
+        if ($by_user) {
+            $query->where('by_user_id', $by_user);
+        }
+        return $query->count();
     }
 
     // 获取指定方式的获得机会的限制次数
@@ -181,5 +240,10 @@ class LotteryChance extends Model
         } else {
             return true;
         }
+    }
+
+    public function byUser()
+    {
+        return $this->belongsTo(User::class, 'by_user_id');
     }
 }

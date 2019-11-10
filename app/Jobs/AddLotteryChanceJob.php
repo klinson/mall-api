@@ -14,22 +14,17 @@ class AddLotteryChanceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    const type2methods = [
-        LotteryChance::FIRST_LOGIN_TYPE => 'whenUserFirstLogin',
-        LotteryChance::INVITE_USER_REGISTER_TYPE => 'whenInviteUserRegister'
-    ];
-
     protected $user_id;
-    protected $type;
+    protected $event;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(int $user_id, int $type)
+    public function __construct(int $user_id, int $event)
     {
-        $this->type = $type;
+        $this->event = $event;
         $this->user_id = $user_id;
     }
 
@@ -40,12 +35,11 @@ class AddLotteryChanceJob implements ShouldQueue
      */
     public function handle()
     {
-        $method = self::type2methods[$this->type];
-        LotteryChance::$method($this->user_id);
+        LotteryChance::whenEvent($this->user_id, $this->event);
     }
 
     public function tags()
     {
-        return ['AddLotteryChanceJob', 'user_id:'.$this->user_id, 'type:'.$this->type];
+        return ['AddLotteryChanceJob', 'user_id:'.$this->user_id, 'event:'.$this->event];
     }
 }
