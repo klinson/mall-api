@@ -16,25 +16,42 @@ class SystemController extends Controller
 {
     public function getConfig(Request $request)
     {
-        switch ($request->key) {
-            // 退货地址
-            case 'express_address':
-                $return = config('system.express_address', []);
-                break;
-            // 资讯（关于我们，入驻我们）
-            case 'articles.about_us':
-            case 'articles.join_us':
-            case 'articles.lottery_intro':
-                $id = config('system.'.$request->key, 0);
-                $return = ['content' => ''];
-                if ($id && $article = Article::find($id)) {
-                    $return['content'] = $article->content;
-                }
-                break;
-            default:
-                $return = [];
-                break;
+        if ($request->key) {
+            $keys = [$request->key];
+        } else {
+            $keys = is_array($request->keys) ? $request->keys : explode(',', $request->keys);
         }
+        $return = [];
+        foreach ($keys as $key) {
+            switch ($key) {
+                // 退货地址
+                case 'express_address':
+                    $return[$key] = config('system.express_address', []);
+                    break;
+                case 'enabled_lottery':
+                    $return[$key] = ['status' => intval(config('system.enabled_lottery', 1))];
+                    break;
+                // 资讯（关于我们，入驻我们）
+                case 'articles.about_us':
+                case 'articles.join_us':
+                case 'articles.lottery_intro':
+                    $id = config('system.'.$key, 0);
+                    $return[$key] = ['content' => ''];
+                    if ($id && $article = Article::find($id)) {
+                        $return[$key]['content'] = $article->content;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if ($return) {
+            if (count($keys) === 1) {
+                $return = $return[$keys[0]];
+            }
+        }
+
 
         return $this->response->array($return);
     }
