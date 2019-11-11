@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MemberLevelsTableSeeder::class);
         $this->call(MemberRechargeActivitiesTableSeeder::class);
         $this->call(PrizesTableSeeder::class);
+        $this->call(CouponsTableSeeder::class);
     }
 }
