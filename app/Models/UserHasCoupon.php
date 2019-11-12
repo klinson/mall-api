@@ -16,4 +16,19 @@ class UserHasCoupon extends Model
     protected $casts = [
         'coupon_snapshot' => 'array'
     ];
+
+    public function getFaceValueAttribute()
+    {
+        return $this->coupon_snapshot['face_value'];
+    }
+
+    public function getStartPriceAttribute()
+    {
+        return $this->coupon_snapshot['start_price'];
+    }
+
+    public function getTypeAttribute()
+    {
+        return $this->coupon_snapshot['type'];
+    }
 }

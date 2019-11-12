@@ -65,7 +65,7 @@ class CouponsController extends Controller
         }
 
         // 排它锁 锁表 lockForUpdate
-        $goods_specification_list = GoodsSpecification::with(['goods', 'nowGroupPurchase'])
+        $goods_specification_list = GoodsSpecification::with(['goods'])
             ->enabled()
             ->whereIn('id', array_keys($goods_specification_id2info))
             ->get();
