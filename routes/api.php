@@ -145,7 +145,7 @@ $api->version('v1', [
         $api->get('lottery/records/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
 
         // 优惠券
-        $api->get('myCoupons', 'CouponsController@myCoupons');
+        $api->get('user/coupons', 'CouponsController@myCoupons');
         $api->post('coupons/check', 'CouponsController@checkUserCoupons');
 
     });
