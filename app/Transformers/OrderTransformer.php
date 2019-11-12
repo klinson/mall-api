@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class OrderTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['orderGoods', 'user', 'specifications', 'coupon', 'leaderModel'];
+    protected $availableIncludes = ['orderGoods', 'user', 'specifications', 'coupon'];
 
     public function transform(Order $order)
     {
@@ -21,6 +21,7 @@ class OrderTransformer extends TransformerAbstract
             'member_discount_price' => $order->member_discount_price,
             'member_discount' => $order->member_discount,
             'coupon_price' => $order->coupon_price,
+            'user_coupon_id' => $order->user_coupon_id,
             'freight_price' => $order->freight_price,
             'freight_template_id' => $order->freight_template_id,
             'goods_count' => $order->goods_count,
@@ -54,18 +55,10 @@ class OrderTransformer extends TransformerAbstract
     public function includeCoupon(Order $order)
     {
         if ($order->coupon) {
-            return $this->item($order->coupon, new UserCouponTransformer());
+            return $this->item($order->coupon, new UserHasCouponTransformer());
         } else {
             return null;
         }
     }
 
-    public function includeLeaderModel(Order $order)
-    {
-        if ($order->leaderModel) {
-            return $this->item($order->leaderModel, new UserTransformer('leader'));
-        } else {
-            return null;
-        }
-    }
 }

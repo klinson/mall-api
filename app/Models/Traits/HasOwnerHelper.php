@@ -32,4 +32,11 @@ trait HasOwnerHelper
         }
         return $query->where($field, \Auth::user()->id ?? 0);
     }
+
+    public function isMine()
+    {
+        $field = $this->ownerForeignKey;
+
+        return $this->$field === (\Auth::user()->id ?? 0);
+    }
 }

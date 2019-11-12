@@ -21,6 +21,7 @@ class CreateUserHasCouponsTable extends Migration
             $table->unsignedInteger('discount_money')->default(0);
             $table->unsignedTinyInteger('has_enabled')->default(0);
             $table->unsignedTinyInteger('status')->default(0);
+            $table->timestamp('used_at')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();

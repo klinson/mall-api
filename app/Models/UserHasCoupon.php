@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\HasOwnerHelper;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserHasCoupon extends Model
@@ -31,4 +32,66 @@ class UserHasCoupon extends Model
     {
         return $this->coupon_snapshot['type'];
     }
+
+    /**
+     * 计算优惠金额
+     * @param $price
+     * @return int|mixed
+     * @author klinson <klinson@163.com>
+     */
+    public function settleDiscount($price)
+    {
+        if ($this->starting_price > $price) {
+            $discount_money = 0;
+        } else {
+            switch ($this->type) {
+                case 1:
+                    if ($this->face_value >= 100) {
+                        $discount_money = 0;
+                    } else {
+                        $discount_money = $price - intval(strval(($this->face_value * $price * 0.01)));
+                    }
+                    break;
+                case 2:
+                    $discount_money = $this->face_value > $price ? $price : $this->face_value;
+                    break;
+                default:
+                    $discount_money = 0;
+                    break;
+            }
+        }
+        return $discount_money;
+    }
+
+    // 冻结
+    public function freeze()
+    {
+        if ($this->status !== 1) {
+            return false;
+        }
+        $this->status = 4;
+        return $this->save();
+    }
+    // 解结
+    public function unfreeze()
+    {
+        if ($this->status !== 4) {
+            return false;
+        }
+        $this->status = 1;
+        return $this->save();
+    }
+    // 使用优惠券
+    public function useIt($coupon_price)
+    {
+        // 仅在冻结状态下可使用
+        if ($this->status !== 4) {
+            return false;
+        }
+        $this->used_at = Carbon::now()->toDateTimeString();
+        $this->discount_money = $coupon_price;
+        $this->status = 3;
+        return $this->save();
+    }
+
 }

@@ -107,25 +107,7 @@ class CouponsController extends Controller
         $price = $all_member_discount_price;
 
         foreach ($userCoupons as &$coupon) {
-            if ($coupon->starting_price > $price) {
-                $coupon->discount_money = 0;
-            } else {
-                switch ($coupon->type) {
-                    case 1:
-                        if ($coupon->face_value >= 100) {
-                            $coupon->discount_money = 0;
-                        } else {
-                            $coupon->discount_money = $price - intval(strval(($coupon->face_value * $price * 0.01)));
-                        }
-                        break;
-                    case 2:
-                        $coupon->discount_money = $coupon->face_value > $price ? $price : $coupon->face_value;
-                        break;
-                    default:
-                        $coupon->discount_money = 0;
-                        break;
-                }
-            }
+            $coupon->discount_money = $coupon->settleDiscount($price);
         }
 
         $userCoupons = $userCoupons->sortByDesc('discount_money');

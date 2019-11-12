@@ -300,4 +300,9 @@ class Order extends Model
             }
         }
     }
+
+    public function coupon()
+    {
+        return $this->hasOne(UserHasCoupon::class, 'id', 'user_coupon_id');
+    }
 }
