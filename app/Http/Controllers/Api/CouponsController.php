@@ -18,6 +18,12 @@ use Illuminate\Http\Request;
 
 class CouponsController extends Controller
 {
+    public function index()
+    {
+        $list = Coupon::enabled()->get();
+        return $this->response->collection($list, new CouponTransformer());
+    }
+
     public function show(Coupon $coupon)
     {
         return $this->response->item($coupon, new CouponTransformer());
@@ -30,7 +36,7 @@ class CouponsController extends Controller
             $query->where('status', $request->status);
         }
         $userCoupons = $query->get();
-        return $this->response->paginator($userCoupons, new UserHasCoupon());
+        return $this->response->collection($userCoupons, new UserHasCouponTransformer());
     }
 
     public function checkUserCoupons(Request $request)

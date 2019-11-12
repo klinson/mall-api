@@ -65,6 +65,12 @@ $api->version('v1', [
         $api->post('lottery/presentChance', 'LotteryController@presentChance');
         $api->get('lottery/records/recent', 'LotteryRecordsController@recent');
 
+        // 优惠券
+        $api->get('coupons', 'CouponsController@index');
+        $api->get('coupons/{coupon}', 'CouponsController@show')->where('coupon', '[0-9]+');
+        $api->post('coupons/{coupon}/present', 'CouponsController@present')->where('coupon', '[0-9]+');
+
+
     });
 
     // 需要登录的路由
@@ -137,6 +143,10 @@ $api->version('v1', [
         $api->get('lottery/records/{record}', 'LotteryRecordsController@show')->where('record', '[0-9]+');
         $api->put('lottery/records', 'LotteryRecordsController@setAddress');
         $api->get('lottery/records/{record}/logistics', 'LotteryRecordsController@logistics')->where('record', '[0-9]+');
+
+        // 优惠券
+        $api->get('myCoupons', 'CouponsController@myCoupons');
+        $api->post('coupons/check', 'CouponsController@checkUserCoupons');
 
     });
 });

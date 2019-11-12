@@ -16,7 +16,7 @@ class CouponTransformer extends TransformerAbstract
         return [
             'id' => $coupon->id,
             'title' => $coupon->title,
-            'starting_price' => $coupon->starting_price,
+            'start_price' => $coupon->start_price,
             'type' => $coupon->type,
             'face_value' => $coupon->face_value,
             'has_enabled' => $coupon->has_enabled,
