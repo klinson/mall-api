@@ -116,8 +116,8 @@ class CouponsController extends Controller
             }
         }
 
-        $userCoupons = $userCoupons->sortByDesc('discount_money');
-        return $this->response->collection($userCoupons, new UserHasCouponTransformer());
+        $list = $list->sortByDesc('discount_money');
+        return $this->response->collection($list, new UserHasCouponTransformer());
     }
 
     // 赠送（生产环境不可用，便于测试)
