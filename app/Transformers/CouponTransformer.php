@@ -7,13 +7,15 @@ use League\Fractal\TransformerAbstract;
 
 class CouponTransformer extends TransformerAbstract
 {
-    public function __construct()
+    protected $type;
+    public function __construct($type = '')
     {
+        $this->type = $type;
     }
 
     public function transform(Coupon $coupon)
     {
-        return [
+        $data = [
             'id' => $coupon->id,
             'title' => $coupon->title,
             'start_price' => $coupon->start_price,
@@ -21,5 +23,10 @@ class CouponTransformer extends TransformerAbstract
             'face_value' => $coupon->face_value,
             'has_enabled' => $coupon->has_enabled,
         ];
+        if ($this->type === 'pivot_count') {
+            $data['count'] = $coupon->pivot->count;
+        }
+
+        return $data;
     }
 }

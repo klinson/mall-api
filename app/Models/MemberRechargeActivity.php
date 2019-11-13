@@ -74,6 +74,6 @@ class MemberRechargeActivity extends Model
 
     public function coupons()
     {
-        return $this->belongsToMany(Coupon::class, 'member_recharge_activity_has_coupons', 'activity_id', 'coupon_id');
+        return $this->belongsToMany(Coupon::class, 'member_recharge_activity_has_coupons', 'activity_id', 'coupon_id')->withPivot(['count']);
     }
 }

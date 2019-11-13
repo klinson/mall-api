@@ -39,6 +39,6 @@ class MemberRechargeActivityTransformer extends TransformerAbstract
 
     public function includeCoupons(Model $model)
     {
-        return $this->collection($model->coupons, new CouponTransformer());
+        return $this->collection($model->coupons, new CouponTransformer('pivot_count'));
     }
 }
