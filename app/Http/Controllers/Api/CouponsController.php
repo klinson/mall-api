@@ -108,8 +108,12 @@ class CouponsController extends Controller
         // 对会员优惠后的价格进行满减
         $price = $all_member_discount_price;
 
-        foreach ($userCoupons as &$coupon) {
+        $list = collect();
+        foreach ($userCoupons as $coupon) {
             $coupon->discount_money = $coupon->settleDiscount($price);
+            if ($coupon->discount_money > 0) {
+                $list->push($coupon);
+            }
         }
 
         $userCoupons = $userCoupons->sortByDesc('discount_money');
