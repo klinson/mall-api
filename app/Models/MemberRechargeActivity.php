@@ -72,5 +72,8 @@ class MemberRechargeActivity extends Model
         return $this->hasMany(MemberRechargeOrder::class);
     }
 
-
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'member_recharge_activity_has_coupons', 'activity_id', 'coupon_id');
+    }
 }

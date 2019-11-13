@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class MemberRechargeActivityTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['memberLevel'];
+    protected $availableIncludes = ['memberLevel', 'coupons'];
 
     public function __construct()
     {
@@ -37,4 +37,8 @@ class MemberRechargeActivityTransformer extends TransformerAbstract
         return $this->item($model->memberLevel, new MemberLevelTransformer());
     }
 
+    public function includeCoupons(Model $model)
+    {
+        return $this->collection($model->coupons, new CouponTransformer());
+    }
 }
