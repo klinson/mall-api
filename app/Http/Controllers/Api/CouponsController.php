@@ -34,6 +34,8 @@ class CouponsController extends Controller
         $query = UserHasCoupon::isOwner()->recent();
         if (in_array($request->status, [1, 2, 3, 4])) {
             $query->where('status', $request->status);
+        } else if ($request->status == -1) {
+            $query->where('status', '<>', 1);
         }
         $userCoupons = $query->get();
         return $this->response->collection($userCoupons, new UserHasCouponTransformer());
