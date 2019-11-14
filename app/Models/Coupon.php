@@ -29,7 +29,7 @@ class Coupon extends Model
         while ($count--) {
             $list[] = $item;
         }
-        $this->userCoupons()->createMany($list);
+        return $this->userCoupons()->createMany($list);
     }
 
     // 系统赠送

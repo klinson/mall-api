@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Transformers\CouponTransformer;
+use App\Transformers\MemberRechargeActivityTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MemberRechargeActivity extends Model
@@ -75,5 +77,14 @@ class MemberRechargeActivity extends Model
     public function coupons()
     {
         return $this->belongsToMany(Coupon::class, 'member_recharge_activity_has_coupons', 'activity_id', 'coupon_id')->withPivot(['count']);
+    }
+
+    public function toSnapshot()
+    {
+        $snapshot = (new MemberRechargeActivityTransformer())->transform($this);
+        foreach ($this->coupons as $coupon) {
+            $snapshot['coupons']['data'][] = (new CouponTransformer('pivot_count'))->transform($coupon);
+        }
+        return $snapshot;
     }
 }

@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Jobs\SettleMemberRechargeOrderJob;
 use App\Models\Traits\HasOwnerHelper;
 use App\Transformers\MemberLevelTransformer;
-use App\Transformers\MemberRechargeActivityTransformer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use function EasyWeChat\Kernel\Support\get_client_ip;
@@ -70,7 +69,7 @@ class MemberRechargeOrder extends Model
             'user_id' => $user_id,
             'balance' => $activity->recharge_threshold,
             'member_recharge_activity_id' => $activity->id,
-            'member_recharge_activity_snapshot' => (new MemberRechargeActivityTransformer())->transform($activity),
+            'member_recharge_activity_snapshot' => $activity->toSnapshot(),
             'member_level_id' => $activity->memberLevel->id,
             'member_level_snapshot' => (new MemberLevelTransformer())->transform($activity->memberLevel),
             'status' => 1,
@@ -172,13 +171,33 @@ class MemberRechargeOrder extends Model
             $activity = $this->member_recharge_activity_snapshot;
             //记录用户会员等级和有效期
             UserHasMemberLevel::generate($this);
-            $log_info = "{$activity['title']}订单（{$this->order_number}）入账";
             $this->owner->memberInit();
 
-            // 充值入账
-            $this->owner->wallet->increment('balance', $this->balance);
-            $this->owner->wallet->save();
-            $this->owner->wallet->log($this->balance, $this, $log_info, 1);
+            // 优惠券入账
+            if (! empty($activity['coupons']['data'])) {
+                $log_info = "{$activity['title']}订单（{$this->order_number}）入账";
+
+                $coupon_ids = collect($activity['coupons']['data'])->pluck('id')->toArray();
+
+                $coupons = Coupon::whereIn('id', $coupon_ids)->get()->keyBy('id');
+                $userCoupons = collect();
+                foreach ($activity['coupons']['data'] as $datum) {
+                    if ($datum['count'] > 0) {
+                        $tmp = $coupons[$datum['id']]->toUser($this->owner, $log_info, $datum['count']);
+                        if ($tmp->isNotEmpty()) {
+                            $userCoupons = $userCoupons->concat($tmp);
+                        }
+                    }
+                }
+
+                // 记录到订单
+                $this->recordUserCoupons($userCoupons);
+            }
+
+            // 充值入账，已取消，已改成优惠券赠送
+//            $this->owner->wallet->increment('balance', $this->balance);
+//            $this->owner->wallet->save();
+//            $this->owner->wallet->log($this->balance, $this, $log_info, 1);
 
 
             DB::commit();
@@ -190,6 +209,20 @@ class MemberRechargeOrder extends Model
             DB::rollBack();
             throw $exception;
         }
+    }
+
+    public function recordUserCoupons($userCoupons)
+    {
+        if ($userCoupons->isEmpty()) {
+            return false;
+        }
+        $user_coupon_ids = $userCoupons->pluck('id')->toArray();
+        $this->coupons()->sync($user_coupon_ids);
+    }
+
+    public function coupons()
+    {
+        return $this->belongsToMany(UserHasCoupon::class, 'member_recharge_order_has_coupons', 'order_id', 'user_coupon_id');
     }
 
     public function inviter()
