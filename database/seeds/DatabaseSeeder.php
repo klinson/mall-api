@@ -30,5 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MemberRechargeActivitiesTableSeeder::class);
         $this->call(PrizesTableSeeder::class);
         $this->call(CouponsTableSeeder::class);
+        $this->call(MemberRechargeActivityHasCouponsTableSeeder::class);
+        $this->call(DiscountGoodsTableSeeder::class);
     }
 }
