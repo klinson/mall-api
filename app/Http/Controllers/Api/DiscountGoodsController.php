@@ -36,9 +36,9 @@ class DiscountGoodsController extends Controller
 
     }
 
-    public function show(Goods $goods)
+    public function show(DiscountGoods $goods)
     {
-        return $this->response->item($goods, new GoodsTransformer('show'));
+        return $this->response->item($goods, new DiscountGoodsTransformer('show'));
     }
 
     public function favour(Goods $goods)
@@ -71,7 +71,7 @@ class DiscountGoodsController extends Controller
     }
 
     // 生成二维码
-    public function qrcode(Goods $goods)
+    public function qrcode(DiscountGoods $goods)
     {
         if ($goods->has_enabled != 1) {
             return $this->response->errorBadRequest('当前商品已下架');
@@ -80,15 +80,15 @@ class DiscountGoodsController extends Controller
         $disk = 'qrcode';
         $user_id = \Auth::user()->id ?? 0;
 
-        $filename = "goods/{$goods->id}_{$user_id}.png";
+        $filename = "discount_goods/{$goods->id}_{$user_id}.png";
 
         try {
             if (! \Storage::disk($disk)->exists($filename)) {
-                $scene = "goods_id={$goods->id}&inviter_id={$user_id}";
+                $scene = "discount_goods_id={$goods->id}&inviter_id={$user_id}";
 
                 $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, [
                     'width' => 430,
-                    'page' => 'pages/goodsDetail/goodsDetail'
+//                    'page' => 'pages/goodsDetail/goodsDetail'
                 ]);
                 if ($stream instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
                     // 以内容 md5 为文件名存到本地

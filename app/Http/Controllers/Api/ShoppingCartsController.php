@@ -36,6 +36,11 @@ class ShoppingCartsController extends Controller
             ->where('goods_id', $shoppingCartRequest->goods_id)
             ->where('goods_specification_id', $shoppingCartRequest->goods_specification_id);
 
+        if ($shoppingCartRequest->marketing_type) {
+            $query->where('marketing_type', $shoppingCartRequest->marketing_type)
+                ->where('marketing_id', $shoppingCartRequest->marketing_id);
+        }
+
         $shoppingCart = $query->first();
         if (empty($shoppingCart)) {
             $shoppingCart = new ShoppingCart();

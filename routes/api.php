@@ -39,6 +39,8 @@ $api->version('v1', [
         $api->get('goods/{goods}/qrcode', 'GoodsController@qrcode')->where('goods', '[0-9]+');;
 
         $api->get('discountGoods', 'DiscountGoodsController@index');
+        $api->get('discountGoods/{goods}', 'DiscountGoodsController@show')->where('goods', '[0-9]+');;
+        $api->get('discountGoods/{goods}/qrcode', 'DiscountGoodsController@qrcode')->where('goods', '[0-9]+');;
 
 
         $api->get('broadcast', 'BroadcastsController@show');

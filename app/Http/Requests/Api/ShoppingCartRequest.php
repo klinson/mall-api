@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Rules\CheckGoodsMarketing;
 use App\Rules\CheckGoodsSpecification;
 
 class ShoppingCartRequest extends Request
@@ -33,7 +34,17 @@ class ShoppingCartRequest extends Request
                 return [
                     'quantity' => ['required', 'numeric', 'min:1'],
                     'goods_id' => ['required'],
-                    'goods_specification_id' => ['required', new CheckGoodsSpecification($this->get('goods_id', 0), $this->get('quantity', 0))],
+                    'goods_specification_id' => ['required'],
+                    'marketing_type' => ['in:App\Models\DiscountGoods'],
+                    'marketing_id' => [
+                        'required_with:marketing_type',
+                        new CheckGoodsMarketing(
+                            $this->get('goods_id', 0),
+                            $this->get('goods_specification_id', 0),
+                            $this->get('marketing_type', ''),
+                            $this->get('quantity', 0)
+                        )
+                    ]
                 ];
                 break;
         }
@@ -44,7 +55,9 @@ class ShoppingCartRequest extends Request
         return [
             'goods_id' => '商品',
             'quantity' => '购买数量',
-            'goods_specification_id' => '商品规格'
+            'goods_specification_id' => '商品规格',
+            'marketing_type' => '促销商品类型',
+            'marketing_id' => '促销商品',
         ];
     }
 }
