@@ -50,6 +50,11 @@ class Model extends EloquentModel
         return $query->where('has_enabled', 1);
     }
 
+    public function hasEnabled()
+    {
+        return $this->has_enabled === 1;
+    }
+
     public function scopeById($query)
     {
         return $query->orderBy('id');

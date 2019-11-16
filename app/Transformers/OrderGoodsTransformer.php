@@ -20,6 +20,8 @@ class OrderGoodsTransformer extends TransformerAbstract
             'quantity' => $orderGoods->quantity,
             'real_price' => $orderGoods->real_price,
             'snapshot' => $orderGoods->snapshot,
+            'marketing_type' => $orderGoods->marketing_type,
+            'marketing_id' => $orderGoods->marketing_id,
             'refund_status' => $orderGoods->refund_status,
         ];
     }

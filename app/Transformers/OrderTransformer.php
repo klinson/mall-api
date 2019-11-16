@@ -21,6 +21,7 @@ class OrderTransformer extends TransformerAbstract
             'member_discount_price' => $order->member_discount_price,
             'member_discount' => $order->member_discount,
             'coupon_price' => $order->coupon_price,
+            'allow_coupon_price' => $order->allow_coupon_price,
             'user_coupon_id' => $order->user_coupon_id,
             'freight_price' => $order->freight_price,
             'freight_template_id' => $order->freight_template_id,

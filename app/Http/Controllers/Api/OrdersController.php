@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\DiscountGoods;
 use App\Models\Express;
 use App\Models\FreightTemplate;
 use App\Models\GoodsSpecification;
@@ -20,6 +21,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
 class OrdersController extends Controller
 {
@@ -109,72 +111,116 @@ class OrdersController extends Controller
 
         $order_goods = [];
         $all_goods_price = 0;
+        // 支持优惠券折扣的金额（已经是会员优惠后的价格）
+        $allow_coupon_price = 0;
+        // 所有商品会员优惠后的价格需要实付的金额（未使用优惠券）
         $all_member_discount_price = 0;
         $goods_count = 0;
         $goods_weight = 0;
         $sub_quantity = [];
 
-        foreach ($goods_ids_list as $info) {
-            $goods_id = intval($info['goods_id']);
-            $specification_id = $info['goods_specification_id'];
-            $specification = $goods_specification_by_key_list[$specification_id];
-            if ($specification->goods_id != $goods_id) {
-                // 回滚数据
-                // 优惠券解冻
-                if ($userCoupon && ! $userCoupon->unfreeze()) {
-                    return $this->response->errorBadRequest('优惠券解冻失败，请联系客服');
+        // 验证库存和促销合法性
+        try {
+            foreach ($goods_ids_list as $info) {
+                $goods_id = intval($info['goods_id']);
+                $specification_id = $info['goods_specification_id'];
+                $specification = $goods_specification_by_key_list[$specification_id];
+                if ($specification->goods_id != $goods_id) {
+                    // 回滚数据
+                    throw new Exception('存在商品规格不合法');
                 }
-                return $this->response->errorBadRequest('存在商品规格不合法');
-            }
-            $goods = $specification->goods;
-            $now_quantity = $specification->quantity;
-            if ($info['quantity'] > $now_quantity) {
-                // 存在商品库存不够，回滚
-                // 优惠券解冻
-                if ($userCoupon && ! $userCoupon->unfreeze()) {
-                    return $this->response->errorBadRequest('优惠券解冻失败，请联系客服');
+                $goods = $specification->goods;
+                $goods_full_title = "【{$goods->title}（{$specification->title}）】";
+                // 加入促销商品判断
+                $marketing_type = $info['marketing_type'] ?? '';
+                switch ($marketing_type) {
+                    case DiscountGoods::class :
+                        $marketing = DiscountGoods::find(($info['marketing_id'] ?? 0));
+                        if (! ($marketing && $marketing->check($goods_id, $specification_id) && $marketing->hasEnabled())) {
+                            // 不存在或者不匹配或者被禁用
+                            throw new Exception("商品{$goods_full_title}促销活动不存在或已过期");
+                        }
+
+                        $goods_full_title = "【{$marketing->title}】";
+                        // 促销原价卖（不参与会员优惠和优惠券优惠）
+                        $discount_price = $goods_price = $marketing->price;
+
+                        $model = $marketing;
+
+                        $now_quantity = $marketing->quantity;
+
+                        break;
+                    default:
+                        $marketing = null;
+                        // 普通商品可会员价
+                        $goods_price = $specification->price;
+                        if ($member_discount < 100) {
+                            $discount_price = ceil(strval($goods_price * $member_discount * 0.01));
+                        } else {
+                            $discount_price = $goods_price;
+                        }
+
+                        $model = $specification;
+
+                        $now_quantity = $specification->quantity;
+
+                        break;
                 }
-                if ($now_quantity) {
-                    return $this->response->errorBadRequest("商品【{$goods->title}（{$specification->title}）】库存紧剩{$now_quantity}件, 不足{$info['quantity']}件，请重新调整数量后下单");
-                } else {
-                    return $this->response->errorBadRequest("商品【{$goods->title}（{$specification->title}）】已售罄");
+
+                if ($info['quantity'] > $now_quantity) {
+                    // 存在商品库存不够，回滚
+                    if ($now_quantity) {
+                        throw new Exception("商品{$goods_full_title}库存紧剩{$now_quantity}件, 不足{$info['quantity']}件，请重新调整数量后下单");
+                    } else {
+                        throw new Exception("商品{$goods_full_title}已售罄");
+                    }
                 }
+
+                //商品库存待删减
+                $sub_quantity[] = [
+                    'title' => $goods_full_title,
+                    'model' => $model,
+                    'quantity' => $info['quantity']
+                ];
+
+                // 计算总价（没有会员优惠的总价）
+                $item_goods_all_price = $goods_price * $info['quantity'];
+                // 已经会员优惠后的总价
+                $item_goods_real_price = $discount_price * $info['quantity'];
+                // 非活动商品，可加入计算优惠券
+                if (! $marketing) {
+                    $allow_coupon_price += $item_goods_real_price;
+                }
+
+                $order_goods_item = [
+                    'goods_id' => $goods_id,
+                    'goods_specification_id' => $specification_id,
+                    // 快照记录
+                    'snapshot' => $model->toSnapshot(),
+                    'price' => $goods_price,
+                    'quantity' => $info['quantity'],
+                    'real_price' => $item_goods_real_price,
+                    'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
+                ];
+                if ($marketing) {
+                    $order_goods_item['marketing_type'] = $marketing_type;
+                    $order_goods_item['marketing_id'] = $marketing->id;
+                }
+
+                $order_goods[] = $order_goods_item;
+                $all_member_discount_price += $item_goods_real_price;
+                $all_goods_price += $item_goods_all_price;
+                $goods_count += $info['quantity'];
+                $goods_weight += $specification->weight * $info['quantity'];
+
             }
 
-            $goods_price = $specification->price;
-
-            //商品库存待删减
-            $sub_quantity[] = [
-                'model' => $specification,
-                'quantity' => $info['quantity']
-            ];
-
-            // 计算单品会员优惠
-            $item_goods_all_price = $goods_price * $info['quantity'];
-            if ($member_discount == 100) {
-                $item_goods_real_price = $item_goods_all_price;
-            } else {
-                $item_goods_real_price = ceil(strval($item_goods_all_price * $member_discount * 0.01));
+        } catch (\Exception $exception) {
+            // 优惠券解冻
+            if ($userCoupon && ! $userCoupon->unfreeze()) {
+                return $this->response->errorBadRequest($exception->getMessage().'，优惠券解冻失败，请联系客服');
             }
-
-            $order_goods_item = [
-                'goods_id' => $goods_id,
-                'goods_specification_id' => $specification_id,
-                // 快照记录
-                'snapshot' => $specification->toSnapshot(),
-                'price' => $goods_price,
-                'quantity' => $info['quantity'],
-                'real_price' => $item_goods_real_price,
-                'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
-            ];
-
-
-            $order_goods[] = $order_goods_item;
-            $all_member_discount_price += $item_goods_real_price;
-            $all_goods_price += $item_goods_all_price;
-            $goods_count += $info['quantity'];
-            $goods_weight += $specification->weight * $info['quantity'];
-
+            return $this->response->errorBadRequest($exception->getMessage());
         }
 
         $goods_weight = floatval(strval($goods_weight));
@@ -184,7 +230,7 @@ class OrdersController extends Controller
 
         //优惠金额
         if ($userCoupon) {
-            $coupon_price = $userCoupon->settleDiscount($all_member_discount_price);
+            $coupon_price = $userCoupon->settleDiscount($allow_coupon_price);
             if ($coupon_price <= 0) {
                 // 优惠券解冻
                 if ($userCoupon && ! $userCoupon->unfreeze()) {
@@ -196,7 +242,7 @@ class OrdersController extends Controller
             $coupon_price = 0;
         }
 
-        // 不算运费的价格：会员折扣后使用优惠券的价格
+        // 算运费的价格：会员折扣后使用优惠券的价格
         $no_freight_price = $all_member_discount_price - $coupon_price;
 
         // 获取用户会员是否包邮
@@ -221,6 +267,7 @@ class OrdersController extends Controller
         $order->freight_price = $freight_price;
         $order->all_price = $all_price;
         $order->coupon_price = $coupon_price;
+        $order->allow_coupon_price = $allow_coupon_price;
         $order->user_coupon_id = $userCoupon ? $userCoupon->id : 0;
         $order->real_price = $real_price;
         $order->goods_count = $goods_count;
@@ -246,9 +293,9 @@ class OrdersController extends Controller
                     }
                     $specification = GoodsSpecification::find($item['model']->id);
                     if ($specification->quantity) {
-                        return $this->response->errorBadRequest("商品【{$specification->goods->title}（{$specification->title}）】库存紧剩{$specification->quantity}件, 不足{$item['quantity']}件，请重新调整数量后下单");
+                        return $this->response->errorBadRequest("商品{$item['title']}库存紧剩{$specification->quantity}件, 不足{$item['quantity']}件，请重新调整数量后下单");
                     } else {
-                        return $this->response->errorBadRequest("商品【{$specification->goods->title}（{$specification->title}）】已售罄");
+                        return $this->response->errorBadRequest("商品{$item['title']}已售罄");
                     }
                 }
             }

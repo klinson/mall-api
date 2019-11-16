@@ -7,7 +7,7 @@ class OrderGoods extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'goods_id', 'goods_specification_id', 'goods_info', 'price', 'quantity', 'snapshot', 'inviter_id', 'refund_status', 'real_price'
+        'goods_id', 'goods_specification_id', 'goods_info', 'price', 'quantity', 'snapshot', 'inviter_id', 'refund_status', 'real_price', 'marketing_type', 'marketing_id'
     ];
 
     protected $casts = [

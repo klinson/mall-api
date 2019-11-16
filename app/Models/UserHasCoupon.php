@@ -41,6 +41,8 @@ class UserHasCoupon extends Model
      */
     public function settleDiscount($price)
     {
+        if ($price <= 0) return 0;
+
         if ($this->start_price > $price) {
             $discount_money = 0;
         } else {
