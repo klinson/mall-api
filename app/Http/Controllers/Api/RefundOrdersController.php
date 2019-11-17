@@ -69,6 +69,15 @@ class RefundOrdersController extends Controller
         // 按购买数量和退款数量比例退
         $real_price = intval(strval($orderGoods->real_price * (floatval($request->quantity) / $orderGoods->quantity)));
 
+        // 验证是否需要退优惠券
+        // 活动商品直接照价退， 没用优惠券照价退
+        // 不是活动商品，并且是用了优惠券需要扣除优惠券折扣部分
+        if (empty($orderGoods->marketing_id) && $order->coupon_price) {
+            // 算大不算小，就可以少退点，避免超退
+            $refund_in_coupon = ceil(floatval(strval($real_price * (floatval($order->coupon_price) / $order->allow_coupon_price))));
+            $real_price -= $refund_in_coupon;
+        }
+
         $data = [
             'order_number' => RefundOrder::generateOrderNumber(),
             'user_id' => $this->user->id,
