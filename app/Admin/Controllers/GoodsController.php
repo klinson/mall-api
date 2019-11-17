@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Actions\GetButton;
 use App\Models\Category;
 use App\Models\Goods;
 use Encore\Admin\Controllers\AdminController;
@@ -129,7 +130,12 @@ class GoodsController extends AdminController
             $grid->disableExport();
             $grid->disableFilter();
             $grid->disableRowSelector();
-            $grid->disableActions();
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                 $actions->disableView();
+                 $actions->disableEdit();
+                 $actions->disableDelete();
+                 $actions->append(new GetButton('/admin/discountGoods/create?goods_specification_id='.$actions->getKey(), '设置折扣'));
+            });
         });
 
         return $show;

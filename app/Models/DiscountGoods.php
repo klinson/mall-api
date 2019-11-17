@@ -12,9 +12,8 @@ class DiscountGoods extends Model
 {
     use SoftDeletes;
 
-    protected $casts = [
-        'images' => 'array',
-        'tags' => 'array'
+    protected $fillable = [
+        'images', 'tags', 'title', 'thumbnail'
     ];
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
@@ -29,12 +28,58 @@ class DiscountGoods extends Model
         return $this->morphMany(OrderGoods::class, 'marketing', 'marketing_type', 'marketing_id', 'id');
     }
 
+    public function getAdCodeAttribute()
+    {
+        return 'discount_goods-'.$this->id;
+    }
+
     public function getThumbnailUrlAttribute()
     {
         if ($this->thumbnail) {
             return get_admin_file_url($this->thumbnail);
         } else {
             return asset(self::THUMBNAIL_TEMPLATE);
+        }
+    }
+
+    public function getImagesUrlAttribute()
+    {
+        if (! empty($this->images)) {
+            return get_admin_file_urls($this->images);
+        } else {
+            return [];
+        }
+    }
+
+    public function getImagesAttribute($content)
+    {
+        if (is_string($content)) {
+            return json_decode($content, true);
+        }
+        return $content;
+    }
+    public function setImagesAttribute($content)
+    {
+        if (is_array($content)) {
+            $this->attributes['images'] = json_encode($content);
+        } else if (empty($content)) {
+            $this->attributes['images'] = json_encode([]);
+        }
+    }
+
+    public function getTagAttribute($content)
+    {
+        if (is_string($content)) {
+            return json_decode($content, true);
+        }
+        return $content;
+    }
+    public function setTagsAttribute($content)
+    {
+        if (is_array($content)) {
+            $this->attributes['tags'] = json_encode($content);
+        } else {
+            $this->attributes['tags'] = json_encode(explode(',', $content));
         }
     }
 
