@@ -95,14 +95,20 @@ class DiscountGoodsController extends AdminController
      */
     protected function form()
     {
-        $specification_id = request('goods_specification_id', 0);
-        $specification = GoodsSpecification::find($specification_id);
-        if (empty($specification)) {
-            admin_toastr('商品不存在', 'error');
-            return back();
+        $form = new Form(new DiscountGoods);
+
+        if ($form->isCreating()) {
+            $specification_id = request('goods_specification_id', 0);
+            $specification = GoodsSpecification::find($specification_id);
+            if (empty($specification)) {
+                admin_toastr('商品不存在', 'error');
+                return back();
+            }
+        } else {
+            $specification = $form->model()->specification;
         }
 
-        $form = new Form(new DiscountGoods);
+
         $form->hidden('goods_id')->value($specification->goods_id);
         $form->hidden('goods_specification_id')->value($specification->id);
         $form->display('goods', '商品信息')->value($specification->goods->title);
