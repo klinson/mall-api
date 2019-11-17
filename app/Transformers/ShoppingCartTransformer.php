@@ -2,12 +2,13 @@
 
 namespace App\Transformers;
 
+use App\Models\DiscountGoods;
 use App\Models\ShoppingCart;
 use League\Fractal\TransformerAbstract;
 
 class ShoppingCartTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['goods', 'specification'];
+    protected $availableIncludes = ['goods', 'specification', 'marketing'];
 
     public function transform(ShoppingCart $shoppingCart)
     {
@@ -28,6 +29,16 @@ class ShoppingCartTransformer extends TransformerAbstract
     public function includeSpecification(ShoppingCart $shoppingCart)
     {
         return $this->item($shoppingCart->specification, new GoodsSpecificationTransformer());
+    }
+
+    public function includeMarketing(ShoppingCart $shoppingCart)
+    {
+        if ($shoppingCart->marketing) {
+            $transformer = MARKETING2TRANSFORMER[$shoppingCart->marketing_type];
+            return $this->item($shoppingCart->marketing, new $transformer());
+        } else {
+            return null;
+        }
     }
 
 }

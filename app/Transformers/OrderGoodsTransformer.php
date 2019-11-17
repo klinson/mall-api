@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class OrderGoodsTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['goods', 'specification', 'refundOrder'];
+    protected $availableIncludes = ['goods', 'specification', 'refundOrder', 'marketing'];
 
     public function transform(OrderGoods $orderGoods)
     {
@@ -35,6 +35,16 @@ class OrderGoodsTransformer extends TransformerAbstract
     {
         if ($orderGoods->specification) {
             return $this->item($orderGoods->specification, new GoodsSpecificationTransformer());
+        } else {
+            return null;
+        }
+    }
+
+    public function includeMarketing(OrderGoods $orderGoods)
+    {
+        if ($orderGoods->marketing) {
+            $transformer = MARKETING2TRANSFORMER[$orderGoods->marketing_type];
+            return $this->item($orderGoods->marketing, new $transformer());
         } else {
             return null;
         }

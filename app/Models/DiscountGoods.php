@@ -19,6 +19,16 @@ class DiscountGoods extends Model
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 
+    public function shoppingCarts()
+    {
+        return $this->morphMany(ShoppingCart::class, 'marketing', 'marketing_type', 'marketing_id', 'id');
+    }
+
+    public function orderGoods()
+    {
+        return $this->morphMany(OrderGoods::class, 'marketing', 'marketing_type', 'marketing_id', 'id');
+    }
+
     public function getThumbnailUrlAttribute()
     {
         if ($this->thumbnail) {

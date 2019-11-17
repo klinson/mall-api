@@ -15,4 +15,9 @@ class ShoppingCart extends Model
     {
         return $this->hasOne(GoodsSpecification::class, 'id', 'goods_specification_id')->withDefault(['title' => '[已删除]', 'price' => 0, 'quantity' => 0]);
     }
+
+    public function marketing()
+    {
+        return $this->morphTo('marketing', 'marketing_type', 'marketing_id');
+    }
 }

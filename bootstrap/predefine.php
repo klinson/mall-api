@@ -10,3 +10,7 @@ const HAS_ENABLED2TEXT = [
 ];
 
 const YN2TEXT = ['否', '是'];
+
+const MARKETING2TRANSFORMER = [
+    \App\Models\DiscountGoods::class => \App\Transformers\DiscountGoodsTransformer::class
+];
