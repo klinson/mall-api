@@ -17,6 +17,8 @@ class ShoppingCartTransformer extends TransformerAbstract
             'quantity' => $shoppingCart->quantity,
             'goods_id' => $shoppingCart->goods_id,
             'goods_specification_id' => $shoppingCart->goods_specification_id,
+            'marketing_id' => $shoppingCart->marketing_id,
+            'marketing_type' => $shoppingCart->marketing_type,
             'inviter_id' => $shoppingCart->inviter_id,
         ];
     }
