@@ -30,9 +30,17 @@ class DiscountGoodsController extends Controller
             $query->where('title', 'like', '%'.$request->q.'%');
         }
 
-        $list = $query->enabled()->sort()->ById()->paginate($request->per_page);
+        $query->enabled()->sort()->ById();
 
-        return $this->response->paginator($list, new DiscountGoodsTransformer());
+        if ($request->unlimit) {
+            $list = $query->get();
+
+            return $this->response->collection($list, new DiscountGoodsTransformer());
+        } else {
+            $list = $query->paginate($request->per_page);
+
+            return $this->response->paginator($list, new DiscountGoodsTransformer());
+        }
 
     }
 
