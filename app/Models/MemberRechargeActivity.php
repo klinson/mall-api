@@ -79,6 +79,11 @@ class MemberRechargeActivity extends Model
         return $this->belongsToMany(Coupon::class, 'member_recharge_activity_has_coupons', 'activity_id', 'coupon_id')->withPivot(['count']);
     }
 
+    public function hasCoupons()
+    {
+        return $this->hasMany(MemberRechargeActivityHasCoupon::class, 'activity_id');
+    }
+
     public function toSnapshot()
     {
         $snapshot = (new MemberRechargeActivityTransformer())->transform($this);
