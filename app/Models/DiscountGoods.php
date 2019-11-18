@@ -16,6 +16,10 @@ class DiscountGoods extends Model
         'images', 'tags', 'title', 'thumbnail'
     ];
 
+    protected $casts = [
+        'images' => 'array'
+    ];
+
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 
     public function shoppingCarts()
@@ -51,29 +55,28 @@ class DiscountGoods extends Model
         }
     }
 
-    public function getImagesAttribute($content)
-    {
-        if (is_string($content)) {
-            return json_decode($content, true);
-        }
-        return $content;
-    }
-    public function setImagesAttribute($content)
-    {
-        if (is_array($content)) {
-            $this->attributes['images'] = json_encode($content);
-        } else if (empty($content)) {
-            $this->attributes['images'] = json_encode([]);
-        }
-    }
-
     public function getTagsAttribute($content)
     {
-        if (is_string($content)) {
-            return json_decode($content, true);
+        if ($arr = json_decode($content, true)) {
+//            return $arr;
+            return implode(',', $arr);
         }
+
         return $content;
     }
+
+    public function getTagsArrayAttribute()
+    {
+
+        if ($arr = json_decode($this->tags, true)) {
+            return $arr;
+        } else if ($arr = explode(',', $this->tags)) {
+            return $arr;
+        }
+
+        return $this->tags;
+    }
+
     public function setTagsAttribute($content)
     {
         if (is_array($content)) {
