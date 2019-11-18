@@ -67,7 +67,7 @@ class DiscountGoods extends Model
         }
     }
 
-    public function getTagAttribute($content)
+    public function getTagsAttribute($content)
     {
         if (is_string($content)) {
             return json_decode($content, true);
