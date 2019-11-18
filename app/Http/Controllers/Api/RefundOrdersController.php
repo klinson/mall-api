@@ -33,49 +33,38 @@ class RefundOrdersController extends Controller
     }
 
     // 发起退款，仅支持确认到货7天内的未申请(1)或已经撤销申请(0)情况
+    // test是用于计算实际能退多少
     public function store(Order $order, OrderGoods $orderGoods, Request $request)
     {
         $this->authorize('is-mine', $order);
 
-        if (! in_array($order->status, [3, 4])) {
-            return $this->response->errorBadRequest('订单状态异常，请确认订单状态');
+        if ($request->test) {
+            $rule = [
+                'quantity' => 'required|numeric',
+            ];
+        } else {
+            $rule = [
+                'quantity' => 'required|numeric',
+                'reason_text' => 'required|max:250',
+                'reason_images' => 'required'
+            ];
         }
 
-        if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
-            return $this->response->errorBadRequest('订单确定到货已经超过7天，不可申请退款');
-        }
-
-        if ($orderGoods->order_id !== $order->id) {
-            return $this->response->errorBadRequest('请选择退款商品');
-        }
-
-        if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
-            return $this->response->errorBadRequest('该商品已经申请过退款');
-        }
-
-        $this->validate($request, [
-            'quantity' => 'required|numeric',
-            'reason_text' => 'required|max:250',
-            'reason_images' => 'required'
-        ], [], [
+        $this->validate($request, $rule, [], [
             'quantity' => '退款数量',
             'reason_text' => '退款原因',
             'reason_images' => '说明图片'
         ]);
 
-        if ($orderGoods->quantity < $request->quantity) {
-            return $this->response->errorBadRequest('退款数量不合法');
-        }
-        // 按购买数量和退款数量比例退
-        $real_price = intval(strval($orderGoods->real_price * (floatval($request->quantity) / $orderGoods->quantity)));
-
-        // 验证是否需要退优惠券
-        // 活动商品直接照价退， 没用优惠券照价退
-        // 不是活动商品，并且是用了优惠券需要扣除优惠券折扣部分
-        if (empty($orderGoods->marketing_id) && $order->coupon_price) {
-            // 算大不算小，就可以少退点，避免超退
-            $refund_in_coupon = ceil(floatval(strval($real_price * (floatval($order->coupon_price) / $order->allow_coupon_price))));
-            $real_price -= $refund_in_coupon;
+        try {
+            $real_price = RefundOrder::settleRefundPrice($order, $orderGoods, $request->quantity);
+            if ($request->test) {
+                return $this->response->array([
+                    'real_price' => $real_price,
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest($exception->getMessage());
         }
 
         $data = [

@@ -6,6 +6,7 @@ use App\Models\Traits\HasObserverHelper;
 use App\Models\Traits\HasOwnerHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Log;
+use Exception;
 
 class RefundOrder extends Model
 {
@@ -24,6 +25,41 @@ class RefundOrder extends Model
     protected $casts = [
         'reason_images' => 'array'
     ];
+
+    public static function settleRefundPrice(Order $order, OrderGoods $orderGoods, int $quantity) {
+        if (! in_array($order->status, [3, 4])) {
+            throw new Exception('订单状态异常，请确认订单状态');
+        }
+
+        if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
+            throw new Exception('订单确定到货已经超过7天，不可申请退款');
+        }
+
+        if ($orderGoods->order_id !== $order->id) {
+            throw new Exception('请选择退款商品');
+        }
+
+        if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
+            throw new Exception('该商品已经申请过退款');
+        }
+
+        if ($quantity <= 0 || $orderGoods->quantity < $quantity) {
+            throw new Exception('退款数量不合法');
+        }
+        // 按购买数量和退款数量比例退
+        $real_price = intval(strval($orderGoods->real_price * (floatval($quantity) / $orderGoods->quantity)));
+
+        // 验证是否需要退优惠券
+        // 活动商品直接照价退， 没用优惠券照价退
+        // 不是活动商品，并且是用了优惠券需要扣除优惠券折扣部分
+        if (empty($orderGoods->marketing_id) && $order->coupon_price) {
+            // 算大不算小，就可以少退点，避免超退
+            $refund_in_coupon = ceil(floatval(strval($real_price * (floatval($order->coupon_price) / $order->allow_coupon_price))));
+            $real_price -= $refund_in_coupon;
+        }
+
+        return $real_price;
+    }
 
     // 拒绝退款
     public function rejectRefund()
