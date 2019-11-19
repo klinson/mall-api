@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class UnsettleOrderJob implements ShouldQueue
+class SettleOrderJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,13 +33,11 @@ class UnsettleOrderJob implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->order->unsettle($this->rate)) {
-            dispatch(new SettleOrderJob($this->order, $this->rate));
-        }
+        $this->order->settle($this->rate);
     }
 
     public function tags()
     {
-        return ['UnsettleOrderJob', 'order_id:'.$this->order->id, 'rate:'.($this->rate*0.01).'%'];
+        return ['SettleOrderJob', 'order_id:'.$this->order->id, 'rate:'.($this->rate*0.01).'%'];
     }
 }

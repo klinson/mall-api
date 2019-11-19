@@ -223,7 +223,8 @@ class Order extends Model
         $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
 
-//        dispatch(new UnsettleOrderJob($this));
+        $rate = intval(config('system.inviter_bonus_rate', 0));
+        dispatch(new UnsettleOrderJob($this, $rate));
     }
 
     /**
@@ -276,29 +277,70 @@ class Order extends Model
         return $this->hasMany(RefundOrder::class, 'order_id', 'id');
     }
 
-    // 待结算记录
-    public function unsettle()
+    /**
+     * 待结算记录
+     * @param int $rate  邀请购买佣金比例, 1=>0.01%,500=>5%,10000=>100%
+     * @author klinson <klinson@163.com>
+     * @return bool 是否需要进行结算
+     */
+    public function unsettle($rate)
     {
-        // 自己是代理直接结算给自己，自己不是代理则按邀请购买人进行结算
-        if ($this->owner->isAgency()) {
-            // 计算出待结算金额
-            $balance = $this->owner->agency->unsettleOrder($this);
-
-            $this->owner->coffer->unsettle($balance, $this, $this->owner->agency, 1);
-        } else {
-            $orderGoods = $this->orderGoods()->with(['inviter'])->whereHas('inviter')->get();
+        if ($rate <= 0) {
+            return false;
+        }
+        $orderGoods = $this->orderGoods()->with(['inviter'])->whereHas('inviter')->get();
+        if ($orderGoods->isNotEmpty()) {
             foreach ($orderGoods as $orderGood) {
                 // 邀请人是代理才进行结算
                 if (! $orderGood->inviter) continue;
-                if (! $orderGood->inviter->isAgency()) continue;
 
-                // 计算出待结算金额
-                $balance = $orderGood->inviter->agency->unsettleOrderGoods($orderGood);
+                // 计算出待结算金额(算小）
+                $balance = intval(strval($orderGood->real_price * $rate * 0.0001));
 
                 // 待结算记录
-                $orderGood->inviter->coffer->unsettle($balance, $this, $orderGood->inviter->agency, 1);
+                $orderGood->inviter->coffer->unsettle($balance, $this);
             }
+            return true;
         }
+        return false;
+    }
+
+    /**
+     * 结算
+     * @param $rate
+     * @author klinson <klinson@163.com>
+     * @return bool
+     */
+    public function settle($rate)
+    {
+        if ($rate <= 0) {
+            return false;
+        }
+        $orderGoods = $this->orderGoods()->with(['inviter', 'refundOrder'])->whereHas('inviter')->get();
+        if ($orderGoods->isNotEmpty()) {
+            foreach ($orderGoods as $orderGood) {
+                // 邀请人是代理才进行结算
+                if (! $orderGood->inviter) continue;
+
+                // 计算要结算金额(算小）
+                $balance = intval(strval($orderGood->real_price * $rate * 0.0001));
+
+                // 存在退款申请且已通过则记录成已退款, 计算出要退回的奖励,（算大）
+                if ($orderGood->refundOrder && $orderGood->refundOrder->status == 4) {
+                    $refund_balance = ceil(strval($orderGood->real_price * $rate * 0.0001));
+
+                    $orderGood->inviter->coffer->settleRefund($refund_balance, $this);
+                    $balance -= $refund_balance;
+                }
+
+                // 结算记录
+                if ($balance > 0) {
+                    $orderGood->inviter->coffer->settle($balance, $this);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public function coupon()

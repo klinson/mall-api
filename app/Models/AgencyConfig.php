@@ -89,7 +89,7 @@ class AgencyConfig extends Model
                 $balance = $this->$profit * $this->goods_count;
                 break;
             case 2:
-                $balance = strval(strval($this->$profit * $orderGoods->price * $orderGoods->quantity * 0.01));
+                $balance = intval(strval($this->$profit * $orderGoods->price * $orderGoods->quantity * 0.01));
                 break;
             case 3:
             default:

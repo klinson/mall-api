@@ -71,7 +71,7 @@ class Coffer extends Model
         return $desc;
     }
 
-    public function unsettle($balance, $model, $agency, $agency_level)
+    public function unsettle($balance, $model, $agency = null, $agency_level = 0)
     {
         if ($balance > 0) {
             $this->increment('unsettle_balance', $balance);
@@ -79,6 +79,47 @@ class Coffer extends Model
         }
 
         $this->log($balance, $model, 1, $agency, $agency_level);
+    }
+
+    public function settleRefund($balance, $model, $agency = null, $agency_level = 0)
+    {
+        if ($balance > 0) {
+            $this->decrement('unsettle_balance', $balance);
+            $this->save();
+        }
+
+        $this->log($balance, $model, 3, $agency, $agency_level);
+    }
+
+    public function settle($balance, $model, $agency = null, $agency_level = 0)
+    {
+        if ($balance > 0) {
+            $this->settleBalance($balance);
+        }
+
+        $this->log($balance, $model, 2, $agency, $agency_level);
+    }
+
+    public function settleBalance($balance)
+    {
+        try {
+            // 减库存
+            $query = DB::table('coffers')->where(
+                $this->getKeyName(), $this->getKey()
+            );
+            $columns = [
+                'balance' => DB::raw("`balance` + $balance"),
+                'unsettle_balance' => DB::raw("`unsettle_balance` - $balance"),
+            ];
+            $res = $query->update($columns);
+            if ($res === 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     public function settleMemberRechargeOrder($balance, $model)
