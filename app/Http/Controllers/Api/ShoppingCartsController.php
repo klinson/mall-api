@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\ShoppingCartRequest;
 use App\Models\ShoppingCart;
+use App\Models\User;
 use App\Transformers\ShoppingCartTransformer;
 use Illuminate\Http\Request;
 
@@ -53,10 +54,8 @@ class ShoppingCartsController extends Controller
             $shoppingCart->quantity = $shoppingCart->quantity + $shoppingCartRequest->quantity;
         }
 
-        if (\Auth::user()->agency_id) {
-            $shoppingCart->inviter_id = \Auth::user()->id;
-        } else {
-            $shoppingCart->inviter_id = intval($shoppingCartRequest->inviter_id);
+        if ($inviter = User::checkInviter($shoppingCart->inviter_id)){
+            $shoppingCart->inviter_id = $inviter->id;
         }
 
         try {
