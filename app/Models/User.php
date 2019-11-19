@@ -219,4 +219,26 @@ class User extends Authenticatable implements JWTSubject
             return '';
         }
     }
+
+    /**
+     * 验证inviter_id是否合法
+     * 本人不能邀请自己，id必须存在用户
+     * @param $inviter_id
+     * @return bool|User
+     * @author klinson <klinson@163.com>
+     */
+    public static function checkInviter($inviter_id)
+    {
+        $inviter_id = intval($inviter_id);
+        if (empty($inviter_id)) return false;
+
+        if (\Auth::check() && $inviter_id == \Auth::user()->id) {
+            return false;
+        }
+        if ($inviter = self::find($inviter_id)) {
+            return $inviter;
+        } else {
+            return false;
+        }
+    }
 }
