@@ -39,6 +39,9 @@ class ShoppingCartsController extends Controller
         if ($shoppingCartRequest->marketing_type) {
             $query->where('marketing_type', $shoppingCartRequest->marketing_type)
                 ->where('marketing_id', $shoppingCartRequest->marketing_id);
+        } else {
+            $query->whereNull('marketing_type')
+                ->where('marketing_id', 0);
         }
 
         $shoppingCart = $query->first();
