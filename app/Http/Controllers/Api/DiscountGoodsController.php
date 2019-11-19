@@ -118,6 +118,7 @@ class DiscountGoodsController extends Controller
                 'url' => \Storage::disk($disk)->url($filename)
             ]);
         } catch (\Exception $exception) {
+            \Log::error('生成折扣二维码失败：' . $exception->getMessage());
             return $this->response->errorBadRequest('生成小程序码失败，请稍后重试');
         }
 
