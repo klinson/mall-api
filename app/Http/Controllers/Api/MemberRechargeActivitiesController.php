@@ -42,7 +42,7 @@ class MemberRechargeActivitiesController extends Controller
 
         try {
             if (! \Storage::disk($disk)->exists($filename)) {
-                $scene = "activity_id={$activity->id}&inviter_id={$user_id}";
+                $scene = "a={$activity->id}&iu={$user_id}";
 
                 $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, [
                     'width' => 430,
