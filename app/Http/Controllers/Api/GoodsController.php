@@ -84,7 +84,7 @@ class GoodsController extends Controller
 
         try {
             if (! \Storage::disk($disk)->exists($filename)) {
-                $scene = "goods_id={$goods->id}&inviter_id={$user_id}";
+                $scene = "g={$goods->id}&iu={$user_id}";
 
                 $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, [
                     'width' => 430,
