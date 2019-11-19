@@ -227,7 +227,7 @@ class User extends Authenticatable implements JWTSubject
      * @return bool|User
      * @author klinson <klinson@163.com>
      */
-    public static function checkInviter($inviter_id)
+    public static function checkInviter($inviter_id = 0)
     {
         $inviter_id = intval($inviter_id);
         if (empty($inviter_id)) return false;
@@ -240,5 +240,24 @@ class User extends Authenticatable implements JWTSubject
         } else {
             return false;
         }
+    }
+
+    /**
+     * 获取inviters
+     * @param array $inviter_ids
+     * @return \Illuminate\Support\Collection
+     * @author klinson <klinson@163.com>
+     */
+    public static function getInviters($inviter_ids = [])
+    {
+        if (empty($inviter_id)) return collect([]);
+
+        if (\Auth::check() && ($key = array_search(\Auth::user()->id, $inviter_ids)) !== false) {
+            unset($inviter_ids[$key]);
+        }
+
+        if (empty($inviter_id)) return collect([]);
+
+        return User::whereIn('id', $inviter_ids)->get();
     }
 }

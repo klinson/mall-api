@@ -15,6 +15,7 @@ use App\Models\GoodsSpecification;
 use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Models\ShoppingCart;
+use App\Models\User;
 use App\Models\UserHasCoupon;
 use App\Transformers\OrderTransformer;
 use Carbon\Carbon;
@@ -62,6 +63,7 @@ class OrdersController extends Controller
             return $this->response->errorBadRequest('下单商品不能为空');
         }
         $goods_specification_id2info = [];
+        $inviter_ids = [];
         foreach ($goods_ids_list as $goods) {
             if (! isset($goods['goods_id']) || ! is_numeric($goods['goods_id']) || $goods['goods_id'] <= 0) {
                 return $this->response->errorBadRequest('存在商品id不合法');
@@ -74,7 +76,12 @@ class OrdersController extends Controller
             }
 
             $goods_specification_id2info[$goods['goods_specification_id']] = $goods;
+            if (isset($goods['inviter_id']) && $goods['inviter_id'] > 0) {
+                $inviter_ids[] = intval($goods['inviter_id']);
+            }
         }
+
+        $inviter_ids = array_unique($inviter_ids);
 
         // 排它锁 锁表 lockForUpdate
         $goods_specification_list = GoodsSpecification::with(['goods'])
@@ -119,11 +126,17 @@ class OrdersController extends Controller
         $goods_weight = 0;
         $sub_quantity = [];
 
+        // 获取所有邀请人
+        $inviters = User::getInvites($inviter_ids);
+        $inviters = $inviters->keyBy('id');
+
         // 验证库存和促销合法性
         try {
             foreach ($goods_ids_list as $info) {
                 $goods_id = intval($info['goods_id']);
                 $specification_id = $info['goods_specification_id'];
+                $inviter_id = $info['inviter_id'] ?? 0;
+
                 $specification = $goods_specification_by_key_list[$specification_id];
                 if ($specification->goods_id != $goods_id) {
                     // 回滚数据
@@ -200,7 +213,7 @@ class OrdersController extends Controller
                     'price' => $goods_price,
                     'quantity' => $info['quantity'],
                     'real_price' => $item_goods_real_price,
-                    'inviter_id' => \Auth::user()->agency_id ? \Auth::user()->id : ($info['inviter_id'] ?? 0),
+                    'inviter_id' => isset($inviters[$inviter_id]) ? $inviters[$inviter_id]->id : 0,
                 ];
                 if ($marketing) {
                     $order_goods_item['marketing_type'] = $marketing_type;
