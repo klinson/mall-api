@@ -23,4 +23,8 @@ return [
     'enabled_lottery' => env('ENABLED_LOTTERY', 1),
     // 谢谢参与抽奖的权值
     'non_prize_rate' => env('NON_PRIZE_RATE', 0),
+
+    // 邀请购买佣金比例, 1=>0.01%,500=>5%,10000=>100%
+    'invite_bonus_rate' => 500,
+
 ];

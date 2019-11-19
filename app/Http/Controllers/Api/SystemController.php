@@ -41,6 +41,10 @@ class SystemController extends Controller
                         $return[$key]['content'] = $article->content;
                     }
                     break;
+                // 邀请购买佣金比例
+                case 'invite_bonus_rate':
+                    $return[$key] = ['rate' => intval(config('system.inviter_bonus_rate', 1))];
+                    break;
                 default:
                     break;
             }
