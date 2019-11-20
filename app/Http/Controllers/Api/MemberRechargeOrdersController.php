@@ -58,7 +58,7 @@ class MemberRechargeOrdersController extends Controller
         }
 
         $inviter_id = 0;
-        if ($request->inviter_id && ($inviter = User::find($request->inviter_id)) && $inviter->isMember()) {
+        if ($request->inviter_id && ($inviter = User::checkInviter($request->inviter_id))) {
             $inviter_id = $inviter->id;
         }
 
