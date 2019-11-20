@@ -127,7 +127,7 @@ class OrdersController extends Controller
         $sub_quantity = [];
 
         // 获取所有邀请人
-        $inviters = User::getInvites($inviter_ids);
+        $inviters = User::getInviters($inviter_ids);
         $inviters = $inviters->keyBy('id');
 
         // 验证库存和促销合法性
