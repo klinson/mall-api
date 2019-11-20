@@ -48,6 +48,10 @@ Route::group([
     $router->get('system', 'SystemController@index');
 
     $router->resource('memberLevels', MemberLevelsController::class);
+
+    $router->get('memberRechargeActivities/{activity}/coupons', 'MemberRechargeActivitiesController@coupons')->where('activity', '[0-9]+');
+    $router->post('memberRechargeActivities/{activity}/coupons', 'MemberRechargeActivitiesController@storeCoupons')->where('activity', '[0-9]+');
+    $router->delete('memberRechargeActivities/{activity}/coupons/{coupon_id}', 'MemberRechargeActivitiesController@destroyCoupons')->where('activity', '[0-9]+')->where('coupon_id', '[0-9]+');
     $router->resource('memberRechargeActivities', MemberRechargeActivitiesController::class);
     $router->resource('memberRechargeOrders', MemberRechargeOrdersController::class);
     $router->put('prizes/{prize}/updateQuantity', 'PrizesController@updateQuantity')->where('prize', '[0-9]+');
