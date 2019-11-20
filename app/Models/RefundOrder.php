@@ -26,21 +26,23 @@ class RefundOrder extends Model
         'reason_images' => 'array'
     ];
 
-    public static function settleRefundPrice(Order $order, OrderGoods $orderGoods, int $quantity) {
-        if (! in_array($order->status, [3, 4])) {
-            throw new Exception('订单状态异常，请确认订单状态');
-        }
-
-        if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
-            throw new Exception('订单确定到货已经超过7天，不可申请退款');
-        }
-
+    public static function settleRefundPrice(Order $order, OrderGoods $orderGoods, int $quantity, $test = false) {
         if ($orderGoods->order_id !== $order->id) {
             throw new Exception('请选择退款商品');
         }
 
-        if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
-            throw new Exception('该商品已经申请过退款');
+        if (! $test) {
+            if (! in_array($order->status, [3, 4])) {
+                throw new Exception('订单状态异常，请确认订单状态');
+            }
+
+            if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
+                throw new Exception('订单确定到货已经超过7天，不可申请退款');
+            }
+
+            if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
+                throw new Exception('该商品已经申请过退款');
+            }
         }
 
         if ($quantity <= 0 || $orderGoods->quantity < $quantity) {

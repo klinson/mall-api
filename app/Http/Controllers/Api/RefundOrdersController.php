@@ -57,7 +57,7 @@ class RefundOrdersController extends Controller
         ]);
 
         try {
-            $real_price = RefundOrder::settleRefundPrice($order, $orderGoods, $request->quantity);
+            $real_price = RefundOrder::settleRefundPrice($order, $orderGoods, $request->quantity, $request->test ? true : false);
             if ($request->test) {
                 return $this->response->array([
                     'real_price' => $real_price,
