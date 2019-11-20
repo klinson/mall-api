@@ -82,8 +82,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function init()
     {
-        $this->wallet()->create();
-        $this->coffer()->create();
+        if (! $this->wallet) {
+            $this->wallet()->create();
+        }
+        if (! $this->coffer) {
+            $this->coffer()->create();
+        }
     }
 
     public function agency()
