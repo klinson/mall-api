@@ -49,13 +49,13 @@ class Coffer extends Model
         $balance = strval($balance * 0.01) . '元';
         switch (get_class($model)) {
             case Order::class:
-                $desc = '【'.CofferLog::type_text[$type]."】【".CofferLog::agency_level[$agency_level]."】订单({$model->order_number})佣金{$balance}";
+                $desc = '【'.CofferLog::type_text[$type]."】订单({$model->order_number})佣金{$balance}";
                 break;
             case OrderGoods::class:
-                $desc = '【'.CofferLog::type_text[$type]."】【".CofferLog::agency_level[$agency_level]."】订单({$model->order->order_number})中商品({$model->snapshot['goods']['title']}-{$model->snapshot['title']})佣金{$balance}";
+                $desc = '【'.CofferLog::type_text[$type]."】订单({$model->order->order_number})中商品({$model->snapshot['goods']['title']}-{$model->snapshot['title']})佣金{$balance}";
                 break;
             case RefundOrder::class:
-                $desc = '【'.CofferLog::type_text[$type]."】【".CofferLog::agency_level[$agency_level]."】售后订单({$model->order_number})中商品({$model->orderGoods->snapshot['goods']['title']}-{$model->orderGoods->snapshot['title']})佣金{$balance}";
+                $desc = '【'.CofferLog::type_text[$type]."】售后订单({$model->order_number})中商品({$model->orderGoods->snapshot['goods']['title']}-{$model->orderGoods->snapshot['title']})佣金{$balance}";
                 break;
             case CofferWithdrawal::class:
                 $desc = '【'.CofferLog::type_text[$type]."】订单({$model->order_number})金额{$model->balance}";

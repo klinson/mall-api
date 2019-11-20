@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,7 +35,7 @@ class UnsettleOrderJob implements ShouldQueue
     public function handle()
     {
         if ($this->order->unsettle($this->rate)) {
-            dispatch(new SettleOrderJob($this->order, $this->rate));
+            dispatch(new SettleOrderJob($this->order, $this->rate))->delay(Carbon::now()->addDays(config('system.order_auto_settle_days', 7)));
         }
     }
 

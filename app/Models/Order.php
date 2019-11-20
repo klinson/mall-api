@@ -219,12 +219,16 @@ class Order extends Model
 
     public function receive()
     {
+        if ($this->status !== 3) {
+            return false;
+        }
         $this->status = 4;
         $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
 
-        $rate = intval(config('system.inviter_bonus_rate', 0));
+        $rate = intval(config('system.invite_bonus_rate', 0));
         dispatch(new UnsettleOrderJob($this, $rate));
+        return true;
     }
 
     /**
@@ -294,11 +298,14 @@ class Order extends Model
                 // 邀请人是代理才进行结算
                 if (! $orderGood->inviter) continue;
 
-                // 计算出待结算金额(算小）
+                // 验证是否已经记录待结算
+                if (CofferLog::check($orderGood, 1)) continue;
+
+                // 计算出待结算金额(算小）(单位分）
                 $balance = intval(strval($orderGood->real_price * $rate * 0.0001));
 
                 // 待结算记录
-                $orderGood->inviter->coffer->unsettle($balance, $this);
+                $orderGood->inviter->coffer->unsettle($balance, $orderGood);
             }
             return true;
         }
@@ -322,20 +329,26 @@ class Order extends Model
                 // 邀请人是代理才进行结算
                 if (! $orderGood->inviter) continue;
 
-                // 计算要结算金额(算小）
+                // 验证是否已经记录结算
+                if (CofferLog::check($orderGood, 2)) continue;
+
+                // 计算要结算金额(算小）(单位分）
                 $balance = intval(strval($orderGood->real_price * $rate * 0.0001));
 
-                // 存在退款申请且已通过则记录成已退款, 计算出要退回的奖励,（算大）
+                // 存在退款申请且已通过则记录成已退款, 计算出要退回的奖励,（算大）(单位分）
                 if ($orderGood->refundOrder && $orderGood->refundOrder->status == 4) {
+                    // 验证是否已经记录退款
+                    if (CofferLog::check($orderGood, 3)) continue;
+
                     $refund_balance = ceil(strval($orderGood->real_price * $rate * 0.0001));
 
-                    $orderGood->inviter->coffer->settleRefund($refund_balance, $this);
+                    $orderGood->inviter->coffer->settleRefund($refund_balance, $orderGood->refundOrder);
                     $balance -= $refund_balance;
                 }
 
                 // 结算记录
                 if ($balance > 0) {
-                    $orderGood->inviter->coffer->settle($balance, $this);
+                    $orderGood->inviter->coffer->settle($balance, $orderGood);
                 }
             }
             return true;

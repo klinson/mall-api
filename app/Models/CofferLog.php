@@ -27,4 +27,14 @@ class CofferLog extends Model
     protected $casts = [
         'agency' => 'array'
     ];
+
+    public static function check($model, $type)
+    {
+        $where = [
+            'type' => $type,
+            'data_id' => $model->id,
+            'data_type' => get_class($model),
+        ];
+        return self::where($where)->first();
+    }
 }

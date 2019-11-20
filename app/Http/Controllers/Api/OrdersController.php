@@ -505,14 +505,9 @@ class OrdersController extends Controller
     public function receive(Order $order, Request $request)
     {
         $this->authorize('is-mine', $order);
-        if ($order->status !== 3) {
+        if ($order->receive()) {
             return $this->response->errorBadRequest('订单无法确认，请查看订单状态');
         }
-        $order->receive();
-
-        // TODO: 日志
-
-        // TODO: 一定时间后订单结算收益
 
         return $this->response->item($order, new OrderTransformer());
     }

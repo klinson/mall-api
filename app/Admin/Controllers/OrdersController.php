@@ -117,7 +117,8 @@ class OrdersController extends AdminController
 //                $batch->disableDelete();
                 $batch->add('批量取消订单', new DefaultBatchTool('cancel'));
                 // 暂时未对接快递，无法自动批量发货
-//                $batch->add('批量确认发货', new DefaultBatchTool('express'));
+//                $batch->add('批量确认发货', new DefaultBatchTool('batch/express'));
+                $batch->add('批量确认到货', new DefaultBatchTool('batch/receive'));
             });
         });
 
@@ -204,23 +205,22 @@ class OrdersController extends AdminController
         return $form;
     }
 
-    // 确认发货
-    public function batchExpress(Request $request)
+    //批量操作 确认发货，确认收货
+    public function batch(Request $request, $handle)
     {
-        $orders = Order::where('status', 2)
-            ->whereIn('id', $request->ids)
-            ->get();
-        if (! $orders->isEmpty()) {
-            foreach ($orders as $order) {
-                $order->express();
+        $orders = Order::whereIn('id', $request->ids)->get();
+        $info = [];
+        $error_count = 0;
+        foreach ($orders as $order) {
+            if ($order->$handle()) {
+                $info[] = "No.{$order->id}：{$order->order_number} 处理成功";
+            } else {
+                $error_count++;
+                $info[] = "No.{$order->id}：{$order->order_number} 处理失败";
             }
         }
 
-        $data = [
-            'status'  => true,
-            'message' => '操作成功',
-        ];
-        return response()->json($data);
+        return show_batch_result($error_count, $info);
     }
 
     public function express(Order $order, Request $request)
