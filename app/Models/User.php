@@ -83,6 +83,7 @@ class User extends Authenticatable implements JWTSubject
     public function init()
     {
         $this->wallet()->create();
+        $this->coffer()->create();
     }
 
     public function agency()
@@ -98,17 +99,11 @@ class User extends Authenticatable implements JWTSubject
     // 代理初始化
     public function agencyInit()
     {
-        if (! $this->coffer) {
-            $this->coffer()->create();
-        }
     }
 
     // 会员初始化
     public function memberInit()
     {
-        if (! $this->coffer) {
-            $this->coffer()->create();
-        }
     }
 
     // 是否是会员
