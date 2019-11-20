@@ -250,13 +250,13 @@ class User extends Authenticatable implements JWTSubject
      */
     public static function getInviters($inviter_ids = [])
     {
-        if (empty($inviter_id)) return collect([]);
+        if (empty($inviter_ids)) return collect([]);
 
         if (\Auth::check() && ($key = array_search(\Auth::user()->id, $inviter_ids)) !== false) {
             unset($inviter_ids[$key]);
         }
 
-        if (empty($inviter_id)) return collect([]);
+        if (empty($inviter_ids)) return collect([]);
 
         return User::whereIn('id', $inviter_ids)->get();
     }
