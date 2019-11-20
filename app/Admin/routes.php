@@ -63,6 +63,8 @@ Route::group([
 
     $router->put('cofferWithdrawals/batch/{handle}', 'CofferWithdrawalsController@batch')->where('handle', 'pass|reject');
     $router->resource('cofferWithdrawals', CofferWithdrawalsController::class);
+    $router->resource('coupons', CouponsController::class);
+    $router->resource('userHasCoupons', UserHasCouponsController::class);
 
 
     $router->get('testFrom', 'TestFormController@index');

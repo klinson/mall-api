@@ -137,5 +137,10 @@
   "Specification id": "规格",
   "Tags": "标签",
   "Coupon id": "优惠券",
-  "Count": "数量"
+  "Count": "数量",
+  "Start price": "起步价",
+  "Face value": "面值",
+  "Discount money": "已优惠金额",
+  "Coupon snapshot": "优惠券快照",
+  "Description": "获取描述"
 }

@@ -8,6 +8,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Coupon extends Model
 {
     use SoftDeletes;
+    const type_text = [
+        1 => '折扣券',
+        2 => '满减券',
+    ];
+
+    public function getFaceValueTextAttribute()
+    {
+        // 2满减固定金额券，1打固定折扣券
+        switch ($this->type) {
+            case 1:
+                return '打' . strval($this->face_value * 0.1) . '折';
+            case 2:
+                return '减￥' . strval($this->face_value * 0.01);
+            default:
+                return '';
+        }
+    }
 
     public function toUser($user, $description, $count = 1)
     {

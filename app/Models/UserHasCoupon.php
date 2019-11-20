@@ -10,6 +10,13 @@ class UserHasCoupon extends Model
 {
     use SoftDeletes, HasOwnerHelper;
 
+    const status_text = [
+        1 => '可用',
+        2 => '过期',
+        3 => '已用',
+        4 => '冻结'
+    ];
+
     protected $fillable = [
         'user_id', 'coupon_snapshot', 'coupon_id', 'status', 'discount_money', 'has_enabled', 'description'
     ];
@@ -94,6 +101,11 @@ class UserHasCoupon extends Model
         $this->discount_money = $coupon_price;
         $this->status = 3;
         return $this->save();
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
 }

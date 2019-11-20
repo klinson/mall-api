@@ -2,11 +2,14 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Coupon;
 use App\Models\MemberRechargeOrder;
+use App\Models\UserHasCoupon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Table;
 
 class MemberRechargeOrdersController extends AdminController
 {
@@ -25,6 +28,7 @@ class MemberRechargeOrdersController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new MemberRechargeOrder);
+        $grid->model()->with('coupons');
 
         $grid->column('id', __('Id'));
         $grid->column('order_number', __('Order number'));
@@ -46,6 +50,28 @@ class MemberRechargeOrdersController extends AdminController
 
         $grid->column('payed_at', __('Payed at'));
         $grid->column('created_at', __('Created at'));
+
+        $grid->column('coupons', __('Coupon id'))->display(function () {
+            return $this->coupons->count() . '张';
+        })->expand(function () {
+            $list = $this->coupons->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->coupon_snapshot['title'],
+                    'status' => UserHasCoupon::status_text[$item->status],
+                    'discount_money' => $item->discount_money * 0.01,
+                    'used_at' => $item->used_at,
+                ];
+            })->toArray();
+
+            return new Table([
+                __('Id'),
+                __('Title'),
+                __('Status'),
+                __('Discount price'),
+                __('Used at'),
+            ], $list);
+        });
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
