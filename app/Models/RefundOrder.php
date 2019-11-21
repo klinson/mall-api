@@ -14,7 +14,7 @@ class RefundOrder extends Model
     const hasDefaultObserver = true;
 
     protected $fillable = [
-        'order_id', 'order_goods_id', 'order_number', 'user_id', 'goods_id', 'goods_specification_id', 'reason_text', 'reason_images', 'quantity', 'price', 'real_price', 'real_refund_cost', 'real_refund_balance', 'freight_price', 'status', 'reject_reason', 'refund_order_number', 'express_id', 'express_number', 'expressed_at', 'confirmed_at'
+        'order_id', 'order_goods_id', 'order_number', 'user_id', 'goods_id', 'goods_specification_id', 'reason_text', 'reason_images', 'quantity', 'price', 'real_price', 'real_refund_cost', 'real_refund_balance', 'freight_price', 'status', 'reject_reason', 'refund_order_number', 'express_id', 'express_number', 'expressed_at', 'confirmed_at', 'marketing_type', 'marketing_id'
     ];
 
     //状态，0无，1申请中，2通过待买家发货，3已发货待卖家确认到货，4已退款，5确认到货拒绝退款，6申请后直接拒绝，7已撤销
@@ -45,11 +45,17 @@ class RefundOrder extends Model
             }
         }
 
+        $quantity = intval($quantity);
         if ($quantity <= 0 || $orderGoods->quantity < $quantity) {
             throw new Exception('退款数量不合法');
         }
+
         // 按购买数量和退款数量比例退
-        $real_price = intval(strval($orderGoods->real_price * (floatval($quantity) / $orderGoods->quantity)));
+        if ($quantity === $orderGoods->quantity) {
+            $real_price = $orderGoods->real_price;
+        } else {
+            $real_price = intval(strval($orderGoods->real_price * (floatval($quantity) / $orderGoods->quantity)));
+        }
 
         // 验证是否需要退优惠券
         // 活动商品直接照价退， 没用优惠券照价退

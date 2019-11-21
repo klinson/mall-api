@@ -80,6 +80,8 @@ class RefundOrdersController extends Controller
             // 优惠需按比例扣除
             'real_price' => $real_price,
             'status' => 1,
+            'marketing_type' => $orderGoods->marketing_type,
+            'marketing_id' => $orderGoods->marketing_id,
         ];
         if ($order->used_balance) {
             $data['real_refund_balance'] = $data['real_price'];

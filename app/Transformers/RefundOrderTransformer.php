@@ -36,9 +36,6 @@ class RefundOrderTransformer extends TransformerAbstract
             'confirmed_at' => $order->confirmed_at,
 
             'created_at' => $order->created_at->toDatetimeString(),
-            'used_balance' => $order->used_balance,
-            'real_cost' => $order->real_cost,
-            'cancel_order_number' => $order->cancel_order_number,
         ];
     }
 
