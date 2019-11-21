@@ -16,8 +16,10 @@ return [
         'lottery_intro' => 3, //抽奖公告
     ],
 
-    // 订单发货后N天自动结算
+    // 订单发货后N天自动到货
     'order_auto_receive_days' => env('ORDER_AUTO_RECEIVE_DAYS', 7),
+    // 订单待结算后N天自动结算
+    'order_auto_settle_days' => env('ORDER_AUTO_SETTLE_DAYS', 7),
 
     // 启动抽奖
     'enabled_lottery' => env('ENABLED_LOTTERY', 1),
