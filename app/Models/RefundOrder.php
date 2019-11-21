@@ -40,7 +40,7 @@ class RefundOrder extends Model
                 throw new Exception('订单确定到货已经超过7天，不可申请退款');
             }
 
-            if ($orderGoods->refund_status && $orderGoods->refund_status !== 7) {
+            if (! in_array($orderGoods->refund_status, [0, 1, 6, 7])) {
                 throw new Exception('该商品已经申请过退款');
             }
         }

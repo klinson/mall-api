@@ -142,12 +142,12 @@ class RefundOrdersController extends Controller
         return $this->response->item($order, new RefundOrderTransformer());
     }
 
-    // 更新，仅支持确认到货7天内的未审批(1)和已驳回申请(6)的状态下可以更新
+    // 更新，仅支持确认到货7天内的未审批(1)和已驳回申请(6)和已撤销（7）的状态下可以更新
     public function update(RefundOrder $order, Request $request)
     {
         $this->authorize('is-mine', $order);
 
-        if (! in_array($order->status, [1, 6])) {
+        if (! in_array($order->status, [1, 6, 7])) {
             return $this->response->errorBadRequest('售后订单状态不可编辑');
         }
 
@@ -161,9 +161,14 @@ class RefundOrdersController extends Controller
             'reason_images' => '说明图片'
         ]);
 
+        try {
+            $real_price = RefundOrder::settleRefundPrice($order->order, $order->orderGoods, $request->quantity, false);
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest($exception->getMessage());
+        }
         $data = $request->only(['quantity', 'reason_text', 'reason_images']);
 
-        $data['real_price'] = $request->quantity * $order->orderGoods->price;
+        $data['real_price'] = $real_price;
         $data['status'] = 1;
 
         if ($order->used_balance) {
