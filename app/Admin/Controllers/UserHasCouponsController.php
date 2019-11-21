@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Controllers\Traits\HasBatchHandle;
 use App\Models\Coupon;
 use App\Models\User;
 use App\Models\UserHasCoupon;
@@ -12,6 +13,17 @@ use Encore\Admin\Show;
 
 class UserHasCouponsController extends AdminController
 {
+    use HasBatchHandle;
+
+    protected $batchHandle2name = [
+        'freeze' => '冻结',
+        'unfreeze' => '解冻'
+    ];
+    protected $allowBatchHandle = [
+        'freeze', 'unfreeze'
+    ];
+    protected $batchHandleModelClass = UserHasCoupon::class;
+
     /**
      * Title for current resource.
      *
@@ -49,6 +61,11 @@ class UserHasCouponsController extends AdminController
 
             $filter->like('description', __('Description'));
 
+        });
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->batch(function (Grid\Tools\BatchActions $batch) {
+                $this->generateBatchPatchButton($batch);
+            });
         });
 
         return $grid;

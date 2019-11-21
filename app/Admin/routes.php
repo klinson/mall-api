@@ -64,6 +64,7 @@ Route::group([
     $router->put('cofferWithdrawals/batch/{handle}', 'CofferWithdrawalsController@batch')->where('handle', 'pass|reject');
     $router->resource('cofferWithdrawals', CofferWithdrawalsController::class);
     $router->resource('coupons', CouponsController::class);
+    $router->put('userHasCoupons/batch/{handle}', 'UserHasCouponsController@batch')->where('handle', 'freeze|unfreeze');
     $router->resource('userHasCoupons', UserHasCouponsController::class);
 
 
