@@ -26,7 +26,7 @@ class RefundOrder extends Model
         'reason_images' => 'array'
     ];
 
-    public static function settleRefundPrice(Order $order, OrderGoods $orderGoods, int $quantity, $test = false) {
+    public static function settleRefundPrice(Order $order, OrderGoods $orderGoods, int $quantity, $test = false, $is_create = true) {
         if ($orderGoods->order_id !== $order->id) {
             throw new Exception('请选择退款商品');
         }
@@ -40,8 +40,14 @@ class RefundOrder extends Model
                 throw new Exception('订单确定到货已经超过7天，不可申请退款');
             }
 
-            if (! in_array($orderGoods->refund_status, [0, 1, 6, 7])) {
-                throw new Exception('该商品已经申请过退款');
+            if ($is_create) {
+                if (! in_array($orderGoods->refund_status, [0, 7])) {
+                    throw new Exception('该商品已经申请过退款');
+                }
+            } else {
+                if (! in_array($orderGoods->refund_status, [1, 6])) {
+                    throw new Exception('该商品当前状态不可修改');
+                }
             }
         }
 

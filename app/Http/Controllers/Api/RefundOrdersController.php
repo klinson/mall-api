@@ -57,7 +57,7 @@ class RefundOrdersController extends Controller
         ]);
 
         try {
-            $real_price = RefundOrder::settleRefundPrice($order, $orderGoods, $request->quantity, $request->test ? true : false);
+            $real_price = RefundOrder::settleRefundPrice($order, $orderGoods, $request->quantity, $request->test ? true : false, true);
             if ($request->test) {
                 return $this->response->array([
                     'real_price' => $real_price,
@@ -142,12 +142,12 @@ class RefundOrdersController extends Controller
         return $this->response->item($order, new RefundOrderTransformer());
     }
 
-    // 更新，仅支持确认到货7天内的未审批(1)和已驳回申请(6)和已撤销（7）的状态下可以更新
+    // 更新，仅支持确认到货7天内的未审批(1)和已驳回申请(6)的状态下可以更新
     public function update(RefundOrder $order, Request $request)
     {
         $this->authorize('is-mine', $order);
 
-        if (! in_array($order->status, [1, 6, 7])) {
+        if (! in_array($order->status, [1, 6])) {
             return $this->response->errorBadRequest('售后订单状态不可编辑');
         }
 
@@ -162,7 +162,7 @@ class RefundOrdersController extends Controller
         ]);
 
         try {
-            $real_price = RefundOrder::settleRefundPrice($order->order, $order->orderGoods, $request->quantity, false);
+            $real_price = RefundOrder::settleRefundPrice($order->order, $order->orderGoods, $request->quantity, false, false);
         } catch (\Exception $exception) {
             return $this->response->errorBadRequest($exception->getMessage());
         }
