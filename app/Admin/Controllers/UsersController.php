@@ -42,6 +42,13 @@ class UsersController extends AdminController
             if (empty($this->coffer)) return '';
             return strval($this->coffer->balance * 0.01).'/'.strval($this->coffer->unsettle_balance * 0.01);
         });
+        $grid->column('max_discount', '最大优惠')->display(function () {
+            $discount = $this->getBestMemberDiscount();
+            return $discount >= 100 ? '无' : $discount*0.1 . '折';
+        });
+        $grid->column('has_fee_freight', '包邮？')->display(function () {
+            return $this->hasFeeFreight();
+        })->using(YN2TEXT);
 
         $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
 
@@ -73,7 +80,36 @@ class UsersController extends AdminController
         $show->field('wxapp_openid', __('Wxapp openid'));
         $show->field('sex', __('Sex'))->using(User::SEX2TEXT);
         $show->field('mobile', __('Mobile'));
-        $show->field('wxapp_userinfo', __('Wxapp userinfo'))->json();
+        $show->field('wxapp_userinfo', __('Wxapp userinfo'))->array2json();
+        $show->field('max_discount', '最大优惠')->as(function () {
+            $discount = $this->getBestMemberDiscount();
+            return $discount >= 100 ? '无' : $discount*0.1 . '折';
+        });
+        $show->field('has_fee_freight', '包邮？')->as(function () {
+            return $this->hasFeeFreight();
+        })->using(YN2TEXT);
+
+        $show->memberLevels('会员记录', function (Grid $grid) {
+            $grid->column('id', __('Id'));
+            grid_display_relation($grid, 'memberLevel');
+            grid_display_relation($grid, 'order', 'order_number');
+            $grid->column('discount', __('Discount'))->display(function () {
+                $discount = $this->member_level_snapshot['discount'];
+                return $discount >= 100 ? '无' : $discount*0.1 . '折';
+            });
+            $grid->column('is_fee_freight', '包邮？')->display(function () {
+                return $this->member_level_snapshot['is_fee_freight'];
+            })->using(YN2TEXT);
+            $grid->column('validity_started_at', __('Validity started at'));
+            $grid->column('validity_ended_at', __('Validity ended at'));
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 

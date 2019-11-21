@@ -29,4 +29,14 @@ class UserHasMemberLevel extends Model
         $model->save();
         return $model;
     }
+
+    public function memberLevel()
+    {
+        return $this->belongsTo(MemberLevel::class);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(MemberRechargeOrder::class, 'member_recharge_order_id');
+    }
 }

@@ -17,6 +17,10 @@ class User extends Authenticatable implements JWTSubject
         '未知', '男', '女'
     ];
 
+
+    protected $casts = [
+        'wxapp_userinfo' => 'array'
+    ];
     /**
      * The attributes that are mass assignable.
      *

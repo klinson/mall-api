@@ -66,7 +66,7 @@ class AuthorizationsController extends Controller
                     'nickname' => $info['nickName'],
                     'sex' => $info['gender'],
                     'avatar' => $info['avatarUrl'],
-                    'wxapp_userinfo' => json_encode($info),
+                    'wxapp_userinfo' => $info,
                     'has_enabled' => 1,
                     'mobile' => '',
                     'inviter_id' => $inviter_id,
