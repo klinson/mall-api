@@ -66,7 +66,8 @@ Route::group([
     $router->resource('coupons', CouponsController::class);
     $router->put('userHasCoupons/batch/{handle}', 'UserHasCouponsController@batch')->where('handle', 'freeze|unfreeze');
     $router->resource('userHasCoupons', UserHasCouponsController::class);
-
+    $router->resource('cofferLogs', CofferLogsController::class);
+    $router->resource('walletLogs', WalletLogsController::class);
 
     $router->get('testFrom', 'TestFormController@index');
     $router->post('testFrom', 'TestFormController@store');

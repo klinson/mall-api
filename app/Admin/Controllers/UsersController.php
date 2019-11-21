@@ -3,7 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Models\AgencyConfig;
+use App\Models\CofferLog;
 use App\Models\User;
+use App\Models\WalletLog;
 use App\Rules\CnMobile;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -89,6 +91,9 @@ class UsersController extends AdminController
             return $this->hasFeeFreight();
         })->using(YN2TEXT);
 
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
+
         $show->memberLevels('会员记录', function (Grid $grid) {
             $grid->column('id', __('Id'));
             grid_display_relation($grid, 'memberLevel');
@@ -109,9 +114,36 @@ class UsersController extends AdminController
             $grid->disableRowSelector();
             $grid->disableActions();
         });
+        $show->cofferLogs('金库日志', function (Grid $grid) {
+            $grid->model()->recent();
+            $grid->column('id', __('Id'));
+            $grid->column('balance', __('Balance'))->currency();
+            $grid->column('type', __('Type'))->using(CofferLog::type_text);
+            $grid->column('description', __('Description'));
+            $grid->column('ip', __('Ip'));
+            $grid->column('created_at', __('Created at'));
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
 
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->walletLogs('钱包日志', function (Grid $grid) {
+            $grid->model()->recent();
+            $grid->column('id', __('Id'));
+            $grid->column('balance', __('Balance'))->currency();
+            $grid->column('type', __('Type'))->using(WalletLog::type_text);
+            $grid->column('description', __('Description'));
+            $grid->column('ip', __('Ip'));
+            $grid->column('created_at', __('Created at'));
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
 
         return $show;
     }
