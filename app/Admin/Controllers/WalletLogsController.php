@@ -15,7 +15,7 @@ class WalletLogsController extends AdminController
      *
      * @var string
      */
-    protected $title = 'App\Models\WalletLog';
+    protected $title = '钱包日志';
 
     /**
      * Make a grid builder.
@@ -33,7 +33,7 @@ class WalletLogsController extends AdminController
         $grid->column('balance', __('Balance'))->currency();
         $grid->column('type', __('Type'))->using(WalletLog::type_text);
         $grid->column('description', __('Description'));
-        $grid->column('ip', __('Ip'));
+        $grid->column('ip', __('Ip'))->ip();
         $grid->column('created_at', __('Created at'));
 
         $grid->disableActions();
@@ -59,7 +59,7 @@ class WalletLogsController extends AdminController
         $show->field('balance', __('Balance'))->currency();
         $show->field('type', __('Type'))->using(WalletLog::type_text);
         $show->field('description', __('Description'));
-        $show->field('ip', __('Ip'));
+        $show->field('ip', __('Ip'))->ip();
         $show->field('created_at', __('Created at'));
 
         return $show;

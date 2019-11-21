@@ -6,6 +6,7 @@ use App\Admin\Extensions\Actions\AjaxWithFormButton;
 use App\Admin\Extensions\Actions\GetButton;
 use App\Admin\Extensions\Exporters\OrderExporter;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
+use App\Models\CofferLog;
 use App\Models\Express;
 use App\Models\Order;
 use App\Models\RefundOrder;
@@ -59,17 +60,29 @@ class OrdersController extends AdminController
             ], $goods);
         });
         grid_display_relation($grid, 'user', 'nickname');
-        $grid->column('all_price', __('All price'))->currency()->sortable();;
-        $grid->column('goods_price', __('Goods price'))->currency()->sortable();;
-        $grid->column('real_price', __('Real price'))->currency()->sortable();;
-        $grid->column('coupon_price', __('Coupon price'))->currency()->sortable();;
+
+        $grid->column('coupon', __('Coupon id'))->display(function () {
+            if (empty($this->coupon)) {
+                return '';
+            }
+            return "<a target='_blank' href='/admin/userHasCoupons/{$this->coupon->id}'>{$this->coupon->coupon_snapshot['title']}</a>";
+        });
+
+        $grid->column('all_price', __('All price'))->currency()->sortable();
+        $grid->column('goods_price', __('Goods price'))->currency()->sortable();
+        $grid->column('member_discount_price', __('Member discount Price'))->currency()->sortable();
+        $grid->column('coupon_price', __('Coupon price'))->currency()->sortable();
+        $grid->column('allow_coupon_price', __('Allow coupon price'))->currency()->sortable();
         $grid->column('freight_price', __('Freight price'))->currency()->sortable();;
+        $grid->column('real_price', __('Real price'))->currency()->sortable();
+        $grid->column('pay_mode', '支付方式')->display(function () {
+            return $this->used_balance ? '钱包' : '微信';
+        });
         $grid->column('remarks', __('Remarks'));
         $grid->column('address_snapshot', __('Address'))->display(function ($item) {
             return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
         });
-        grid_display_relation($grid, 'express', 'name');
-        $grid->column('express_number', __('Express number'));
+
         $grid->column('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
         $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
         $grid->column('payed_at', __('Payed at'))->sortable()->filter('range', 'datetime');
@@ -145,21 +158,102 @@ class OrdersController extends AdminController
         $show->field('id', __('Id'));
         $show->field('order_number', __('Order number'));
         show_display_relation($show, 'user', 'nickname');
+        $show->field('coupon', __('Coupon id'))->unescape()->as(function () {
+            if (empty($this->coupon)) {
+                return '';
+            }
+            return "<a target='_blank' href='/admin/userHasCoupons/{$this->coupon->id}'>{$this->coupon->coupon_snapshot['title']}</a>";
+        });
+
         $show->field('all_price', __('All price'))->currency();
         $show->field('goods_price', __('Goods price'))->currency();
-        $show->field('real_price', __('Real price'))->currency();
+        $show->field('member_discount_price', __('Member discount Price'))->currency();
         $show->field('coupon_price', __('Coupon price'))->currency();
-        $show->field('freight_price', __('Freight price'))->currency();
+        $show->field('allow_coupon_price', __('Allow coupon price'))->currency();
+        $show->field('freight_price', __('Freight price'))->currency();;
+        $show->field('real_price', __('Real price'))->currency();
+        $show->field('pay_mode', '支付方式')->as(function () {
+            return $this->used_balance ? '钱包' : '微信';
+        });
+        $show->field('remarks', __('Remarks'));
         $show->field('address_snapshot', __('Address'))->unescape()->as(function ($item) {
             return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
         });
-        $show->field('remarks', __('Remarks'));
-        $show->field('status', __('Status'))->using(Order::status_text);
+
+        $show->field('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
         $show->field('created_at', __('Created at'));
         $show->field('payed_at', __('Payed at'));
         $show->field('expressed_at', __('Expressed at'));
         $show->field('confirmed_at', __('Confirmed at'));
         $show->field('updated_at', __('Updated at'));
+
+        $show->field('cancel_order_number', __('Cancel order number'));
+        $show->field('goods_count', __('Goods count'));
+        $show->field('goods_weight', __('Goods weight'));
+
+
+        $show->orderGoods('订单商品', function (Grid $grid) {
+            $grid->column('id', __('Id'));
+            grid_display_relation($grid, 'goods');
+            grid_display_relation($grid, 'specification');
+            grid_display_relation($grid, 'marketing');
+            $grid->column('price', '原价')->currency();
+            $grid->column('quantity', __('Quantity'));
+            $grid->column('real_price', '实际支付')->currency();
+            $grid->column('refund_status', __('Refund status'))->using(RefundOrder::status_text);
+            grid_display_relation($grid, 'inviter', 'nickname');
+            grid_display_relation($grid, 'refundOrder', 'order_number');
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
+        $show->refunds('售后订单', function (Grid $grid) {
+            $grid->setResource('/admin/refundOrders');
+
+            $grid->column('id', __('Id'));
+            $grid->column('order_number', __('Order number'));
+            $grid->column('orderGoods', '退款商品')->display(function ($item) {
+                return $this->orderGoods->toString();
+            });
+            $grid->column('quantity', __('Quantity'));
+            $grid->column('price', __('Price'))->currency();
+            $grid->column('real_price', '实际应退')->currency();
+            $grid->column('freight_price', __('Freight price'))->currency();
+            $grid->column('status', __('Status'))->using(RefundOrder::status_text);
+            $grid->column('reason_text', __('Reason text'));
+            $grid->column('reason_images', __('Reason Images'))->image();
+            $grid->column('expressed_at', __('Expressed at'));
+            $grid->column('created_at', __('Created at'));
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+        });
+
+        $show->cofferLogs('金库结算日志', function (Grid $grid) {
+            $grid->column('id', __('Id'));
+            grid_display_relation($grid, 'owner', 'nickname');
+            $grid->column('balance', __('Balance'))->currency();
+            $grid->column('type', __('Type'))->using(CofferLog::type_text);
+            $grid->column('description', __('Description'));
+            $grid->column('ip', __('Ip'))->ip();
+            $grid->column('created_at', __('Created at'));
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
 
         return $show;
     }

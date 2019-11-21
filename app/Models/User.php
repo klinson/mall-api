@@ -273,4 +273,9 @@ class User extends Authenticatable implements JWTSubject
 
         return User::whereIn('id', $inviter_ids)->get();
     }
+
+    public function coupons()
+    {
+        return $this->hasMany(UserHasCoupon::class);
+    }
 }

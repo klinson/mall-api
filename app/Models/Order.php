@@ -360,4 +360,9 @@ class Order extends Model
     {
         return $this->hasOne(UserHasCoupon::class, 'id', 'user_coupon_id');
     }
+
+    public function cofferLogs()
+    {
+        return $this->belongsToMany(CofferLog::class, 'order_goods', 'order_id', 'id', 'id', 'data_id')->where('data_type', OrderGoods::class);
+    }
 }

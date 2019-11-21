@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\AgencyConfig;
 use App\Models\CofferLog;
 use App\Models\User;
+use App\Models\UserHasCoupon;
 use App\Models\WalletLog;
 use App\Rules\CnMobile;
 use Encore\Admin\Controllers\AdminController;
@@ -114,6 +115,29 @@ class UsersController extends AdminController
             $grid->disableRowSelector();
             $grid->disableActions();
         });
+
+        $show->coupons('优惠券', function (Grid $grid) {
+            $grid->model()->recent();
+            $grid->column('id', __('Id'));
+            grid_display_relation($grid, 'coupon');
+            $grid->column('coupon_snapshot', __('Coupon snapshot'))->display(function ($item) {
+                return $item['title'];
+            });
+            $grid->column('discount_money', __('Discount money'))->currency();
+            $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+            $grid->column('status', __('Status'))->using(UserHasCoupon::status_text);
+            $grid->column('used_at', __('Used at'));
+            $grid->column('description', __('Description'));
+            $grid->column('created_at', __('Created at'));
+
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
+
         $show->cofferLogs('金库日志', function (Grid $grid) {
             $grid->model()->recent();
             $grid->column('id', __('Id'));

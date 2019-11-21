@@ -79,7 +79,7 @@
   "All price": "总价",
   "Goods price": "商品总价",
   "Real price": "实际付款",
-  "Coupon price": "优惠金额",
+  "Coupon price": "优惠券抵扣金额",
   "Freight price": "运费",
   "Remarks": "备注",
   "Status": "状态",
@@ -142,5 +142,13 @@
   "Face value": "面值",
   "Discount money": "已优惠金额",
   "Coupon snapshot": "优惠券快照",
-  "Description": "获取描述"
+  "Description": "获取描述",
+  "Member discount Price": "会员优惠后价格",
+  "Allow coupon price": "可使用优惠券金额",
+  "Cancel order number": "取消订单退款单号",
+  "Refund status": "退款状态",
+  "Marketing id": "促销商品",
+  "Goods count": "商品数量",
+  "Goods weight": "商品总重(kg)",
+  "Refund order id": "退款申请订单"
 }
