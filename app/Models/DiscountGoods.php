@@ -147,4 +147,9 @@ class DiscountGoods extends Model
         $info['goods'] = $transformer->transform($this->goods);
         return $info;
     }
+
+    public function favourUsers()
+    {
+        return $this->morphMany(UserFavourGoods::class, 'favourGoods', 'goods_type', 'goods_id');
+    }
 }

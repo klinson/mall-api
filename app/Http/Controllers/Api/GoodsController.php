@@ -10,7 +10,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Goods;
 use App\Models\LotteryChance;
+use App\Models\UserFavourGoods;
 use App\Transformers\GoodsTransformer;
+use App\Transformers\UserFavourGoodsTransformer;
 use Illuminate\Http\Request;
 
 class GoodsController extends Controller
@@ -41,12 +43,27 @@ class GoodsController extends Controller
         return $this->response->item($goods, new GoodsTransformer('show'));
     }
 
-    public function favour(Goods $goods)
+    public function favour($goods_id, Request $request)
     {
-        \Auth::user()->favourGoods()->syncWithoutDetaching([
-            $goods->id => [
-                'created_at' => date('Y-m-d H:i:s')
-            ]
+        if (empty($request->goods_type)) {
+            $goods_type = Goods::class;
+        } else if (in_array($request->goods_type, UserFavourGoods::goods_types)) {
+            $goods_type = $request->goods_type;
+        } else {
+            return $this->response->error('商品类型不存在');
+        }
+        $goods = $goods_type::find($goods_id);
+        if (empty($goods)) {
+            return $this->response->error('商品不存在');
+        }
+
+        $where = [
+            'goods_type' => $goods_type,
+            'goods_id' => $goods_id,
+            'user_id' => $this->user->id
+        ];
+        UserFavourGoods::updateOrCreate($where, [
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
         LotteryChance::whenFavourGoods(\Auth::user());
@@ -55,19 +72,16 @@ class GoodsController extends Controller
 
     public function unfavour(Request $request)
     {
-
-        \Auth::user()->favourGoods()->detach($request->goods_ids);
+        UserFavourGoods::isOwner()->whereIn('id', $request->ids)->delete();
 
         return $this->response->noContent();
     }
 
     public function favours(Request $request)
     {
+        $list = UserFavourGoods::isOwner()->recent()->paginate($request->per_page);
 
-        $list = \Auth::user()->favourGoods()->enabled()->paginate($request->per_page);
-
-
-        return $this->response->paginator($list, new GoodsTransformer());
+        return $this->response->paginator($list, new UserFavourGoodsTransformer());
     }
 
     // 生成二维码

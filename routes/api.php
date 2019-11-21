@@ -90,7 +90,7 @@ $api->version('v1', [
 
         // 商品收藏
         $api->get('goods/favours', 'GoodsController@favours');
-        $api->post('goods/{goods}/favour', 'GoodsController@favour')->where('goods', '[0-9]+');
+        $api->post('goods/{goods_id}/favour', 'GoodsController@favour')->where('goods_id', '[0-9]+');
         $api->delete('goods/unfavour', 'GoodsController@unfavour');
 
 

@@ -61,4 +61,9 @@ class Goods extends Model
     {
         return 'goods-'.$this->id;
     }
+
+    public function favourUsers()
+    {
+        return $this->morphMany(UserFavourGoods::class, 'favourGoods', 'goods_type', 'goods_id');
+    }
 }
