@@ -36,7 +36,8 @@ class RefundOrder extends Model
                 throw new Exception('订单状态异常，请确认订单状态');
             }
 
-            if ($order->confirm_at && strtotime($order->confirm_at) + 7*24*60*60 < time()) {
+            $days = config('system.order_cannot_refund_days', 7);
+            if ($order->confirm_at && strtotime($order->confirm_at) + $days*24*60*60 < time()) {
                 throw new Exception('订单确定到货已经超过7天，不可申请退款');
             }
 

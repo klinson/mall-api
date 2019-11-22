@@ -19,6 +19,8 @@ return [
 
     // 订单发货后N天自动到货
     'order_auto_receive_days' => env('ORDER_AUTO_RECEIVE_DAYS', 7),
+    // 订单到货后N天后不能发起退货退款
+    'order_cannot_refund_days' => env('ORDER_CANNOT_REFUND_DAYS', 7),
     // 订单待结算后N天自动结算
     'order_auto_settle_days' => env('ORDER_AUTO_SETTLE_DAYS', 7),
 
