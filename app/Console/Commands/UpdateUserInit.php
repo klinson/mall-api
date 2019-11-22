@@ -43,9 +43,5 @@ class UpdateUserInit extends Command
                 $user->init();
             }
         });
-
-        // 一年以后过期
-        $ttl = 365*24*60;
-        $this->info(\Auth::guard('api')->setTTL($ttl));
     }
 }

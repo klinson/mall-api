@@ -210,9 +210,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Goods::class, 'user_favour_goods')->orderBy('user_favour_goods.created_at', 'desc');
     }
 
-    public function isMyFavourGoods($goods_id)
+    public function isMyFavourGoods($goods)
     {
-        return \DB::table('user_favour_goods')->where('user_id', $this->id)->where('goods_id', $goods_id)->first() ? true : false;
+        return \DB::table('user_favour_goods')->where('user_id', $this->id)->where('goods_id', $goods->id)->where('goods_type', get_class($goods))->first() ? true : false;
     }
 
     public function getLastMemberLevel($member_level_id)
