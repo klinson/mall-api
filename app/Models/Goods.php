@@ -66,4 +66,14 @@ class Goods extends Model
     {
         return $this->morphMany(UserFavourGoods::class, 'favourGoods', 'goods_type', 'goods_id');
     }
+
+    public function discountGoods()
+    {
+        return $this->hasMany(DiscountGoods::class, 'goods_id');
+    }
+
+    public function soldDiscountGoods()
+    {
+        return $this->discountGoods()->where('has_enabled', 1);
+    }
 }

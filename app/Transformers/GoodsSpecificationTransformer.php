@@ -10,6 +10,8 @@ class GoodsSpecificationTransformer extends TransformerAbstract
 {
     protected $discount = 100;
 
+    protected $availableIncludes = ['soldDiscountGoods'];
+
     public function __construct()
     {
         if (\Auth::check()) {
@@ -34,5 +36,11 @@ class GoodsSpecificationTransformer extends TransformerAbstract
             'discount_price' => $this->discount < 100 ? ceil(strval($model->price * $this->discount * 0.01)) : $model->price,
             'weight' => $model->weight,
         ];
+    }
+
+
+    public function includeSoldDiscountGoods(Model $model)
+    {
+        return $this->collection($model->soldDiscountGoods, new DiscountGoodsTransformer());
     }
 }

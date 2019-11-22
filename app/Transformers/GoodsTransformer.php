@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 
 class GoodsTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['category', 'soldSpecifications'];
+    protected $availableIncludes = ['category', 'soldSpecifications', 'soldDiscountGoods'];
 
     protected $type;
     protected $discount = 100;
@@ -73,5 +73,10 @@ class GoodsTransformer extends TransformerAbstract
     public function includeSoldSpecifications(Model $model)
     {
         return $this->collection($model->soldSpecifications, new GoodsSpecificationTransformer());
+    }
+
+    public function includeSoldDiscountGoods(Model $model)
+    {
+        return $this->collection($model->soldDiscountGoods, new DiscountGoodsTransformer());
     }
 }

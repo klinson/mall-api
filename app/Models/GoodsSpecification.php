@@ -70,4 +70,14 @@ class GoodsSpecification extends Model
         $specification['goods'] = $transformer->transform($this->goods);
         return $specification;
     }
+
+    public function discountGoods()
+    {
+        return $this->hasMany(DiscountGoods::class, 'goods_specification_id');
+    }
+
+    public function soldDiscountGoods()
+    {
+        return $this->discountGoods()->where('has_enabled', 1);
+    }
 }

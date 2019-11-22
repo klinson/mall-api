@@ -29,7 +29,10 @@ class GoodsController extends Controller
         }
 
         if ($request->has_recommended == 1) {
-            $query = $query->where('has_recommended', 1);
+            $query->where('has_recommended', 1);
+        }
+        if ($request->has_discount_goods == 1) {
+            $query->whereHas('soldDiscountGoods');
         }
 
         $list = $query->enabled()->sort()->ById()->paginate($request->per_page);
