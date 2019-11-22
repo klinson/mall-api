@@ -35,6 +35,7 @@ class SystemController extends Controller
                 case 'articles.about_us':
                 case 'articles.join_us':
                 case 'articles.lottery_intro':
+                case 'articles.coffer_intro':
                     $id = config('system.'.$key, 0);
                     $return[$key] = ['content' => ''];
                     if ($id && $article = Article::find($id)) {
