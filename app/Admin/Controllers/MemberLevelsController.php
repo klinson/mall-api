@@ -78,9 +78,9 @@ class MemberLevelsController extends AdminController
         $form = new Form(new MemberLevel);
 
         $form->text('title', __('Title'))->required();
-        $form->number('level', __('Level'))->default(0)->required();
+        $form->number('level', __('Level'))->default(0)->required()->help('等级约大代表此会员越高级');
         $form->image('logo', __('Logo'))->uniqueName();
-        $form->number('discount', __('Discount'))->default(100)->max(100)->min(1)->required();
+        $form->number('discount', __('Discount'))->default(100)->max(100)->min(1)->required()->help('折扣，88=>8.8折,100=>原价');
         $form->switch('is_fee_freight', __('Is fee freight'))->default(0);
         $form->switch('has_enabled', __('Has enabled'))->default(1);
 

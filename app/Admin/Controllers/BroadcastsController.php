@@ -28,7 +28,7 @@ class BroadcastsController extends AdminController
 
         $grid->column('id', __('Id'));
         $grid->column('content', __('Content'));
-        $grid->column('has_enabled', __('Has enabled'));
+        grid_has_enabled($grid);
         $grid->column('updated_at', __('Updated at'));
 
         return $grid;
