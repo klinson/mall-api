@@ -43,6 +43,7 @@ class GoodsController extends Controller
         return $this->response->item($goods, new GoodsTransformer('show'));
     }
 
+    // 收藏
     public function favour($goods_id, Request $request)
     {
         if (empty($request->goods_type)) {
@@ -70,13 +71,40 @@ class GoodsController extends Controller
         return $this->response->noContent();
     }
 
-    public function unfavour(Request $request)
+    // 取消收藏
+    public function unfavour($goods_id, Request $request)
+    {
+        if (empty($request->goods_type)) {
+            $goods_type = Goods::class;
+        } else if (in_array($request->goods_type, UserFavourGoods::goods_types)) {
+            $goods_type = $request->goods_type;
+        } else {
+            return $this->response->error('商品类型不存在');
+        }
+        $goods = $goods_type::find($goods_id);
+        if (empty($goods)) {
+            return $this->response->error('商品不存在');
+        }
+
+        $where = [
+            'goods_type' => $goods_type,
+            'goods_id' => $goods_id,
+            'user_id' => $this->user->id
+        ];
+        UserFavourGoods::where($where)->delete();
+
+        return $this->response->noContent();
+    }
+
+    // 批量删除收藏
+    public function unfavourByIds(Request $request)
     {
         UserFavourGoods::isOwner()->whereIn('id', $request->ids)->delete();
 
         return $this->response->noContent();
     }
 
+    // 我的收藏列表
     public function favours(Request $request)
     {
         $list = UserFavourGoods::isOwner()->recent()->paginate($request->per_page);

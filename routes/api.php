@@ -91,7 +91,8 @@ $api->version('v1', [
         // 商品收藏
         $api->get('goods/favours', 'GoodsController@favours');
         $api->post('goods/{goods_id}/favour', 'GoodsController@favour')->where('goods_id', '[0-9]+');
-        $api->delete('goods/unfavour', 'GoodsController@unfavour');
+        $api->delete('goods/{goods_id}/favour', 'GoodsController@unfavour')->where('goods_id', '[0-9]+');
+        $api->delete('goods/unfavour', 'GoodsController@unfavourByIds');
 
 
         // 购物车
