@@ -46,7 +46,7 @@ class GoodsTransformer extends TransformerAbstract
                 'created_at' => $model->created_at->toDateTimeString(),
                 'images' => $model->images_url,
                 'detail' => $model->detail,
-                'is_favour' => ($this->user && $this->user->isMyFavourGoods($model->id)) ? 1 : 0,
+                'is_favour' => ($this->user && $this->user->isMyFavourGoods($model)) ? 1 : 0,
             ];
         } else {
             return [
