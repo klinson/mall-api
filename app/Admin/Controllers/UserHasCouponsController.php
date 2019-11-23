@@ -48,7 +48,7 @@ class UserHasCouponsController extends AdminController
         });
         $grid->column('discount_money', __('Discount money'))->currency();
         grid_has_enabled($grid);
-        $grid->column('status', __('Status'))->using(UserHasCoupon::status_text);
+        $grid->column('status', __('Status'))->using(UserHasCoupon::status_text)->filter(UserHasCoupon::status_text);
         $grid->column('used_at', __('Used at'));
         $grid->column('description', __('Description'));
         $grid->column('created_at', __('Created at'));

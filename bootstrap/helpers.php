@@ -377,3 +377,10 @@ function grid_has_enabled($grid)
     ];
     $grid->column('has_enabled', __('Has enabled'))->switch($states)->filter(HAS_ENABLED2TEXT);
 }
+
+// int 转int 避免原来的int是float，直接转就精度丢失
+// 如 100.0 => 100
+function to_int($float)
+{
+    return intval(strval($float));
+}

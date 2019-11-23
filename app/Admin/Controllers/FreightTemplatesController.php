@@ -34,7 +34,7 @@ class FreightTemplatesController extends AdminController
         $grid->column('pinkage_type', __('Pinkage type'))->using(FreightTemplate::pinkage_types);
         $grid->column('pinkage_number', __('Pinkage number'));
         $grid->column('continued_cost', __('Continued cost'))->currency();
-        $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+        grid_has_enabled($grid);
         $grid->column('sort', __('Sort'));
 
         return $grid;
