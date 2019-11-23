@@ -27,6 +27,7 @@ class RefundOrderTransformer extends TransformerAbstract
             'real_refund_cost' => $order->real_refund_cost,
             'real_refund_balance' => $order->real_refund_balance,
             'freight_price' => $order->freight_price,
+            'mobile' => $order->mobile,
             'status' => $order->status,
             'reject_reason' => $order->reject_reason,
             'refund_order_number' => $order->refund_order_number,
