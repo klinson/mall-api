@@ -416,7 +416,7 @@ class OrdersController extends Controller
         }
 
         // 使用余额抵扣，只能全额抵扣
-        $balance = intval($request->balance);
+        $balance = to_int($request->balance);
         if ($balance) {
             if ($this->user->wallet->balance < $balance) {
                 return $this->response->errorBadRequest('用户余额不足，无法支付');

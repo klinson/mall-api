@@ -33,7 +33,7 @@ class CoffersController extends Controller
     // 金库提现申请
     public function withdraw(Request $request)
     {
-        $balance = intval($request->balance);
+        $balance = to_int($request->balance);
         if (! $balance) {
             return $this->response->errorBadRequest('提现金额不能为空');
         }

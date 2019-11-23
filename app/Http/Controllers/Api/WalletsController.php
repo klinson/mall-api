@@ -31,7 +31,7 @@ class WalletsController extends Controller
     // 钱包充值
     public function recharge(Request $request)
     {
-        $balance = intval($request->balance);
+        $balance = to_int($request->balance);
         if (! $balance) {
             return $this->response->errorBadRequest('充值金额不能为空');
         }
