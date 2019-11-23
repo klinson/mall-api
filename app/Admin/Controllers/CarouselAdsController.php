@@ -129,7 +129,7 @@ class CarouselAdsController extends Controller
                 $form->hasMany('items', '轮播图', function (Form\NestedForm $form) use ($id) {
                     $form->image('picture', '轮播图')->uniqueName()->rules('required|image');
                     $form->text('item_title', '子标题')->rules('max:250');
-                    $form->text('url', '跳转链接')->rules('max:250');
+                    $form->text('url', '跳转代码')->rules('max:250');
                     $form->number('sort', '排序')->default(0)->rules('required|min:0|integer');
                 });
             }
@@ -155,7 +155,7 @@ class CarouselAdsController extends Controller
 
                     $form->image('picture', '轮播图')->uniqueName()->rules('required|image');
                     $form->text('item_title', '子标题');
-                    $form->text('url', '跳转链接');
+                    $form->text('url', '跳转代码');
                     $form->number('sort', '排序')->default(0)->rules('required|min:0');
                     $form->hidden('_token')->default(csrf_token());
 

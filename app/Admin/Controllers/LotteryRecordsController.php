@@ -31,6 +31,7 @@ class LotteryRecordsController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new LotteryRecord);
+        $grid->model()->recent();
 
         $grid->column('id', __('Id'));
         $grid->column('prize_snapshot', __('Prize id'))->display(function ($item) {

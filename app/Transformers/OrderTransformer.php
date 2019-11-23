@@ -37,6 +37,7 @@ class OrderTransformer extends TransformerAbstract
             'used_balance' => $order->used_balance,
             'real_cost' => $order->real_cost,
             'cancel_order_number' => $order->cancel_order_number,
+            'cancel_reason' => $order->cancel_reason,
             'express_id' => $order->express_id,
             'express_number' => $order->express_number,
             'address' => $order->address_snapshot,

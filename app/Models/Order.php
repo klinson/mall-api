@@ -111,7 +111,7 @@ class Order extends Model
     }
 
     // 取消订单
-    public function cancel()
+    public function cancel($reason = null)
     {
         if (! in_array($this->status, [1, 2, 3, 4])) {
             throw new \Exception('订单状态无法取消');
@@ -122,6 +122,7 @@ class Order extends Model
                 \DB::beginTransaction();
 
                 $this->status = 5;
+                $this->cancel_reason = is_null($reason) ? '系统取消' : $reason;
                 $this->save();
 
                 // 恢复库存

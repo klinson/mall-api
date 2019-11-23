@@ -150,5 +150,6 @@
   "Marketing id": "促销商品",
   "Goods count": "商品数量",
   "Goods weight": "商品总重(kg)",
-  "Refund order id": "退款申请订单"
+  "Refund order id": "退款申请订单",
+  "Cancel reason": "取消原因"
 }

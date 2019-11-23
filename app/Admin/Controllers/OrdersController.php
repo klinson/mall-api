@@ -188,6 +188,7 @@ class OrdersController extends AdminController
         $show->field('updated_at', __('Updated at'));
 
         $show->field('cancel_order_number', __('Cancel order number'));
+        $show->field('cancel_reason', __('Cancel reason'));
         $show->field('goods_count', __('Goods count'));
         $show->field('goods_weight', __('Goods weight'));
 
