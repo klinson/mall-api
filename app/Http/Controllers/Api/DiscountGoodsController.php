@@ -96,7 +96,7 @@ class DiscountGoodsController extends Controller
 
                 $stream = app('wechat.mini_program')->app_code->getUnlimit($scene, [
                     'width' => 430,
-//                    'page' => 'pages/goodsDetail/goodsDetail'
+                    'page' => 'pages/discountGoodsDetail/discountGoodsDetail'
                 ]);
                 if ($stream instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
                     // 以内容 md5 为文件名存到本地
