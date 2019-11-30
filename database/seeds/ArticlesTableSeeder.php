@@ -44,6 +44,15 @@ class ArticlesTableSeeder extends Seeder
                 'updated_at' => '2019-11-06 12:56:19',
                 'deleted_at' => NULL,
             ),
+            3 => 
+            array (
+                'id' => 4,
+                'title' => '奖励金公告',
+                'content' => '<p><strong>奖励金说明</strong></p><p>奖励金是用户通过分享二维码出去邀请身边朋友购买产品或会员的酬金</p><p>可随时提现</p><p>不限制提现最小金额</p><p><br/></p><p><strong>提现流程</strong></p><p>添加客服人员微信p13798829111，提供说明和截图即可</p><p><br/></p><p style="white-space: normal; text-align: center;">本小程序归东莞市韩苡琳科技有限公司所有</p><p style="white-space: normal;"><br/></p><p style="white-space: normal; text-align: center;">技术支持：klinson.com</p><p><br/></p>',
+                'created_at' => '2019-11-22 22:16:28',
+                'updated_at' => '2019-11-22 22:16:28',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

@@ -25,6 +25,7 @@ class WalletLogsController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new WalletLog);
+        $grid->model()->recent();
 
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'owner', 'nickname');

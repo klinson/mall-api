@@ -35,8 +35,12 @@ class CofferWithdrawalsController extends AdminController
         });
 
         $grid->column('id', __('Id'));
-        $grid->column('order_number', __('Order number'));
+//        $grid->column('order_number', __('Order number'));
         grid_display_relation($grid, 'owner', 'nickname');
+        $grid->column('coffer', '用户当前金库(已结算/待结算)')->display(function ($item) {
+            if (empty($this->owner->coffer)) return '';
+            return strval($this->owner->coffer->balance * 0.01).'/'.strval($this->owner->coffer->unsettle_balance * 0.01);
+        });
         $grid->column('balance', __('Balance'))->currency();
         $grid->column('status', __('Status'))->using(CofferWithdrawal::status_text)->filter(CofferWithdrawal::status_text);
         $grid->column('ip', __('Ip'))->ip();
@@ -94,7 +98,7 @@ class CofferWithdrawalsController extends AdminController
         $show = new Show(CofferWithdrawal::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('order_number', __('Order number'));
+//        $show->field('order_number', __('Order number'));
         show_display_relation($show, 'owner', 'nickname');
         $show->field('balance', __('Balance'))->currency();
         $show->field('status', __('Status'))->using(CofferWithdrawal::status_text);

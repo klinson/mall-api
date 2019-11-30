@@ -83,7 +83,7 @@ class UsersController extends AdminController
         $show->field('wxapp_openid', __('Wxapp openid'));
         $show->field('sex', __('Sex'))->using(User::SEX2TEXT);
         $show->field('mobile', __('Mobile'));
-        $show->field('wxapp_userinfo', __('Wxapp userinfo'))->array2json();
+        $show->field('wxapp_userinfo', __('Wxapp userinfo'))->unescape()->array2json();
         $show->field('max_discount', '最大优惠')->as(function () {
             $discount = $this->getBestMemberDiscount();
             return $discount >= 100 ? '无' : $discount*0.1 . '折';

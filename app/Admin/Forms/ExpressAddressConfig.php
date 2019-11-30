@@ -48,7 +48,7 @@ class ExpressAddressConfig extends Form
     public function form()
     {
         // setElementClass只为避免bug
-        $this->select('system|express_company_id', '默认寄件快递公司')->options(Express::all()->pluck('name', 'id')->toArray())->rules('required')->setElementClass('s');
+        $this->select('system|express_company_id', '默认寄件快递公司')->options(Express::all()->pluck('name', 'id')->toArray())->rules('required')->setElementClass('s')->help('系统使用发货功能时，默认首先快递公司');
 
         $this->text('system|express_address|name', '退货快递收件人')->rules('required');
         $this->text('system|express_address|mobile', '退货快递电话')->rules('required');

@@ -30,7 +30,7 @@ class CategoriesController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('title', __('Title'));
         $grid->column('thumbnail', __('Thumbnail'))->image();
-        $grid->column('has_enabled', __('Has enabled'))->using(HAS_ENABLED2TEXT);
+        grid_has_enabled($grid);
         $grid->column('sort', __('Sort'));
         $grid->column('created_at', __('Created at'));
 

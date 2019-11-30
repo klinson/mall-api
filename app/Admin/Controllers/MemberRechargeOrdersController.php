@@ -73,6 +73,8 @@ class MemberRechargeOrdersController extends AdminController
             ], $list);
         });
 
+        $grid->disableCreateButton();
+
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
         });

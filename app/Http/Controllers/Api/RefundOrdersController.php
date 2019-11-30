@@ -105,14 +105,17 @@ class RefundOrdersController extends Controller
         $this->validate($request, [
             'freight_price' => 'required',
             'express_id' => 'required',
-            'express_number' => 'required'
+            'express_number' => 'required',
+            'mobile' => 'required'
         ], [], [
             'freight_price' => '快递费',
+            'mobile' => '联系电话',
             'express_id' => '快递公司',
             'express_number' => '快递单号'
         ]);
 
-        $order->fill($request->only(['freight_price', 'express_number', 'express_id']));
+        $order->fill($request->only(['freight_price', 'express_number', 'express_id', 'mobile']));
+        $order->freight_price = to_int($request->freight_price);
         $order->expressed_at = date('Y-m-d H:i:s');
         $order->status = 3;
         $order->save();

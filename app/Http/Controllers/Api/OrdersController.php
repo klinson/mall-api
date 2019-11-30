@@ -378,16 +378,19 @@ class OrdersController extends Controller
      * @author klinson <klinson@163.com>
      * @return \Dingo\Api\Http\Response|void
      */
-    public function cancel(Order $order)
+    public function cancel(Order $order, Request $request)
     {
         $this->authorize('is-mine', $order);
 
         if (! in_array($order->status, [1, 2])) {
             return $this->response->errorBadRequest('订单状态不可取消');
         }
+        if (! $request->reason) {
+            return $this->response->errorBadRequest('请选择取消原因');
+        }
 
         try {
-            $order->cancel();
+            $order->cancel($request->reason);
 
             // 加库存
 
@@ -416,7 +419,7 @@ class OrdersController extends Controller
         }
 
         // 使用余额抵扣，只能全额抵扣
-        $balance = intval($request->balance);
+        $balance = to_int($request->balance);
         if ($balance) {
             if ($this->user->wallet->balance < $balance) {
                 return $this->response->errorBadRequest('用户余额不足，无法支付');

@@ -42,7 +42,8 @@ class RefundOrdersController extends AdminController
         $grid->column('price', __('Price'))->currency();
         $grid->column('real_price', '实际应退')->currency();
         $grid->column('freight_price', __('Freight price'))->currency();
-        $grid->column('status', __('Status'))->using(RefundOrder::status_text)->filter(RefundOrder::status_text)->filter(RefundOrder::status_text);
+        $grid->column('mobile', __('Mobile'));
+        $grid->column('status', __('Status'))->using(RefundOrder::status_text)->filter(RefundOrder::status_text);
         $grid->column('reason_text', __('Reason text'));
         $grid->column('reason_images', __('Reason Images'))->image();
         $grid->column('expressed_at', __('Expressed at'))->sortable()->filter('range', 'datetime');
@@ -95,6 +96,7 @@ class RefundOrdersController extends AdminController
         $show->field('real_refund_cost', __('Real refund cost'))->currency();
         $show->field('real_refund_balance', __('Real refund balance'))->currency();
         $show->field('freight_price', __('Freight price'))->currency();
+        $show->field('mobile', __('Mobile'));
         $show->field('status', __('Status'))->using(RefundOrder::status_text);
         $show->field('reason_text', __('Reason text'));
         $show->field('reason_images', __('Reason images'))->image();

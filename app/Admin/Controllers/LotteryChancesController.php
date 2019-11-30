@@ -25,6 +25,7 @@ class LotteryChancesController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new LotteryChance);
+        $grid->model()->recent();
 
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'owner', 'nickname');
@@ -35,6 +36,7 @@ class LotteryChancesController extends AdminController
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
         });
+        $grid->disableCreateButton();
 
         return $grid;
     }

@@ -31,6 +31,7 @@ class LotteryRecordsController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new LotteryRecord);
+        $grid->model()->recent();
 
         $grid->column('id', __('Id'));
         $grid->column('prize_snapshot', __('Prize id'))->display(function ($item) {
@@ -55,7 +56,7 @@ class LotteryRecordsController extends AdminController
         });
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableEdit();
-            if ($this->row->status === 1) {
+            if ($this->row->status === 1 && $this->row->address_id != 0) {
                 $actions->append(new AjaxWithFormButton(
                     $actions->getResource() . '/' . $actions->getKey() . '/express',
                     '发货',
@@ -81,7 +82,7 @@ class LotteryRecordsController extends AdminController
                     ]
                 ));
             }
-            if ($this->row->status > 1) {
+            if ($this->row->status > 1 && $this->row->express_id) {
                 $actions->append(new GetButton(
                     $actions->getResource() . '/' . $actions->getKey() . '/logistics',
                     '物流查询'

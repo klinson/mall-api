@@ -10,6 +10,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Forms\ExpressAddressConfig;
 use App\Admin\Forms\LotteryConfig;
+use App\Admin\Forms\SystemConfig;
 use Encore\Admin\Config\ConfigModel;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Widgets\Tab;
@@ -26,6 +27,7 @@ class SystemController extends Controller
 
 
         $forms = [
+            'system' => SystemConfig::class,
             'express' => ExpressAddressConfig::class,
             'lottery' => LotteryConfig::class,
         ];

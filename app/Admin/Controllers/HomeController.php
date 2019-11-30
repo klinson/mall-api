@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\CofferWithdrawal;
+use App\Models\LotteryRecord;
 use App\Models\Order;
 use App\Models\RefundOrder;
 use Encore\Admin\Controllers\Dashboard;
@@ -22,11 +24,11 @@ class HomeController extends Controller
         $content->row(view('admin.dashboard.title'));
         $list = [
             [
-                'title' => '今日任务',
+                'title' => '工作台',
                 'width' => 4,
                 'data' => [
                     [
-                        'title' => '待发货',
+                        'title' => '订单待发货',
                         'icon' => 'cart-plus',
                         'color' => 'aqua',
                         'link' => '/admin/orders?status[]=2',
@@ -45,6 +47,20 @@ class HomeController extends Controller
                         'color' => 'aqua',
                         'link' => '/admin/refundOrders?status[]=3',
                         'info' => RefundOrder::where('status', 3)->count(),
+                    ],
+                    [
+                        'title' => '中奖待发货',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/lotteryRecords',
+                        'info' => LotteryRecord::where('status', 1)->count(),
+                    ],
+                    [
+                        'title' => '提现待处理',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/cofferWithdrawals',
+                        'info' => CofferWithdrawal::where('status', 1)->count(),
                     ],
                 ]
             ],
