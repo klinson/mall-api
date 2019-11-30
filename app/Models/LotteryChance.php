@@ -27,8 +27,8 @@ class LotteryChance extends Model
 
     // 获取方式对应可获取抽奖机会次数, -1不限制
     const TYPE_LIMIT_COUNTS = [
-        self::FIRST_LOGIN_TYPE => 1,
-        self::INVITE_USER_REGISTER_TYPE => 1,
+        self::FIRST_LOGIN_TYPE => 0,
+        self::INVITE_USER_REGISTER_TYPE => 0,
         self::INVITE_USER_FAVOUR3GOODS => 3,
         self::SELF_FAVOUR3GOODS => 1,
         self::SYSTEM_PRESENT => -1,
