@@ -89,6 +89,15 @@ class ShoppingCartsController extends Controller
         }
     }
 
+    public function deleteByIds(Request $request)
+    {
+        if (! $request->ids) {
+            return $this->response->errorBadRequest('请选择要删除的商品');
+        }
+        ShoppingCart::isMine()->whereIn('id', $request->ids)->delete();
+        return $this->response->noContent();
+    }
+
     public function clearAll()
     {
         ShoppingCart::isMine()->delete();
