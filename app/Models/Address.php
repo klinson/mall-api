@@ -41,6 +41,11 @@ class Address extends Model
         return $info;
     }
 
+    public function province()
+    {
+        return $this->belongsTo(Area::class, 'province_code', 'code');
+    }
+
     public function district()
     {
         return $this->belongsTo(Area::class, 'district_code', 'code');

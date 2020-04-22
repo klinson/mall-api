@@ -90,4 +90,10 @@ class AddressesController extends Controller
 
         return $this->response->item($address, new AddressTransformer());
     }
+
+    public function getDefault()
+    {
+        $address = $this->user->addresses()->where('is_default', 1)->first();
+        return $this->response->item($address, new AddressTransformer());
+    }
 }

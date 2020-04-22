@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
         // 单独处理几个用户的数据
         $user = User::find(1);
         $user->nickname = 'klinson';
-        $user->wxapp_openid = 'ohxfd4n41q7HylJaASQ85dOTuXWw';
+        $user->wxapp_openid = 'o46yX5KGT8rWzmoJJmSpcMWQ5WP4';
         $user->mobile = '15818253017';
         $user->sex = 1;
         $user->save();

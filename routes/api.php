@@ -86,6 +86,7 @@ $api->version('v1', [
         // 用户
         $api->get('user', 'UserController@show');
         $api->put('user', 'UserController@update');
+        $api->get('addresses/default', 'AddressesController@getDefault');
         $api->resource('addresses', 'AddressesController', ['only' => ['index', 'update', 'store', 'destroy', 'show']]);
 
         // 商品收藏
