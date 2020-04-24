@@ -94,6 +94,7 @@ class AddressesController extends Controller
     public function getDefault()
     {
         $address = $this->user->addresses()->where('is_default', 1)->first();
-        return $this->response->item($address, new AddressTransformer());
+        if ($address) return $this->response->item($address, new AddressTransformer());
+        else return $this->response->noContent();
     }
 }

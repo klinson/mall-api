@@ -10,7 +10,7 @@ class GoodsSpecificationTransformer extends TransformerAbstract
 {
     protected $discount = 100;
 
-    protected $availableIncludes = ['soldDiscountGoods'];
+    protected $availableIncludes = ['soldDiscountGoods', 'goods'];
 
     public function __construct()
     {
@@ -33,6 +33,7 @@ class GoodsSpecificationTransformer extends TransformerAbstract
             'quantity' => $model->quantity,
             'sold_quantity' => $model->sold_quantity,
             'price' => $model->price,
+            'has_enabled' => $model->has_enabled,
             'discount_price' => $this->discount < 100 ? ceil(strval($model->price * $this->discount * 0.01)) : $model->price,
             'weight' => $model->weight,
         ];
@@ -42,5 +43,10 @@ class GoodsSpecificationTransformer extends TransformerAbstract
     public function includeSoldDiscountGoods(Model $model)
     {
         return $this->collection($model->soldDiscountGoods, new DiscountGoodsTransformer());
+    }
+
+    public function includeGoods(Model $model)
+    {
+        return $this->item($model->goods, new GoodsTransformer());
     }
 }

@@ -46,16 +46,22 @@ class OrdersController extends Controller
     public function store(Request $request)
     {
         $from_shopping_cart_ids = $request->from_shopping_cart_ids ?? [];
+        $test = intval($request->test);
         if ($request->remarks && mb_strlen($request->remarks) > 100) {
             return $this->response->errorBadRequest('备注信息不可超过100字符');
         }
 
-        if (! $request->address_id || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
-            return $this->response->errorBadRequest('请选择配送地址');
-        }
-        // 获取运费计算模板，没有则非配送范围
-        if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
-            return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
+        if (! empty($request->address_id) || ! $test) {
+            if (! $request->address_id || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
+                return $this->response->errorBadRequest('请选择配送地址');
+            }
+            // 获取运费计算模板，没有则非配送范围
+            if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
+                return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
+            }
+        } else {
+            $address = null;
+            $freightTemplate = null;
         }
 
         $goods_ids_list = $request->goods_list;
@@ -263,7 +269,12 @@ class OrdersController extends Controller
             $freight_price = 0;
         } else {
             // 根据地区计算配送费和运费模板
-            $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $no_freight_price);
+            // 测试模式可能没有address
+            if ($freightTemplate) {
+                $freight_price = $freightTemplate->compute($goods_weight, $goods_count, $no_freight_price);
+            } else {
+                $freight_price = 0;
+            }
         }
 
         // 总费用（商品原价+快递费）
@@ -288,9 +299,9 @@ class OrdersController extends Controller
         $order->status = 1;
         $order->remarks = $request->remarks ?: '';
         $order->address_id = $request->address_id;
-        $order->address_snapshot = $address->toSnapshot();
+        $order->address_snapshot = $address ? $address->toSnapshot() : [];
         // 运费模板
-        $order->freight_template_id = $is_fee_freight ? 0 : $freightTemplate->id;
+        $order->freight_template_id = ($is_fee_freight || empty($freightTemplate)) ? 0 : $freightTemplate->id;
 
         DB::beginTransaction();
 
@@ -323,7 +334,6 @@ class OrdersController extends Controller
             }
 
             // 测试计算
-            $test = intval($request->test);
             if ($test === 1) {
                 DB::rollBack();
                 // 优惠券解冻
