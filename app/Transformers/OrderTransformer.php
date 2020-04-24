@@ -29,6 +29,7 @@ class OrderTransformer extends TransformerAbstract
             'goods_weight' => $order->goods_weight,
             'remarks' => $order->remarks,
             'status' => $order->status,
+            'status_text' => Order::status_text[$order->status] ?? '',
             'address_id' => $order->address_id,
             'created_at' => $order->created_at->toDatetimeString(),
             'payed_at' => $order->payed_at,
