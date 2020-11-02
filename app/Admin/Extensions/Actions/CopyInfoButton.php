@@ -23,6 +23,8 @@ class CopyInfoButton
 
     protected function script()
     {
+        Admin::js(static::$js);
+
         return <<<JS
 var clipboard = new ClipboardJS('.clipboard-btn');
 
@@ -35,7 +37,6 @@ JS;
 
     protected function render()
     {
-        Admin::js(static::$js);
         Admin::script($this->script());
 
         return <<<EOT
