@@ -78,6 +78,9 @@ $api->version('v1', [
         $api->get('coupons/{coupon}', 'CouponsController@show')->where('coupon', '[0-9]+');
         $api->post('coupons/{coupon}/present', 'CouponsController@present')->where('coupon', '[0-9]+');
 
+        // 门店
+        $api->get('stores', 'StoresController@index');
+
 
     });
 

@@ -45,3 +45,15 @@ Column::extend('ip', \App\Admin\Extensions\Column\Ip::class);
 show::extend('currency', \App\Admin\Extensions\Show\Currency::class);
 show::extend('array2json', \App\Admin\Extensions\Show\Array2json::class);
 show::extend('ip', \App\Admin\Extensions\Show\Ip::class);
+
+// 排序表单
+function form_sort($form)
+{
+    $form->number('sort', __('Sort'))->default(0)->min(0)->max(999);
+}
+
+// 启用禁用表单
+function form_has_enabled($form)
+{
+    $form->switch('has_enabled', __('Has enabled'))->default(1);
+}

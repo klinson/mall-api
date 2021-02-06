@@ -25,6 +25,9 @@ class Model extends EloquentModel
 {
     protected $perPage = 10;
     const hasDefaultObserver = false;
+    const cache_minutes = 360; //缓存6小时
+    const cache_key = 'list:models'; //缓存列表数据key
+
 
     // 自动注册 creating, created, updating, updated, saving, saved, deleting, deleted, restoring, restored 事件，只需重构对应whenXXXX实践
     protected static function boot()
@@ -157,5 +160,36 @@ class Model extends EloquentModel
                 return $form->$select_type($formField, $label)->options($list);
             }
         }
+    }
+
+    /**
+     * 优先从缓存读数据
+     * @param bool $reset 强行刷新
+     * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @author klinson <klinson@163.com>
+     */
+    public static function getByCache($reset = false)
+    {
+        if ($reset || app()->isLocal()) cache()->delete(static::cache_key);
+        return cache()->remember(static::cache_key, static::cache_minutes, function () {
+            $list = static::getAllData();
+            $arr = [];
+            foreach ($list as $item) {
+                $arr[] = $item->formatToArray();
+            }
+            return $arr;
+        });
+    }
+
+    // 获取所有数据列表
+    public static function getAllData()
+    {
+        return static::all();
+    }
+    // 数据格式化
+    public function formatToArray()
+    {
+        return $this->toArray();
     }
 }

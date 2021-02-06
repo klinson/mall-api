@@ -529,6 +529,16 @@ return [
             ]
         ],
 
+        // 高德地图
+        'amap'     => [
+            // 是否启用插件
+            'enable' => true,
+            'config' => [
+                // API KEY
+                'api_key' => env('AMAP_WEB_KEY', ''),
+            ],
+        ],
+
     ],
 
     'powered_by_info' => '技术支持：<a href="https://www.klinson.com/" target="_blank" title="专业开发一切web、公众号、小程序，请联系我吧">klinson.com</a>',
