@@ -72,6 +72,7 @@ Route::group([
     $router->get('testFrom', 'TestFormController@index');
     $router->post('testFrom', 'TestFormController@store');
 
+    $router->get('stores/resetCache', 'StoresController@resetCache');
     $router->resource('stores', StoresController::class);
 
 });

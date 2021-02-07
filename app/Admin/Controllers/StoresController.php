@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Tools\DefaultSimpleTool;
 use App\Models\Store;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -39,6 +40,10 @@ class StoresController extends AdminController
         $grid->column('created_at', __('Created at'));
 //        $grid->column('updated_at', __('Updated at'));
 //        $grid->column('deleted_at', __('Deleted at'));
+
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new DefaultSimpleTool(admin_base_path('stores/resetCache'), '刷新缓存', 'right', 'warning', 'refresh'));
+        });
 
         return $grid;
     }
@@ -94,5 +99,12 @@ class StoresController extends AdminController
         form_has_enabled($form);
 
         return $form;
+    }
+
+    public function resetCache()
+    {
+        Store::getByCache(true);
+        admin_success('刷新缓存成功');
+        return redirect(admin_base_path('stores'));
     }
 }
