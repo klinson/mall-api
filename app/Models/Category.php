@@ -22,6 +22,6 @@ class Category extends Model
 
     public function getAdCodeAttribute()
     {
-        return 'goods-'.$this->id;
+        return 'category-'.$this->id;
     }
 }

@@ -38,7 +38,7 @@ class CarouselAd extends Model
     public static function getByKeyByCache($key, $reset = false)
     {
         $cache_key = 'ads:carousel_ads:'.$key;
-        (app()->environment() !== 'production' || $reset) && \Cache::forget($cache_key);
+        (app()->isLocal() || $reset) && \Cache::forget($cache_key);
         return \Cache::remember($cache_key, 60*48, function () use ($key) {
             return static::getByKey($key);
         });

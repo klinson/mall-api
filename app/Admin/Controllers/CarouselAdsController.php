@@ -178,8 +178,9 @@ class CarouselAdsController extends Controller
             $grid->disableExport();
             $grid->disableCreateButton();
             $grid->disableFilter();
-            $grid->tools(function (Grid\Tools $tools) {
-                $tools->append(new DefaultSimpleTool(admin_base_path('carouselAds'), '返回列表', 'right', 'default', 'mail-reply'));
+            $grid->tools(function (Grid\Tools $tools) use ($ad) {
+                $tools->append(new DefaultSimpleTool(admin_base_path('carouselAds'), '返回列表', 'left', 'default', 'mail-reply'));
+                $tools->append(new DefaultSimpleTool(admin_base_path('carouselAds/'.$ad->id.'/resetCache'), '刷新缓存', 'right', 'warning', 'refresh'));
             });
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 $actions->disableView();
@@ -256,6 +257,13 @@ class CarouselAdsController extends Controller
         return response()->json($data);
     }
 
+    public function resetCache(CarouselAd $ad)
+    {
+        $ad->resetCache();
+        admin_success('刷新缓存成功');
+
+        return redirect()->back();
+    }
 
     public function update($id)
     {

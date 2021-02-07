@@ -27,6 +27,16 @@ class CarouselAdsTableSeeder extends Seeder
                 'updated_at' => '2019-10-06 15:02:20',
                 'deleted_at' => NULL,
             ),
+            1 => 
+            array (
+                'id' => 2,
+                'key' => 'index_icon',
+                'title' => '首页图标入口',
+                'has_enabled' => 1,
+                'created_at' => '2021-02-07 17:34:18',
+                'updated_at' => '2021-02-07 17:34:18',
+                'deleted_at' => NULL,
+            ),
         ));
         
         
