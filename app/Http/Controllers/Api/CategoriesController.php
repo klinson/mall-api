@@ -15,6 +15,7 @@ class CategoriesController extends Controller
 {
     public function index()
     {
-        return $this->response->collection(Category::enabled()->sort()->byId()->get(), new CategoryTransformer());
+        $tree = Category::getByCache();
+        return $this->response->array($tree);
     }
 }

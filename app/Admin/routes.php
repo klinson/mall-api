@@ -13,6 +13,7 @@ Route::group([
 
     $router->get('/', 'HomeController@index');
     $router->resource('users', UsersController::class);
+    $router->get('categories/resetCache', 'CategoriesController@resetCache');
     $router->resource('categories', CategoriesController::class);
     $router->resource('goods', GoodsController::class);
     $router->resource('discountGoods', DiscountGoodsController::class);
