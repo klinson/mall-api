@@ -14,6 +14,7 @@ class Category extends Model
 
     protected $appends = ['thumbnail_url'];
     protected $hidden = ['deleted_at'];
+    protected $casts = ['search_ids' => 'array'];
 
     protected $fillable = ['title', 'code', 'parent_id'];
 
@@ -25,9 +26,19 @@ class Category extends Model
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 
+    public function whenCreating()
+    {
+        $this->search_ids = [];
+    }
+
     public function whenSaving()
     {
         $this->full_title = $this->getNewFullTitle();
+    }
+
+    public function whenSaved()
+    {
+        $this->updateSearchIds();
     }
 
     public function getThumbnailUrlAttribute()
@@ -51,6 +62,38 @@ class Category extends Model
             $full_title .= $this->parent->full_title . '/';
         }
         return $full_title.$this->title;
+    }
+
+    // 更新搜索ID列表，递归父级
+    public function updateSearchIds()
+    {
+        $res = $this->getAllChildren();
+        if ($res->count() > 0) $child_ids = $res->pluck('id')->toArray();
+        else $child_ids = [];
+        $child_ids[] = $this->id;
+        if (!$this->search_ids || array_diff($child_ids, $this->search_ids)) {
+            $this->search_ids = $child_ids;
+            $this->save();
+        }
+//        if ($this->parent) {
+//            $this->parent->updateSearchIds();
+//        }
+    }
+
+    // 获取所有子对象
+    public function getAllChildren()
+    {
+        if ($this->children) {
+            $children = $this->children;
+            foreach ($this->children as $child) {
+                $cc = $child->getAllChildren();
+                if ($cc->count() > 0) $children = $children->merge($cc);
+
+            }
+            return $children;
+        } else {
+            return collect();
+        }
     }
 
     public static function getTreeList()

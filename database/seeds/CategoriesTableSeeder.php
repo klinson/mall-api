@@ -25,12 +25,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 1,
                 'created_at' => '2019-08-18 00:39:29',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:51:00',
                 'deleted_at' => NULL,
                 'parent_id' => 0,
                 'full_title' => '图书',
                 'is_recommended' => 1,
                 'code' => NULL,
+                'search_ids' => '[3, 4, 5, 6, 7, 8, 9, 10, 11, 84, 1]',
             ),
             1 => 
             array (
@@ -40,12 +41,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 11,
                 'created_at' => '2019-08-18 00:39:39',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 0,
                 'full_title' => '文具',
                 'is_recommended' => 0,
                 'code' => NULL,
+                'search_ids' => '[12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 2]',
             ),
             2 => 
             array (
@@ -55,12 +57,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 2,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/成人',
                 'is_recommended' => 0,
                 'code' => 101,
+                'search_ids' => '[3]',
             ),
             3 => 
             array (
@@ -70,12 +73,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 3,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/学生',
                 'is_recommended' => 0,
                 'code' => 102,
+                'search_ids' => '[4]',
             ),
             4 => 
             array (
@@ -85,12 +89,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 4,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/幼儿',
                 'is_recommended' => 0,
                 'code' => 103,
+                'search_ids' => '[5]',
             ),
             5 => 
             array (
@@ -100,12 +105,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 5,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:17:59',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/教辅',
                 'is_recommended' => 0,
                 'code' => 104,
+                'search_ids' => '[6]',
             ),
             6 => 
             array (
@@ -115,12 +121,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 6,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/作文',
-                'is_recommended' => 0,
+                'is_recommended' => 1,
                 'code' => 105,
+                'search_ids' => '[7]',
             ),
             7 => 
             array (
@@ -130,12 +137,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 7,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/字典',
                 'is_recommended' => 0,
                 'code' => 106,
+                'search_ids' => '[8]',
             ),
             8 => 
             array (
@@ -145,12 +153,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 8,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/杂志',
                 'is_recommended' => 0,
                 'code' => 107,
+                'search_ids' => '[9]',
             ),
             9 => 
             array (
@@ -160,12 +169,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 9,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/地图',
                 'is_recommended' => 0,
                 'code' => 108,
+                'search_ids' => '[11, 10]',
             ),
             10 => 
             array (
@@ -175,12 +185,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 10,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:18:30',
                 'deleted_at' => NULL,
                 'parent_id' => 1,
                 'full_title' => '图书/磁带',
                 'is_recommended' => 0,
                 'code' => 109,
+                'search_ids' => '[11]',
             ),
             11 => 
             array (
@@ -190,12 +201,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 12,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/体育用品',
                 'is_recommended' => 0,
                 'code' => 201,
+                'search_ids' => '[12]',
             ),
             12 => 
             array (
@@ -205,12 +217,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 13,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/大件商品',
                 'is_recommended' => 0,
                 'code' => 202,
+                'search_ids' => '[13]',
             ),
             13 => 
             array (
@@ -220,12 +233,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 14,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/百货商品',
                 'is_recommended' => 0,
                 'code' => 203,
+                'search_ids' => '[14]',
             ),
             14 => 
             array (
@@ -235,12 +249,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 15,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/其他商品',
                 'is_recommended' => 0,
                 'code' => 204,
+                'search_ids' => '[15]',
             ),
             15 => 
             array (
@@ -250,12 +265,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 16,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/水笔',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[16]',
             ),
             16 => 
             array (
@@ -265,12 +281,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 17,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/铅笔',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[17]',
             ),
             17 => 
             array (
@@ -280,12 +297,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 18,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/毛笔',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[18]',
             ),
             18 => 
             array (
@@ -295,12 +313,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 19,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/钢笔',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[19]',
             ),
             19 => 
             array (
@@ -310,12 +329,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 20,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/画笔',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[20]',
             ),
             20 => 
             array (
@@ -325,12 +345,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 21,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/笔芯',
                 'is_recommended' => 0,
                 'code' => 205,
+                'search_ids' => '[21]',
             ),
             21 => 
             array (
@@ -340,12 +361,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 22,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/笔刨',
                 'is_recommended' => 0,
                 'code' => 206,
+                'search_ids' => '[22]',
             ),
             22 => 
             array (
@@ -355,12 +377,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 23,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/笔筒',
                 'is_recommended' => 0,
                 'code' => 207,
+                'search_ids' => '[23]',
             ),
             23 => 
             array (
@@ -370,12 +393,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 24,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/笔盒',
                 'is_recommended' => 0,
                 'code' => 208,
+                'search_ids' => '[24]',
             ),
             24 => 
             array (
@@ -385,12 +409,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 25,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/彩笔',
                 'is_recommended' => 0,
                 'code' => 209,
+                'search_ids' => '[25]',
             ),
             25 => 
             array (
@@ -400,12 +425,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 26,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/彩泥',
                 'is_recommended' => 0,
                 'code' => 210,
+                'search_ids' => '[26]',
             ),
             26 => 
             array (
@@ -415,12 +441,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 27,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/学具',
                 'is_recommended' => 0,
                 'code' => 211,
+                'search_ids' => '[27]',
             ),
             27 => 
             array (
@@ -430,12 +457,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 28,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/玩具',
                 'is_recommended' => 0,
                 'code' => 212,
+                'search_ids' => '[28]',
             ),
             28 => 
             array (
@@ -445,12 +473,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 29,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/胶擦',
                 'is_recommended' => 0,
                 'code' => 213,
+                'search_ids' => '[29]',
             ),
             29 => 
             array (
@@ -460,12 +489,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 30,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/胶水',
                 'is_recommended' => 0,
                 'code' => 325,
+                'search_ids' => '[30]',
             ),
             30 => 
             array (
@@ -475,12 +505,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 31,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/胶纸',
                 'is_recommended' => 0,
                 'code' => 215,
+                'search_ids' => '[31]',
             ),
             31 => 
             array (
@@ -490,12 +521,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 32,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/涂改',
                 'is_recommended' => 0,
                 'code' => 216,
+                'search_ids' => '[32]',
             ),
             32 => 
             array (
@@ -505,12 +537,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 33,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/软抄',
                 'is_recommended' => 0,
                 'code' => 217,
+                'search_ids' => '[33]',
             ),
             33 => 
             array (
@@ -520,12 +553,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 34,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/硬抄',
                 'is_recommended' => 0,
                 'code' => 218,
+                'search_ids' => '[34]',
             ),
             34 => 
             array (
@@ -535,12 +569,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 35,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/线抄',
                 'is_recommended' => 0,
                 'code' => 219,
+                'search_ids' => '[35]',
             ),
             35 => 
             array (
@@ -550,12 +585,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 36,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/皮抄',
                 'is_recommended' => 0,
                 'code' => 220,
+                'search_ids' => '[36]',
             ),
             36 => 
             array (
@@ -565,12 +601,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 37,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/墨水墨具',
                 'is_recommended' => 0,
                 'code' => 221,
+                'search_ids' => '[37]',
             ),
             37 => 
             array (
@@ -580,12 +617,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 38,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/便条百事',
                 'is_recommended' => 0,
                 'code' => 222,
+                'search_ids' => '[38]',
             ),
             38 => 
             array (
@@ -595,12 +633,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 39,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/日记锁本',
                 'is_recommended' => 0,
                 'code' => 223,
+                'search_ids' => '[39]',
             ),
             39 => 
             array (
@@ -610,12 +649,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 40,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/学生作业',
                 'is_recommended' => 0,
                 'code' => 224,
+                'search_ids' => '[40]',
             ),
             40 => 
             array (
@@ -625,12 +665,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 41,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/书法画描',
                 'is_recommended' => 0,
                 'code' => 225,
+                'search_ids' => '[41]',
             ),
             41 => 
             array (
@@ -640,12 +681,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 42,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/账本',
                 'is_recommended' => 0,
                 'code' => 226,
+                'search_ids' => '[42]',
             ),
             42 => 
             array (
@@ -655,12 +697,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 43,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/单据',
                 'is_recommended' => 0,
                 'code' => 227,
+                'search_ids' => '[43]',
             ),
             43 => 
             array (
@@ -670,12 +713,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 44,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/证书',
                 'is_recommended' => 0,
                 'code' => 228,
+                'search_ids' => '[44]',
             ),
             44 => 
             array (
@@ -685,12 +729,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 45,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/扑克',
                 'is_recommended' => 0,
                 'code' => 229,
+                'search_ids' => '[45]',
             ),
             45 => 
             array (
@@ -700,12 +745,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 46,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/棋牌',
                 'is_recommended' => 0,
                 'code' => 230,
+                'search_ids' => '[46]',
             ),
             46 => 
             array (
@@ -715,12 +761,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 47,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/钟表',
                 'is_recommended' => 0,
                 'code' => 231,
+                'search_ids' => '[47]',
             ),
             47 => 
             array (
@@ -730,12 +777,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 48,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/订书机',
                 'is_recommended' => 0,
                 'code' => 232,
+                'search_ids' => '[48]',
             ),
             48 => 
             array (
@@ -745,12 +793,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 49,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/书针类',
                 'is_recommended' => 0,
                 'code' => 233,
+                'search_ids' => '[49]',
             ),
             49 => 
             array (
@@ -760,12 +809,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 50,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/名片册座',
                 'is_recommended' => 0,
                 'code' => 234,
+                'search_ids' => '[50]',
             ),
             50 => 
             array (
@@ -775,12 +825,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 51,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/计算机',
                 'is_recommended' => 0,
                 'code' => 235,
+                'search_ids' => '[51]',
             ),
             51 => 
             array (
@@ -790,12 +841,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 52,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/电话机',
                 'is_recommended' => 0,
                 'code' => 236,
+                'search_ids' => '[52]',
             ),
             52 => 
             array (
@@ -805,12 +857,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 53,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/小五金',
                 'is_recommended' => 0,
                 'code' => 237,
+                'search_ids' => '[53]',
             ),
             53 => 
             array (
@@ -820,12 +873,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 54,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/文件袋夹册盒',
                 'is_recommended' => 0,
                 'code' => 238,
+                'search_ids' => '[54]',
             ),
             54 => 
             array (
@@ -835,12 +889,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 55,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/文件架盘',
                 'is_recommended' => 0,
                 'code' => 239,
+                'search_ids' => '[55]',
             ),
             55 => 
             array (
@@ -850,12 +905,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 56,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/印章印油',
                 'is_recommended' => 0,
                 'code' => 240,
+                'search_ids' => '[56]',
             ),
             56 => 
             array (
@@ -865,12 +921,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 57,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/贺卡请帖',
                 'is_recommended' => 0,
                 'code' => 241,
+                'search_ids' => '[57]',
             ),
             57 => 
             array (
@@ -880,12 +937,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 58,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/剪刀介刀',
                 'is_recommended' => 0,
                 'code' => 242,
+                'search_ids' => '[58]',
             ),
             58 => 
             array (
@@ -895,12 +953,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 59,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/相框相册',
                 'is_recommended' => 0,
                 'code' => 243,
+                'search_ids' => '[59]',
             ),
             59 => 
             array (
@@ -910,12 +969,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 60,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/电筒电池',
                 'is_recommended' => 0,
                 'code' => 244,
+                'search_ids' => '[60]',
             ),
             60 => 
             array (
@@ -925,12 +985,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 61,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/电脑耗材',
                 'is_recommended' => 0,
                 'code' => 245,
+                'search_ids' => '[61]',
             ),
             61 => 
             array (
@@ -940,12 +1001,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 62,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/电脑用品',
                 'is_recommended' => 0,
                 'code' => 246,
+                'search_ids' => '[62]',
             ),
             62 => 
             array (
@@ -955,12 +1017,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 63,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/复印打印',
                 'is_recommended' => 0,
                 'code' => 247,
+                'search_ids' => '[63]',
             ),
             63 => 
             array (
@@ -970,12 +1033,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 64,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/台历挂历',
                 'is_recommended' => 0,
                 'code' => 248,
+                'search_ids' => '[64]',
             ),
             64 => 
             array (
@@ -985,12 +1049,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 65,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/年画饰品',
                 'is_recommended' => 0,
                 'code' => 249,
+                'search_ids' => '[65]',
             ),
             65 => 
             array (
@@ -1000,12 +1065,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 66,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/书包挂包',
                 'is_recommended' => 0,
                 'code' => 250,
+                'search_ids' => '[66]',
             ),
             66 => 
             array (
@@ -1015,12 +1081,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 67,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/品牌笔类',
                 'is_recommended' => 0,
                 'code' => 251,
+                'search_ids' => '[67]',
             ),
             67 => 
             array (
@@ -1030,12 +1097,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 68,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/台牌胸牌',
                 'is_recommended' => 0,
                 'code' => 252,
+                'search_ids' => '[68]',
             ),
             68 => 
             array (
@@ -1045,12 +1113,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 69,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/颜料调色',
                 'is_recommended' => 0,
                 'code' => 253,
+                'search_ids' => '[69]',
             ),
             69 => 
             array (
@@ -1060,12 +1129,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 70,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/打码票夹',
                 'is_recommended' => 0,
                 'code' => 254,
+                'search_ids' => '[70]',
             ),
             70 => 
             array (
@@ -1075,12 +1145,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 71,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/其他袋类',
                 'is_recommended' => 0,
                 'code' => 255,
+                'search_ids' => '[71]',
             ),
             71 => 
             array (
@@ -1090,12 +1161,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 72,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/公文档案',
                 'is_recommended' => 0,
                 'code' => 256,
+                'search_ids' => '[72]',
             ),
             72 => 
             array (
@@ -1105,12 +1177,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 73,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/拼积画板',
                 'is_recommended' => 0,
                 'code' => 257,
+                'search_ids' => '[73]',
             ),
             73 => 
             array (
@@ -1120,12 +1193,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 74,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/装订夹板',
                 'is_recommended' => 0,
                 'code' => 258,
+                'search_ids' => '[74]',
             ),
             74 => 
             array (
@@ -1135,12 +1209,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 75,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/饰品礼品',
                 'is_recommended' => 0,
                 'code' => 259,
+                'search_ids' => '[75]',
             ),
             75 => 
             array (
@@ -1150,12 +1225,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 76,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/学习机',
                 'is_recommended' => 0,
                 'code' => 301,
+                'search_ids' => '[76]',
             ),
             76 => 
             array (
@@ -1165,12 +1241,13 @@ class CategoriesTableSeeder extends Seeder
                 'has_enabled' => 1,
                 'sort' => 77,
                 'created_at' => '2021-02-20 17:51:03',
-                'updated_at' => '2021-02-20 17:52:06',
+                'updated_at' => '2021-02-20 22:56:49',
                 'deleted_at' => NULL,
                 'parent_id' => 2,
                 'full_title' => '文具/校服/徽章（宇服）',
                 'is_recommended' => 0,
                 'code' => 302,
+                'search_ids' => '[77]',
             ),
         ));
         

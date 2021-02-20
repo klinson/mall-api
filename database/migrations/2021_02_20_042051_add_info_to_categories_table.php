@@ -18,6 +18,7 @@ class AddInfoToCategoriesTable extends Migration
             $table->string('full_title')->nullable();
             $table->unsignedTinyInteger('is_recommended')->default(0);
             $table->unsignedInteger('code')->nullable();
+            $table->json('search_ids')->nullable();
         });
     }
 
@@ -33,6 +34,7 @@ class AddInfoToCategoriesTable extends Migration
             $table->dropColumn('full_title');
             $table->dropColumn('is_recommended');
             $table->dropColumn('code');
+            $table->dropColumn('search_ids');
         });
     }
 }

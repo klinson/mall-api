@@ -46,7 +46,7 @@ class CategoriesController extends Controller
                     $form->number('sort', __('Sort'))->default(0);
 
 //                    $form->textarea('description', '描述');
-                    $form->hidden('_token')->default(csrf_token());
+//                    $form->hidden('_token')->default(csrf_token());
 
                     $column->append((new Box(trans('admin.new'), $form))->style('success'));
                 });

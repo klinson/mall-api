@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Category;
 use App\Models\Goods;
 use App\Models\LotteryChance;
 use App\Models\UserFavourGoods;
@@ -22,7 +23,8 @@ class GoodsController extends Controller
         $query = Goods::query();
 
         if ($request->category_id) {
-            $query->where('category_id', $request->category_id);
+            $category = Category::find($request->category_id);
+            $category && $query->whereIn('category_id', $category->search_ids);
         }
         if (! blank($request->q)) {
             $query->where('title', 'like', '%'.$request->q.'%');
