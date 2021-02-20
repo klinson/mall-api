@@ -34,6 +34,7 @@ $api->version('v1', [
 
     ], function ($api) {
         $api->get('categories', 'CategoriesController@index');
+        $api->get('categories/top', 'CategoriesController@top');
         $api->get('goods', 'GoodsController@index');
         $api->get('goods/{goods}', 'GoodsController@show')->where('goods', '[0-9]+');;
         $api->get('goods/{goods}/qrcode', 'GoodsController@qrcode')->where('goods', '[0-9]+');;

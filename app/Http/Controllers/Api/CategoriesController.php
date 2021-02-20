@@ -18,4 +18,11 @@ class CategoriesController extends Controller
         $tree = Category::getByCache();
         return $this->response->array($tree);
     }
+
+    // 推荐的分类
+    public function top()
+    {
+        $list = Category::enabled()->orderBy('sort')->where('is_recommended', 1)->get();
+        return $this->response->collection($list, new CategoryTransformer());
+    }
 }
