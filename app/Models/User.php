@@ -84,6 +84,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(WalletLog::class);
     }
 
+    public function integral()
+    {
+        return $this->hasOne(Integral::class, 'user_id', 'id');
+    }
+
+    public function integralLogs()
+    {
+        return $this->hasMany(IntegralLog::class);
+    }
+
     public function coffer()
     {
         return $this->hasOne(Coffer::class, 'user_id', 'id');
@@ -101,6 +111,9 @@ class User extends Authenticatable implements JWTSubject
         }
         if (! $this->coffer) {
             $this->coffer()->create();
+        }
+        if (! $this->integral) {
+            $this->integral()->create();
         }
     }
 
