@@ -306,7 +306,7 @@ class OrdersController extends Controller
         // 总费用（商品原价+快递费）
         $all_price = $all_goods_price + $freight_price;
         // 支付费用（优惠后的会员价-优惠券折扣+快递费-积分抵扣）
-        $real_price = $no_freight_price + $freight_price - ($used_integral * $integral2money_rate);
+        $real_price = $no_freight_price + $freight_price - ($used_integral * $integral2money_rate * 100);
 
         $order = new Order();
         $order->order_number = Order::generateOrderNumber();
