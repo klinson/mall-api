@@ -102,6 +102,17 @@ class UserHasCoupon extends Model
         $this->status = 3;
         return $this->save();
     }
+    // 取消订单后退回优惠券
+    public function backIt()
+    {
+        if ($this->status !== 3) {
+            return false;
+        }
+        $this->used_at = null;
+        $this->discount_money = 0;
+        $this->status = 1;
+        return $this->save();
+    }
 
     public function coupon()
     {

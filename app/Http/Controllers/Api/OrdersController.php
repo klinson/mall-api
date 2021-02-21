@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Address;
 use App\Models\DiscountGoods;
 use App\Models\Express;
 use App\Models\FreightTemplate;
@@ -15,6 +16,7 @@ use App\Models\GoodsSpecification;
 use App\Models\Order;
 use App\Models\OrderGoods;
 use App\Models\ShoppingCart;
+use App\Models\Store;
 use App\Models\User;
 use App\Models\UserHasCoupon;
 use App\Transformers\OrderTransformer;
@@ -23,6 +25,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Intervention\Image\Point;
 
 class OrdersController extends Controller
 {
@@ -51,17 +54,40 @@ class OrdersController extends Controller
             return $this->response->errorBadRequest('备注信息不可超过100字符');
         }
 
-        if (! empty($request->address_id) || ! $test) {
-            if (! $request->address_id || ! $address = $this->user->addresses()->where('id', $request->address_id)->first()) {
-                return $this->response->errorBadRequest('请选择配送地址');
+        if (! $test) {
+            if (! $request->delivery_type) {
+                return $this->response->errorBadRequest('请选择配送方式');
             }
-            // 获取运费计算模板，没有则非配送范围
-            if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
-                return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
+
+            if ($request->delivery_type == Address::class) {
+                if (! $request->delivery_id || ! $address = $this->user->addresses()->where('id', $request->delivery_id)->first()) {
+                    return $this->response->errorBadRequest('请选择配送地址');
+                }
+                // 获取运费计算模板，没有则非配送范围
+                if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
+                    return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
+                }
+            } else {
+                if (! $request->delivery_id || ! $store = Store::where('id', $request->delivery_id)->enabled()->first()) {
+                    return $this->response->errorBadRequest('请选择自取门店');
+                }
             }
         } else {
-            $address = null;
-            $freightTemplate = null;
+            $address = $freightTemplate = $store = null;
+        }
+
+        if ($request->used_integral > 0) {
+            $used_integral = intval($request->used_integral);
+            if ($this->user->integral->blance < $used_integral) {
+                return $this->response->errorBadRequest("当前积分剩余{$this->user->integral->blance}分，不够{$used_integral}分抵用");
+            }
+            $integral2money_rate = config('system.integral2money_rate', 0);
+            if (empty($integral2money_rate) || $integral2money_rate < 0 || $integral2money_rate > 1) {
+                return $this->response->errorBadRequest('当前积分无法使用，系统未设置正确的汇率');
+            }
+        } else {
+            $used_integral = 0;
+            $integral2money_rate = 0;
         }
 
         $goods_ids_list = $request->goods_list;
@@ -279,11 +305,12 @@ class OrdersController extends Controller
 
         // 总费用（商品原价+快递费）
         $all_price = $all_goods_price + $freight_price;
-        // 支付费用（优惠后的会员价-优惠券折扣+快递费）
-        $real_price = $no_freight_price + $freight_price;
+        // 支付费用（优惠后的会员价-优惠券折扣+快递费-积分抵扣）
+        $real_price = $no_freight_price + $freight_price - ($used_integral * $integral2money_rate);
 
         $order = new Order();
         $order->order_number = Order::generateOrderNumber();
+        $order->order_type = 1;//普通下单
         $order->user_id = $this->user->id;
         $order->goods_price = $all_goods_price;
         $order->member_discount_price = $all_member_discount_price;
@@ -293,13 +320,17 @@ class OrdersController extends Controller
         $order->coupon_price = $coupon_price;
         $order->allow_coupon_price = $allow_coupon_price;
         $order->user_coupon_id = $userCoupon ? $userCoupon->id : 0;
+        $order->used_integral = $used_integral;
         $order->real_price = $real_price;
         $order->goods_count = $goods_count;
         $order->goods_weight = $goods_weight;
         $order->status = 1;
         $order->remarks = $request->remarks ?: '';
-        $order->address_id = $request->address_id;
-        $order->address_snapshot = $address ? $address->toSnapshot() : [];
+        $order->delivery_type = $request->delivery_type;
+        $order->delivery_id = $request->delivery_id;
+        $order->delivery_snapshot = $request->delivery_type == Address::class ? ($address ? $address->toSnapshot() : []) : ($store ? $store->toSnapshot() : []);
+//        $order->address_id = $request->address_id;
+//        $order->address_snapshot = $address ? $address->toSnapshot() : [];
         // 运费模板
         $order->freight_template_id = ($is_fee_freight || empty($freightTemplate)) ? 0 : $freightTemplate->id;
 
@@ -328,11 +359,6 @@ class OrdersController extends Controller
 
             $order->orderGoods()->createMany($order_goods);
 
-            // 清购物车
-            if ($from_shopping_cart_ids) {
-                ShoppingCart::isMine()->whereIn('id', $from_shopping_cart_ids)->delete();
-            }
-
             // 测试计算
             if ($test === 1) {
                 DB::rollBack();
@@ -341,10 +367,26 @@ class OrdersController extends Controller
                     return $this->response->errorBadRequest('优惠券解冻失败，请联系客服');
                 }
             } else {
+                // 清购物车
+                if ($from_shopping_cart_ids) {
+                    ShoppingCart::isMine()->whereIn('id', $from_shopping_cart_ids)->delete();
+                }
+
                 // 修改优惠券为已使用
                 if ($userCoupon && ! $userCoupon->useIt($coupon_price)) {
+                    DB::rollBack();
                     return $this->response->errorBadRequest('优惠券状态异常，结算失败');
                 }
+                // 扣除积分
+                if ($used_integral) {
+                    try {
+                        $this->user->integral->useIt($order, 0);
+                    } catch (\Exception $exception) {
+                        DB::rollBack();
+                        return $this->response->errorBadRequest($exception->getMessage());
+                    }
+                }
+
                 DB::commit();
             }
 
