@@ -29,8 +29,9 @@ class WalletLogsController extends AdminController
 
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'owner', 'nickname');
-        $grid->column('data_id', __('Data id'));
-        $grid->column('data_type', __('Data type'));
+        grid_display_relation($grid, 'datatype', 'order_number', '关联订单');
+//        $grid->column('data_id', __('Data id'));
+//        $grid->column('data_type', __('Data type'));
         $grid->column('balance', __('Balance'))->currency();
         $grid->column('type', __('Type'))->using(WalletLog::type_text);
         $grid->column('description', __('Description'));
@@ -55,8 +56,9 @@ class WalletLogsController extends AdminController
 
         $show->field('id', __('Id'));
         show_display_relation($show, 'owner', 'nickname');
-        $show->field('data_id', __('Data id'));
-        $show->field('data_type', __('Data type'));
+        show_display_relation($show, 'datatype', 'order_number', '关联订单');
+//        $show->field('data_id', __('Data id'));
+//        $show->field('data_type', __('Data type'));
         $show->field('balance', __('Balance'))->currency();
         $show->field('type', __('Type'))->using(WalletLog::type_text);
         $show->field('description', __('Description'));

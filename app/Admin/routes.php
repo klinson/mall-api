@@ -77,4 +77,6 @@ Route::group([
     $router->get('stores/resetCache', 'StoresController@resetCache');
     $router->resource('stores', StoresController::class);
 
+    $router->resource('walletActivities', WalletActivitiesController::class);
+    $router->resource('rechargeThresholdOrders', RechargeThresholdOrdersController::class);
 });

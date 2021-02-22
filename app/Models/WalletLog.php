@@ -14,4 +14,9 @@ class WalletLog extends Model
     const type_text = [
         '消费', '充值'
     ];
+
+    public function datatype()
+    {
+        return $this->morphTo('datatype', 'data_type', 'data_id');
+    }
 }

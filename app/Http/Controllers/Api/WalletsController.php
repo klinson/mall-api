@@ -9,7 +9,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\RechargeThresholdOrder;
+use App\Models\WalletActivity;
 use App\Transformers\RechargeThresholdOrderTransformer;
+use App\Transformers\WalletActivityTransformer;
 use App\Transformers\WalletLogTransformer;
 use App\Transformers\WalletTransformer;
 use Auth;
@@ -32,7 +34,7 @@ class WalletsController extends Controller
     public function recharge(Request $request)
     {
         $balance = to_int($request->balance);
-        if (! $balance) {
+        if (! $balance || $balance <= 0) {
             return $this->response->errorBadRequest('充值金额不能为空');
         }
         $order = RechargeThresholdOrder::generateRechargeOrder($this->user, $balance);
@@ -48,5 +50,16 @@ class WalletsController extends Controller
                 return $this->response->errorBadRequest($exception->getMessage());
             }
         }
+    }
+
+    /**
+     * 充值活动列表
+     * @return \Dingo\Api\Http\Response
+     * @author klinson <klinson@163.com>
+     */
+    public function activities()
+    {
+        $list = WalletActivity::getValidActivities();
+        return $this->response->collection($list, new WalletActivityTransformer());
     }
 }

@@ -192,4 +192,27 @@ class Model extends EloquentModel
     {
         return $this->toArray();
     }
+
+    /**
+     * 快照自动加载转换器转化
+     * @param $data
+     * @return mixed
+     * @author klinson <klinson@163.com>
+     */
+    public static function transformBySnapshot($data)
+    {
+        $tmp = explode("\\", static::class);
+        $class_name = end($tmp);
+        $class_name = "App\\Transformers\\{$class_name}Transformer";
+        $method = 'transform';
+        if (! class_exists($class_name)) {
+            return $data;
+        } else {
+            $model = new static();
+            foreach ($data as $key => $value) {
+                $model->$key = $value;
+            }
+            return (new $class_name)->$method($model);
+        }
+    }
 }

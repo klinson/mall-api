@@ -82,6 +82,7 @@ $api->version('v1', [
         // 门店
         $api->get('stores', 'StoresController@index');
 
+        $api->get('wallet/activities', 'WalletsController@activities');
 
     });
 

@@ -15,7 +15,23 @@ class RechargeThresholdOrder extends Model
 
     const wechat_pay_notify_route = '/api/wechat/RechargeThresholdOrderPaidNotify';
 
-    protected $fillable = ['order_number', 'balance', 'user_id', 'agency_config_id', 'status'];
+    const status_text = [
+        1 => '待支付',
+        2 => '已支付',
+        3 => '已过期',
+    ];
+
+    protected $fillable = ['order_number', 'balance', 'user_id', 'agency_config_id', 'status', 'result', 'wallet_activity_id', 'wallet_activity_snapshot'];
+
+    protected $casts = [
+        'wallet_activity_snapshot' => 'array'
+    ];
+
+    public function datatype()
+    {
+        return $this->hasOne(WalletLog::class, 'data_id')->where('data_type', static::class);
+//        return $this->morphMany(WalletLog::class, 'datatype', 'data_type', 'data_id');
+    }
 
     public static function getWechatPayNotifyUrl()
     {
@@ -48,11 +64,17 @@ class RechargeThresholdOrder extends Model
         } else {
             $user_id = intval($user);
         }
+        $res = WalletActivity::calculateRecharge($balance);
+        if (! $res) return false;
+
         $data = [
             'balance' => $balance,
             'user_id' => $user_id,
             'agency_config_id' => 0,
             'status' => 1,
+            'result' => $res['result'],
+            'wallet_activity_id' => $res['activity'] ? $res['activity']->id : 0,
+            'wallet_activity_snapshot' => $res['activity'] ? $res['activity']->toArray() : [],
         ];
         $order = new self($data);
         $order->order_number = self::generateOrderNumber();
@@ -69,7 +91,10 @@ class RechargeThresholdOrder extends Model
     {
         $app = app('wechat.payment');
         $config = $app->getConfig();
-        $order_title = "【".config('app.name')."】代理充值订单：{$this->order_number}";
+        $order_title = "【".config('app.name')."】钱包充值：{$this->order_number}";
+        if ($this->wallet_activity_snapshot) {
+            $order_title .= "（活动：{$this->wallet_activity_snapshot['title']}）";
+        }
         $result = $app->order->unify([
             'body' => $order_title,
             'out_trade_no' => $this->order_number,
@@ -138,11 +163,14 @@ class RechargeThresholdOrder extends Model
             } else {
                 $log_info = "充值钱包（{$this->order_number}）";
             }
+            if ($this->wallet_activity_snapshot) {
+                $log_info .= "（活动：{$this->wallet_activity_snapshot['title']}）";
+            }
 
             // 充值入账
-            $this->owner->wallet->increment('balance', $this->balance);
+            $this->owner->wallet->increment('balance', $this->result);
             $this->owner->wallet->save();
-            $this->owner->wallet->log($this->balance, $this, $log_info, 1);
+            $this->owner->wallet->log($this->result, $this, $log_info, 1);
 
             DB::commit();
         } catch (Exception $exception) {

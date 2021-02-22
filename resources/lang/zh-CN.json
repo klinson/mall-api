@@ -155,5 +155,10 @@
   "Latitude": "经度",
   "Longitude": "纬度",
   "Store title": "门店名称",
+  "Threshold": "充值门槛金额",
+  "Present": "赠送金额",
+  "Wallet activity snapshot": "充值活动",
+  "Recharge threshold order result": "充值到账金额",
+  "": "",
   "": ""
 }
