@@ -34,6 +34,9 @@ class CouponTransformer extends TransformerAbstract
         if ($this->type === 'pivot_count') {
             $data['count'] = $coupon->pivot->count;
         }
+        if ($this->type === 'my_coupons_count') {
+            $data['my_coupons_count'] = $coupon->my_coupons_count;
+        }
 
         return $data;
     }

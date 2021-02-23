@@ -20,8 +20,8 @@ class CouponsController extends Controller
 {
     public function index()
     {
-        $list = Coupon::enabled()->get();
-        return $this->response->collection($list, new CouponTransformer());
+        $list = Coupon::enabled()->withCount('myCoupons')->get();
+        return $this->response->collection($list, new CouponTransformer('my_coupons_count'));
     }
 
     public function show(Coupon $coupon)
@@ -174,8 +174,19 @@ class CouponsController extends Controller
     public function draw(Coupon $coupon)
     {
         $this->authorize('enabled', $coupon);
-        $list = $coupon->toUser($this->user, '用户领取', 1);
-        return $this->response->item($list[0], new UserHasCouponTransformer());
+
+        try {
+            // 验证是否可以领取
+            $coupon->checkDraw();
+
+            $userCouponCount = $coupon->myCoupons()->count();
+            if ($userCouponCount >= $coupon['limit']) return $this->response->errorBadRequest('您已经超过领取限制了');
+
+            $list = $coupon->toUser($this->user, '用户领取', 1);
+            return $this->response->item($list[0], new UserHasCouponTransformer());
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest($exception->getMessage());
+        }
     }
 
     // 赠送（生产环境不可用，便于测试)
@@ -193,8 +204,14 @@ class CouponsController extends Controller
 
         $count = $request->count ?: 1;
 
-        $coupon->present($user, $count);
+        try {
+            // 验证是否可以领取
+            $coupon->checkDraw();
 
-        return $this->response->noContent();
+            $coupon->present($user, $count);
+            return $this->response->noContent();
+        } catch (\Exception $exception) {
+            return $this->response->errorBadRequest($exception->getMessage());
+        }
     }
 }
