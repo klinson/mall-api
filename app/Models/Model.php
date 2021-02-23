@@ -201,6 +201,7 @@ class Model extends EloquentModel
      */
     public static function transformBySnapshot($data)
     {
+        if (empty($data)) return [];
         $tmp = explode("\\", static::class);
         $class_name = end($tmp);
         $class_name = "App\\Transformers\\{$class_name}Transformer";
