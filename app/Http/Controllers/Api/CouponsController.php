@@ -29,16 +29,66 @@ class CouponsController extends Controller
         return $this->response->item($coupon, new CouponTransformer());
     }
 
+    /**
+     * 我的优惠券（下单前计算折扣优惠）
+     * @param Request $request
+     * @return \Dingo\Api\Http\Response
+     * @author klinson <klinson@163.com>
+     */
     public function myCoupons(Request $request)
     {
+        //status 状态1可用，2过期，3已用，4冻结,0未生效
         $query = UserHasCoupon::isOwner()->recent();
-        if (in_array($request->status, [1, 2, 3, 4])) {
-            $query->where('status', $request->status);
-        } else if ($request->status == -1) {
-            $query->where('status', '<>', 1);
+        if ($request->price) {
+            $query->whereIn('status', [0, 1]);
+        } else {
+            switch ($request->status) {
+                case 1:
+                    $query->whereIn('status', [0, 1]);
+                    break;
+                case 2:
+                    $query->whereIn('status', [0, 1, 2]);
+                    break;
+                case -1:
+                    break;
+                default:
+                    if (in_array($request->status, [3, 4])) {
+                        $query->where('status', $request->status);
+                    } else {
+                        $request->status = null;
+                    }
+                    break;
+            }
         }
+
         $userCoupons = $query->get();
-        return $this->response->collection($userCoupons, new UserHasCouponTransformer());
+        $list = [];
+        foreach ($userCoupons as $key=>$coupon) {
+            $coupon = $coupon->updateStatus();
+            if ($request->price) {
+                if (! in_array($coupon->status, [0, 1])) continue;
+
+                // 计算折扣
+                $coupon->discount_money = $coupon->settleDiscount($request->price);
+            } else {
+                if ($request->status) {
+                    if ($request->status == -1) {
+                        if ($coupon->status == 1) continue;
+                    } else {
+                        if ($coupon->status != $request->status) continue;
+                    }
+                }
+            }
+
+            $list[] = $coupon;
+        }
+
+        $list = collect($list);
+        if ($request->price) {
+            $list = $list->sortByDesc('discount_money');
+        }
+
+        return $this->response->collection($list, new UserHasCouponTransformer());
     }
 
     public function checkUserCoupons(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Transformers;
 
+use App\Models\Coupon;
 use App\Models\UserHasCoupon;
 use League\Fractal\TransformerAbstract;
 
@@ -13,7 +14,7 @@ class UserHasCouponTransformer extends TransformerAbstract
         return [
             'id' => $coupon->id,
             'coupon_id' => $coupon->coupon_id,
-            'coupon_snapshot' => $coupon->coupon_snapshot,
+            'coupon_snapshot' => Coupon::transformBySnapshot($coupon->coupon_snapshot),
             'used_at' => $coupon->used_at,
             'status' => $coupon->status,
             'discount_money' => $coupon->discount_money,

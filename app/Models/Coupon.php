@@ -36,7 +36,7 @@ class Coupon extends Model
         }
 
         $item = [
-            'coupon_snapshot' => (new CouponTransformer())->transform($this),
+            'coupon_snapshot' => $this->toArray(),
             'user_id' => $user_id,
             'status' => 1,
             'discount_money' => 0,

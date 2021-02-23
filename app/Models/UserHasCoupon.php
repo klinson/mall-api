@@ -41,6 +41,28 @@ class UserHasCoupon extends Model
     }
 
     /**
+     * 自动更新过期和生效状态
+     * @return $this
+     * @author klinson <klinson@163.com>
+     */
+    public function updateStatus()
+    {
+        $now = date('Y-m-d H:i:s');
+        switch ($this['status']) {
+            case 0:
+                if (is_null($this['coupon_snapshot']['valid_started_at']) || $now >= $this['coupon_snapshot']['valid_started_at']) {
+                    $this->status = 1;
+                }
+            case 1:
+                if (! is_null($this['coupon_snapshot']['valid_ended_at']) && $now >= $this['coupon_snapshot']['valid_ended_at']) {
+                    $this->status = 2;
+                }
+                $this->save();
+        }
+        return $this;
+    }
+
+    /**
      * 计算优惠金额
      * @param $price
      * @return int|mixed
