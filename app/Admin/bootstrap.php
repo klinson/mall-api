@@ -49,7 +49,7 @@ show::extend('ip', \App\Admin\Extensions\Show\Ip::class);
 // 排序表单
 function form_sort($form)
 {
-    $form->number('sort', __('Sort'))->default(0)->min(0)->max(999);
+    $form->number('sort', __('Sort'))->default(0)->min(0)->max(999)->help('排序，0-999，越大越靠前');
 }
 
 // 启用禁用表单

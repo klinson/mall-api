@@ -120,6 +120,14 @@ class CouponsController extends Controller
         return $this->response->collection($list, new UserHasCouponTransformer());
     }
 
+    // 领取优惠券
+    public function draw(Coupon $coupon)
+    {
+        $this->authorize('enabled', $coupon);
+        $list = $coupon->toUser($this->user, '用户领取', 1);
+        return $this->response->item($list[0], new UserHasCouponTransformer());
+    }
+
     // 赠送（生产环境不可用，便于测试)
     public function present(Coupon $coupon, Request $request)
     {

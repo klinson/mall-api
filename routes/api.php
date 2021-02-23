@@ -102,6 +102,8 @@ $api->version('v1', [
         $api->delete('goods/{goods_id}/favour', 'GoodsController@unfavour')->where('goods_id', '[0-9]+');
         $api->delete('goods/unfavour', 'GoodsController@unfavourByIds');
 
+        // 优惠券
+        $api->post('coupons/{coupon}/draw', 'CouponsController@draw')->where('coupon', '[0-9]+');
 
         // 购物车
         $api->resource('shoppingCarts', 'ShoppingCartsController', ['only' => ['index', 'update', 'store', 'destroy']]);

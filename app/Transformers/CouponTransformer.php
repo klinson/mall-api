@@ -21,6 +21,14 @@ class CouponTransformer extends TransformerAbstract
             'start_price' => $coupon->start_price,
             'type' => $coupon->type,
             'face_value' => $coupon->face_value,
+            'face_value_text' => $coupon->face_value_text,
+            'draw_started_at' => $coupon->draw_started_at,
+            'draw_ended_at' => $coupon->draw_ended_at,
+            'valid_started_at' => $coupon->valid_started_at,
+            'valid_ended_at' => $coupon->valid_ended_at,
+            'limit' => $coupon->limit,
+            'quantity' => $coupon->quantity,
+            'all_quantity' => $coupon->all_quantity,
             'has_enabled' => $coupon->has_enabled,
         ];
         if ($this->type === 'pivot_count') {

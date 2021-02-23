@@ -159,6 +159,15 @@
   "Present": "赠送金额",
   "Wallet activity snapshot": "充值活动",
   "Recharge threshold order result": "充值到账金额",
+  "Coupon limit": "限领",
+  "All quantity": "总库存",
+  "Draw started at": "开始领取时间",
+  "Draw ended at": "截止领取时间",
+  "Valid started at": "生效时间",
+  "Valid ended at": "过期时间",
+  "": "",
+  "": "",
+  "": "",
   "": "",
   "": ""
 }

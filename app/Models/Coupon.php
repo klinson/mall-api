@@ -12,6 +12,7 @@ class Coupon extends Model
         1 => '折扣券',
         2 => '满减券',
     ];
+    protected $appends = ['face_value_text'];
 
     public function getFaceValueTextAttribute()
     {
