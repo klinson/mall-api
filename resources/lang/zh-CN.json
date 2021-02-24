@@ -165,9 +165,10 @@
   "Draw ended at": "截止领取时间",
   "Valid started at": "生效时间",
   "Valid ended at": "过期时间",
-  "": "",
-  "": "",
-  "": "",
+  "Publish date": "出版日期",
+  "Barcode": "商品条码",
+  "Press id": "出版社",
+  "Authors": "作者",
   "": "",
   "": ""
 }

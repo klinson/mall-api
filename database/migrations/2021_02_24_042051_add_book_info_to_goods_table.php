@@ -15,9 +15,10 @@ class AddBookInfoToGoodsTable extends Migration
     {
         Schema::table('goods', function (Blueprint $table) {
             $table->string('isbn')->nullable();
+            $table->string('barcode')->nullable();
             $table->string('description')->nullable();
-            $table->unsignedInteger('publishing_house_id')->default(0);
-            $table->unsignedInteger('published_at')->default(0);
+            $table->unsignedInteger('press_id')->default(0);
+            $table->string('publish_date')->nullable();
         });
     }
 
@@ -28,11 +29,12 @@ class AddBookInfoToGoodsTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        Schema::table('goods', function (Blueprint $table) {
             $table->dropColumn('isbn');
+            $table->dropColumn('barcode');
             $table->dropColumn('description');
-            $table->dropColumn('publishing_house_id');
-            $table->dropColumn('published_at');
+            $table->dropColumn('press_id');
+            $table->dropColumn('publish_date');
         });
     }
 }

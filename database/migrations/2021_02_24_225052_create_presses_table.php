@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePublishingHousesTable extends Migration
+class CreatePressesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreatePublishingHousesTable extends Migration
      */
     public function up()
     {
-        Schema::create('publishing_houses', function (Blueprint $table) {
+        Schema::create('presses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->timestamps();
             $table->softDeletes();
+            $table->unique('title');
         });
     }
 
@@ -28,6 +29,6 @@ class CreatePublishingHousesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('publishing_houses');
+        Schema::dropIfExists('presses');
     }
 }

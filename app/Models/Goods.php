@@ -76,4 +76,9 @@ class Goods extends Model
     {
         return $this->discountGoods()->where('has_enabled', 1);
     }
+
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class, 'goods_has_authors', 'goods_id', 'author_id');
+    }
 }

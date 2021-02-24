@@ -3,8 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\GetButton;
+use App\Models\Author;
 use App\Models\Category;
 use App\Models\Goods;
+use App\Models\Press;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -152,9 +154,17 @@ class GoodsController extends AdminController
 
         Category::form_display_select($form, 'category_id')->required();
         $form->text('title', __('Title'))->required();
+        $form->text('isbn', __('Isbn'))->required();
+        $form->text('barcode', __('Barcode'))->required();
         $form->image('thumbnail', __('Thumbnail'))->uniqueName();
         $form->multipleImage('images', __('Images'))->uniqueName()->removable();
         $form->editor('detail', __('Detail'));
+
+        $form->date('publish_date', __('Publish date'))->format('YYYY-MM');
+        Press::form_display_select($form, 'press_id')->default(1);
+        Author::form_display_select($form, 'authors', 'name', __('Authors'), false, 'name', 'multipleSelect');
+//        $form->multipleSelect('authors', __('Authors'))->options(Author::all()->pluck('name', 'id'));
+
         $form->switch('has_enabled', __('Has enabled'))->default(1);
         $form->switch('has_recommended', __('Has recommended'))->default(1);
         $form->number('sort', __('Sort'))->default(0);
@@ -178,6 +188,9 @@ class GoodsController extends AdminController
                     $form->images = [];
                 }
             };
+//            $form->authors = array_filter($form->authors);
+
+//            $form->authors = [[1], [2]];
         });
 
         return $form;

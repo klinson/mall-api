@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Coupon;
 use App\Models\GoodsSpecification;
+use App\Models\Press;
 use App\Models\User;
 use App\Models\UserHasCoupon;
 use App\Transformers\CouponTransformer;
@@ -20,6 +21,9 @@ class CouponsController extends Controller
 {
     public function index()
     {
+        $m = new Press();
+        $m->import();
+        dd();
         $list = Coupon::enabled()->withCount('myCoupons')->get();
         return $this->response->collection($list, new CouponTransformer('my_coupons_count'));
     }

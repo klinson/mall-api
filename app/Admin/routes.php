@@ -79,4 +79,8 @@ Route::group([
 
     $router->resource('walletActivities', WalletActivitiesController::class);
     $router->resource('rechargeThresholdOrders', RechargeThresholdOrdersController::class);
+
+    $router->resource('presses', PressesController::class);
+    $router->resource('authors', AuthorsController::class);
+
 });
