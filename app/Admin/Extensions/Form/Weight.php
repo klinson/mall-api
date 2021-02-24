@@ -79,9 +79,9 @@ $('{$this->getElementClassSelector()}').inputmask({
 });
 EOT;
 
-        $this
+//        $this
 //            ->append($this->append)
-            ->defaultAttribute('style', 'width: 120px');
+//            ->defaultAttribute('style', 'width: 120px');
 
         return parent::render();
     }
