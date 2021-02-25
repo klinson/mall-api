@@ -39,8 +39,8 @@ class Coupon extends Model
         // 领取前校验
         if ($this['quantity'] <= 0) throw new \Exception('优惠券已抢光，下次再来吧~');
         $now = date('Y-m-d H:i:s');
-        if ($this['draw_started_at'] > $now) throw new \Exception('优惠券还未开始领取');
-        if ($this['draw_ended_at'] < $now) throw new \Exception('优惠券领取已结束');
+        if (!is_null($this['draw_started_at']) && $this['draw_started_at'] > $now) throw new \Exception('优惠券还未开始领取');
+        if (!is_null($this['draw_ended_at']) && $this['draw_ended_at'] < $now) throw new \Exception('优惠券领取已结束');
         return true;
     }
 
