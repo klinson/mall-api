@@ -14,4 +14,6 @@ class IntegralLog extends Model
     const type_text = [
         '消费', '激励'
     ];
+
+
 }
