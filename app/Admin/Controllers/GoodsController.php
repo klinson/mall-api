@@ -152,7 +152,7 @@ class GoodsController extends AdminController
     {
         $form = new Form(new Goods);
 
-        Category::form_display_select($form, 'category_id')->required();
+        $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
         $form->text('title', __('Title'))->required();
         $form->text('isbn', __('Isbn'))->required();
         $form->text('barcode', __('Barcode'))->required();
