@@ -81,4 +81,11 @@ class Goods extends Model
     {
         return $this->belongsToMany(Author::class, 'goods_has_authors', 'goods_id', 'author_id');
     }
+
+    // 出版社
+    public function press()
+    {
+        return $this->belongsTo(Press::class, 'press_id');
+    }
+
 }

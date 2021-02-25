@@ -37,6 +37,7 @@ class GoodsController extends AdminController
         $grid->column('id', __('Id'));
         grid_display_relation($grid, 'category');
         $grid->column('title', __('Title'));
+        $grid->column('isbn', __('Isbn'));
         $grid->column('thumbnail', __('Thumbnail'))->image();
         $grid->column('max_price', __('Max price'))->currency();
         $grid->column('min_price', __('Min price'))->currency();
@@ -48,7 +49,7 @@ class GoodsController extends AdminController
         $grid->column('has_enabled', __('Has enabled'))->switch($states)->filter(HAS_ENABLED2TEXT);
         $grid->column('has_recommended', __('Has recommended'))->filter(YN2TEXT)->switch($states);
         $grid->column('sort', __('Sort'));
-        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
+//        $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
         $grid->column('updated_at', __('Updated at'))->sortable()->filter('range', 'datetime');
 
         $grid->column('specifications', '商品规格')->display(function () {
@@ -81,7 +82,8 @@ class GoodsController extends AdminController
 
         $grid->filter(function ($filter) {
             $filter->like('title', '名称');
-            $filter->equal('category_id', '所属分类')->select(Category::all()->pluck('title', 'id')->toArray());
+            $filter->like('isbn', 'Isbn');
+            $filter->equal('category_id', '所属分类')->select(Category::selectOptions(null, '所有'));
 
         });
         return $grid;
@@ -98,9 +100,17 @@ class GoodsController extends AdminController
         $show = new Show(Goods::findOrFail($id));
 
         $show->field('id', __('Id'));
-        show_display_relation($show, 'category');
         $show->field('title', __('Title'));
+        $show->field('isbn', __('Isbn'));
+        show_display_relation($show, 'category');
         $show->field('thumbnail', __('Thumbnail'))->image();
+        $show->field('publish_date', __('Publish date'));
+        show_display_relation($show, 'press');
+//        show_display_relation($show, 'authors');
+        $show->field('authors', __('Authors'))->as(function ($list) {
+            return $list->pluck('name')->toArray();
+        })->label();
+        $show->field('description', __('Description'));
         $show->field('images', __('Images'))->image();
         $show->field('detail', __('Detail'))->unescape();
         $show->field('max_price', __('Max price'))->as(function ($item) {
@@ -118,6 +128,7 @@ class GoodsController extends AdminController
         $show->specifications('规格', function (Grid $grid) {
             $grid->column('id', __('Id'));
             $grid->column('title', __('Title'));
+            $grid->column('barcode', __('Barcode'));
             $grid->column('thumbnail', __('Thumbnail'))->image();
             $grid->column('price', __('Price'))->currency();
             $grid->column('quantity', __('Quantity'));
@@ -140,6 +151,7 @@ class GoodsController extends AdminController
             });
         });
 
+
         return $show;
     }
 
@@ -157,6 +169,7 @@ class GoodsController extends AdminController
         $form->text('isbn', __('Isbn'))->required();
         $form->image('thumbnail', __('Thumbnail'))->uniqueName();
         $form->multipleImage('images', __('Images'))->uniqueName()->removable();
+        $form->textarea('description', __('Description'));
         $form->editor('detail', __('Detail'));
 
         $form->date('publish_date', __('Publish date'))->format('YYYY-MM');

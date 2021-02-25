@@ -8,7 +8,7 @@ use League\Fractal\TransformerAbstract;
 
 class GoodsTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['category', 'soldSpecifications', 'soldDiscountGoods'];
+    protected $availableIncludes = ['category', 'soldSpecifications', 'soldDiscountGoods', 'authors', 'press'];
 
     protected $type;
     protected $discount = 100;
@@ -35,9 +35,11 @@ class GoodsTransformer extends TransformerAbstract
             return [
                 'id' => $model->id,
                 'category_id' => $model->category_id,
+                'isbn' => $model->isbn,
                 'title' => $model->title,
                 'thumbnail_url' => $model->thumbnail_url,
-                'desc' => strip_tags($model->content),
+                'description' => $model->description,
+                'publish_date' => $model->publish_date,
                 'max_price' => $model->max_price,
                 'min_price' => $model->min_price,
                 'discount_max_price' => $this->discount < 100 ? ceil(strval($model->max_price * $this->discount * 0.01)) : $model->max_price,
@@ -53,11 +55,13 @@ class GoodsTransformer extends TransformerAbstract
             return [
                 'id' => $model->id,
                 'category_id' => $model->category_id,
+                'isbn' => $model->isbn,
                 'title' => $model->title,
                 'thumbnail_url' => $model->thumbnail_url,
                 'max_price' => $model->max_price,
                 'min_price' => $model->min_price,
-                'desc' => strip_tags($model->content),
+                'description' => $model->description,
+                'publish_date' => $model->publish_date,
                 'discount_max_price' => $this->discount < 100 ? ceil(strval($model->max_price * $this->discount * 0.01)) : $model->max_price,
                 'discount_min_price' => $this->discount < 100 ? ceil(strval($model->min_price * $this->discount * 0.01)) : $model->min_price,
                 'has_recommended' => $model->has_recommended,
@@ -80,5 +84,16 @@ class GoodsTransformer extends TransformerAbstract
     public function includeSoldDiscountGoods(Model $model)
     {
         return $this->collection($model->soldDiscountGoods, new DiscountGoodsTransformer());
+    }
+
+    public function includePress(Model $model)
+    {
+        if ($model->press) return $this->item($model->press, new PressTransformer());
+        else return null;
+    }
+
+    public function includeAuthors(Model $model)
+    {
+        return $this->collection($model->authors, new AuthorTransformer());
     }
 }

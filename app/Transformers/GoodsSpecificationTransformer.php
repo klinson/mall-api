@@ -29,6 +29,7 @@ class GoodsSpecificationTransformer extends TransformerAbstract
         return [
             'id' => $model->id,
             'title' => $model->title,
+            'barcode' => $model->barcode,
             'thumbnail_url' => $model->thumbnail_url,
             'quantity' => $model->quantity,
             'sold_quantity' => $model->sold_quantity,

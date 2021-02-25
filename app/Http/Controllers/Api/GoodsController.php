@@ -27,7 +27,11 @@ class GoodsController extends Controller
             $category && $query->whereIn('category_id', $category->search_ids);
         }
         if (! blank($request->q)) {
-            $query->where('title', 'like', '%'.$request->q.'%');
+            $query->where(function ($query) use ($request) {
+                $query->where('title', 'like', '%'.$request->q.'%');
+                $query->orWhere('isbn', 'like', '%'.$request->q.'%');
+            });
+//            $query->where('title', 'like', '%'.$request->q.'%');
         }
 
         if ($request->has_recommended == 1) {
