@@ -8,14 +8,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\IntegralLog;
-use App\Models\RechargeThresholdOrder;
-use App\Models\WalletActivity;
 use App\Transformers\IntegralTransformer;
-use App\Transformers\RechargeThresholdOrderTransformer;
-use App\Transformers\WalletActivityTransformer;
 use App\Transformers\WalletLogTransformer;
-use App\Transformers\WalletTransformer;
 use Auth;
 use Illuminate\Http\Request;
 
