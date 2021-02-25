@@ -155,7 +155,6 @@ class GoodsController extends AdminController
         $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
         $form->text('title', __('Title'))->required();
         $form->text('isbn', __('Isbn'))->required();
-        $form->text('barcode', __('Barcode'))->required();
         $form->image('thumbnail', __('Thumbnail'))->uniqueName();
         $form->multipleImage('images', __('Images'))->uniqueName()->removable();
         $form->editor('detail', __('Detail'));
@@ -171,6 +170,7 @@ class GoodsController extends AdminController
 
         $form->hasMany('specifications', '商品规格',  function (Form\NestedForm $form) {
             $form->text('title', __('Title'))->rules('required');
+            $form->text('barcode', __('Barcode'))->required();
             $form->image('thumbnail', __('Thumbnail'))->uniqueName()->removable()->addElementClass('specifications_'.random_string(10));
             $form->currency('price', __('Price'))->rules(['required', 'min:1', 'numeric']);
             $form->number('quantity', __('Quantity'))->default(1)->rules(['required', 'integer', 'min:0']);
