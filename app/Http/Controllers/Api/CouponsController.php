@@ -21,9 +21,6 @@ class CouponsController extends Controller
 {
     public function index()
     {
-        $m = new Press();
-        $m->import();
-        dd();
         $list = Coupon::enabled()->withCount('myCoupons')->get();
         return $this->response->collection($list, new CouponTransformer('my_coupons_count'));
     }
