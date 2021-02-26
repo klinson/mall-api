@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Transformers\IntegralLogTransformer;
 use App\Transformers\IntegralTransformer;
 use App\Transformers\WalletLogTransformer;
 use Auth;
@@ -23,7 +24,7 @@ class IntegralsController extends Controller
     public function logs(Request $request)
     {
         $logs = $this->user->integral->logs()->recent()->paginate($request->per_page);
-        return $this->response->paginator($logs, new WalletLogTransformer());
+        return $this->response->paginator($logs, new IntegralLogTransformer());
     }
 
 }

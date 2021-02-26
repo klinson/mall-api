@@ -129,6 +129,9 @@ $api->version('v1', [
         $api->put('refundOrders/{order}', 'RefundOrdersController@update')->where('order', '[0-9]+');
         $api->get('refundOrders/{order}/logistics', 'RefundOrdersController@logistics')->where('order', '[0-9]+');
 
+        // 积分
+        $api->get('integral', 'IntegralsController@show');
+        $api->get('integral/logs', 'IntegralsController@logs');
 
         // 钱包
         $api->get('wallet', 'WalletsController@show');
