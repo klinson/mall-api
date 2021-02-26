@@ -40,7 +40,9 @@ class AddressesController extends Controller
             'is_default' => '默认地址',
         ]);
 
-        $address = $this->user->addresses()->create($request->only(['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default']));
+        $data = $request->only(['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default']);
+        $data['city_name'] = '';
+        $address = $this->user->addresses()->create($data);
         if ($address->is_default) {
             $this->user->addresses()->where('id', '<>', $address->id)->update(['is_default' => 0]);
         }
@@ -70,7 +72,9 @@ class AddressesController extends Controller
             'is_default' => '默认地址',
         ]);
 
-        $address->fill($request->only(['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default']));
+        $data = $request->only(['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default']);
+        $data['city_name'] = '';
+        $address->fill($data);
 
         $address->save();
         return $this->response->item($address, new AddressTransformer());

@@ -9,7 +9,7 @@ class Address extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default'];
+    protected $fillable = ['name', 'mobile', 'province_code', 'city_code', 'district_code', 'address', 'is_default', 'city_name'];
 
     public static function boot()
     {
@@ -24,13 +24,14 @@ class Address extends Model
         parent::boot();
     }
 
-    public function getAllCityNameAttribute()
+    public function setCityNameAttribute($value)
     {
         if ($this->district) {
-            return $this->district->full_name;
+            $name = $this->district->full_name;
         } else {
-            return $this->city->full_name;
+            $name = $this->city->full_name;
         }
+        $this->attributes['city_name'] = $name;
     }
 
     public function toSnapshot()

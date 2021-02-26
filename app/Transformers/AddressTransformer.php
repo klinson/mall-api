@@ -24,6 +24,7 @@ class AddressTransformer extends TransformerAbstract
             'province_code' => $model->province_code,
             'city_code' => $model->city_code,
             'district_code' => $model->district_code,
+            'city_name' => $model->city_name,
             'address' => $model->address,
             'is_default' => $model->is_default,
             'created_at' => $model->created_at->toDatetimeString(),
