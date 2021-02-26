@@ -16,7 +16,8 @@ class Order extends Model
     use SoftDeletes, ScopeDateHelper, HasOwnerHelper;
 
     protected $casts = [
-        'address_snapshot' => 'array'
+//        'address_snapshot' => 'array',
+        'delivery_snapshot' => 'array',
     ];
 
     const wechat_pay_notify_route = '/api/wechat/OrderPaidNotify';

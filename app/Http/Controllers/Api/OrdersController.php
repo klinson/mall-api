@@ -34,6 +34,10 @@ class OrdersController extends Controller
     public function index(Request $request)
     {
         $query = Order::query();
+        // 订单类型：1普通订单，2团购下单，3线下下单（book）
+        if ($request->order_type) {
+            $query->where('order_type', $request->order_type);
+        }
         if ($request->status) {
             $query->where('status', $request->status);
         }
@@ -54,6 +58,8 @@ class OrdersController extends Controller
             return $this->response->errorBadRequest('备注信息不可超过100字符');
         }
 
+        // 处理化 收货地址、快递配送模板、自提门店
+        $address = $freightTemplate = $store = null;
         if (! $test) {
             if (! $request->delivery_type) {
                 return $this->response->errorBadRequest('请选择配送方式');
@@ -72,13 +78,11 @@ class OrdersController extends Controller
                     return $this->response->errorBadRequest('请选择自取门店');
                 }
             }
-        } else {
-            $address = $freightTemplate = $store = null;
         }
 
         if ($request->used_integral > 0) {
             $used_integral = intval($request->used_integral);
-            if ($this->user->integral->blance < $used_integral) {
+            if ($this->user->integral->balance < $used_integral) {
                 return $this->response->errorBadRequest("当前积分剩余{$this->user->integral->blance}分，不够{$used_integral}分抵用");
             }
             $integral2money_rate = config('system.integral2money_rate', 0);
@@ -328,7 +332,7 @@ class OrdersController extends Controller
         $order->remarks = $request->remarks ?: '';
         $order->delivery_type = $request->delivery_type;
         $order->delivery_id = $request->delivery_id;
-        $order->delivery_snapshot = $request->delivery_type == Address::class ? ($address ? $address->toSnapshot() : []) : ($store ? $store->toSnapshot() : []);
+        $order->delivery_snapshot = $request->delivery_type == Address::class ? ($address ? $address->toArray() : []) : ($store ? $store->toArray() : []);
 //        $order->address_id = $request->address_id;
 //        $order->address_snapshot = $address ? $address->toSnapshot() : [];
         // 运费模板

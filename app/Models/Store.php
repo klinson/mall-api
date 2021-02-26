@@ -12,6 +12,8 @@ class Store extends Model
     const cache_key = 'list:stores';
 
     protected $fillable = ['title', 'address', 'longitude', 'latitude', 'point', 'geohash', 'thumbnail'];
+    protected $hidden = ['geohash', 'point'];
+    protected $appends = ['thumbnail_url'];
 
     public function setPointAttribute($value)
     {
