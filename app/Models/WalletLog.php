@@ -12,7 +12,8 @@ class WalletLog extends Model
     protected $fillable = ['balance', 'type', 'description', 'ip', 'created_at', 'data_id', 'data_type'];
 
     const type_text = [
-        '消费', '充值'
+        '消费', '充值', '退回',
+        99 => '系统奖励',
     ];
 
     public function datatype()

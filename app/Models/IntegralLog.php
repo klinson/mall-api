@@ -12,7 +12,8 @@ class IntegralLog extends Model
     protected $fillable = ['balance', 'type', 'description', 'ip', 'created_at', 'data_id', 'data_type'];
 
     const type_text = [
-        '消费', '激励'
+        '消费', '激励', '退回',
+        99 => '系统奖励',
     ];
 
 
