@@ -68,6 +68,8 @@ class CouponsController extends Controller
             $coupon = $coupon->updateStatus();
             if ($request->price) {
                 if (! in_array($coupon->status, [0, 1])) continue;
+                // 超过面额的隐藏
+                if ($coupon['coupon_snapshot']['start_price'] > $request->price) continue;
 
                 // 计算折扣
                 $coupon->discount_money = $coupon->settleDiscount($request->price);
