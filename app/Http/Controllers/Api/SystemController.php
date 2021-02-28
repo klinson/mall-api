@@ -46,6 +46,10 @@ class SystemController extends Controller
                 case 'invite_bonus_rate':
                     $return[$key] = ['rate' => intval(config('system.invite_bonus_rate', 1))];
                     break;
+                    // 积分转化汇率
+                case 'integral2money_rate':
+                    $return[$key] = ['rate' => config('system.integral2money_rate', 0)];
+                    break;
                 default:
                     break;
             }
