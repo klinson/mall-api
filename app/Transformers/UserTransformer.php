@@ -9,7 +9,7 @@ class UserTransformer extends TransformerAbstract
 {
     protected $token;
 
-    protected $availableIncludes = ['agency', 'validMemberLevels'];
+    protected $availableIncludes = ['agency', 'validMemberLevels', 'score', 'wallet', 'integral'];
 
     public function __construct($token = '')
     {
@@ -84,4 +84,21 @@ class UserTransformer extends TransformerAbstract
         return $this->collection($model->validMemberLevels, new UserHasMemberLevelTransformer());
     }
 
+    // 会员经验
+    public function includeScore(Model $model)
+    {
+        return $this->item($model->score, new UserScoreTransformer());
+    }
+
+    // 用户钱包
+    public function includeWallet(Model $model)
+    {
+        return $this->item($model->wallet, new WalletTransformer());
+    }
+
+    // 用户积分
+    public function includeIntegral(Model $model)
+    {
+        return $this->item($model->integral, new IntegralTransformer());
+    }
 }

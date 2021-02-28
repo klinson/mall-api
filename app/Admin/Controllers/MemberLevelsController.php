@@ -30,6 +30,7 @@ class MemberLevelsController extends AdminController
         $grid->column('level', __('Level'));
         $grid->column('title', __('Title'));
         $grid->column('logo', __('Logo'))->image();
+        $grid->column('score', __('Member level score'));
         $grid->column('discount', __('Discount'))->display(function ($item) {
             return $item * 0.1 . '折';
         });
@@ -57,6 +58,7 @@ class MemberLevelsController extends AdminController
         $show->field('level', __('Level'));
         $show->field('title', __('Title'));
         $show->field('logo', __('Logo'))->image();
+        $show->field('score', __('Member level score'));
         $show->field('discount', __('Discount'))->as(function ($item) {
             return $item * 0.1 . '折';
         });
@@ -80,6 +82,7 @@ class MemberLevelsController extends AdminController
         $form->text('title', __('Title'))->required();
         $form->number('level', __('Level'))->default(0)->required()->help('等级约大代表此会员越高级');
         $form->image('logo', __('Logo'))->uniqueName();
+        $form->number('score', __('Member level score'))->default(0)->required()->min(0);
         $form->number('discount', __('Discount'))->default(100)->max(100)->min(1)->required()->help('折扣，88=>8.8折,100=>原价');
         $form->switch('is_fee_freight', __('Is fee freight'))->default(0);
         $form->switch('has_enabled', __('Has enabled'))->default(1);

@@ -15,6 +15,11 @@ class MemberLevel extends Model
         return $query->orderBy('level', 'desc');
     }
 
+    public function scopeLevelByAsc($query)
+    {
+        return $query->orderBy('level', 'asc');
+    }
+
     public function getLogoUrlAttribute()
     {
         if ($this->logo) {

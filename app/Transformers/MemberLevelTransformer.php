@@ -20,6 +20,7 @@ class MemberLevelTransformer extends TransformerAbstract
             'discount' => $model->discount,
             'is_fee_freight' => $model->is_fee_freight,
             'level' => $model->level,
+            'score' => $model->score,
         ];
     }
 }

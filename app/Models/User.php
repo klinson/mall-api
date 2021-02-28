@@ -115,6 +115,10 @@ class User extends Authenticatable implements JWTSubject
         if (! $this->integral) {
             $this->integral()->create();
         }
+        // 会员经验值
+        if (! $this->score) {
+            $this->scoreInit();
+        }
     }
 
     public function agency()
@@ -135,6 +139,24 @@ class User extends Authenticatable implements JWTSubject
     // 会员初始化
     public function memberInit()
     {
+    }
+
+    // 会员经验值初始化
+    public function scoreInit()
+    {
+        if (! $this->score) {
+            UserScore::create([
+                'user_id' => $this->id,
+                'member_level_id' => 1,
+                'balance' => 0,
+            ]);
+        }
+    }
+
+    // 会员经验值
+    public function score()
+    {
+        return $this->hasOne(UserScore::class, 'user_id', 'id');
     }
 
     // 是否是会员
