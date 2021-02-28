@@ -56,8 +56,8 @@ class OrdersController extends Controller
      * 会员优惠价member_discount_price=商品总价goods_price*会员折扣member_discount*0.01
      * 优惠券可打折部分allow_coupon_price=会员优惠价member_discount_price（优惠券只能抵扣会员折扣后优惠价格，不能抵扣运费）
      * 优惠券抵扣金额coupon_price=优惠券可打折部分allow_coupon_price进行满减或打折后
-     * 实付金额real_price=会员优惠价member_discount_price-优惠券抵扣金额coupon_price+运费freight_price-使用积分used_integral*积分汇率就是real_cost
-     * 最后是使用钱包就是used_balance，使用微信支付
+     * 实付金额real_price=会员优惠价member_discount_price-优惠券抵扣金额coupon_price+运费freight_price-使用积分used_integral*积分汇率
+     * 最后是使用钱包就是used_balance，使用微信支付就是real_cost
      * @param Request $request
      * @return \Dingo\Api\Http\Response|void
      * @author klinson <klinson@163.com>
