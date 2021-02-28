@@ -18,14 +18,11 @@ class GoodsTransformer extends TransformerAbstract
     {
         $this->type = $type;
         if (\Auth::check()) {
+            if ($type == 'show') $this->user = \Auth::user();
             $this->discount = \Auth::user()->getBestMemberDiscount();
-        }
-        // 没登录没会员的默认显示优惠价
-        if ($this->discount == 100) {
-            $this->discount = MemberLevel::getMaxDiscount();
-        }
-        if ($type == 'show' && \Auth::check()) {
-            $this->user = \Auth::user();
+        } else {
+            // 没登录没会员的默认显示优惠价
+//            $this->discount = MemberLevel::getMaxDiscount();
         }
     }
 

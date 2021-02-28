@@ -197,9 +197,31 @@ class User extends Authenticatable implements JWTSubject
         return $res;
     }
 
+    /**
+     * book分支下经验 会员优惠获取
+     * @return int
+     * @author klinson <klinson@163.com>
+     */
+    public function getScoreMemberDiscount()
+    {
+        return $this->score->memberLevel->discount ?? 100;
+    }
+    /**
+     * book分支下经验 会员是否包邮
+     * @return int
+     * @author klinson <klinson@163.com>
+     */
+    public function hasFeeFreightByScoreMember()
+    {
+        return $this->score->memberLevel->is_fee_freight ?? 0;
+    }
+
     // 获取用户当前会员最佳折扣
     public function getBestMemberDiscount($reset = false)
     {
+        // book分支
+        return $this->getScoreMemberDiscount();
+
         $cache_key = 'user_member_best_discount_'.$this->id;
 
         if ($reset || app()->isLocal()) cache()->delete($cache_key);
@@ -221,6 +243,9 @@ class User extends Authenticatable implements JWTSubject
 
     public function hasFeeFreight()
     {
+        // book分支
+        return $this->hasFeeFreightByScoreMember();
+
         $is_fee_freight = 0;
         if ($this->validMemberLevels) {
             foreach ($this->validMemberLevels as $memberLevel) {
