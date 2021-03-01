@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddScoreToMemberLevelsTable extends Migration
+class AddIsStaffToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddScoreToMemberLevelsTable extends Migration
      */
     public function up()
     {
-        Schema::table('member_levels', function (Blueprint $table) {
-            $table->unsignedInteger('score')->default(0);
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedTinyInteger('is_staff')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddScoreToMemberLevelsTable extends Migration
      */
     public function down()
     {
-        Schema::table('member_levels', function (Blueprint $table) {
-            $table->dropColumn('score');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_staff');
         });
     }
 }

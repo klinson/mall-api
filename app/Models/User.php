@@ -159,6 +159,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(UserScore::class, 'user_id', 'id');
     }
 
+    public function scoreLogs()
+    {
+        return $this->hasMany(UserScoreLog::class);
+    }
+
     // 是否是会员
     public function isMember()
     {

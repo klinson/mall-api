@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\AgencyConfig;
 use App\Models\CofferLog;
+use App\Models\IntegralLog;
 use App\Models\User;
 use App\Models\UserHasCoupon;
 use App\Models\WalletLog;
@@ -30,7 +31,7 @@ class UsersController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new User);
-        $grid->model()->with(['agency', 'wallet', 'coffer'])->orderBy('created_at', 'desc');
+        $grid->model()->with(['agency', 'wallet', 'integral', 'score.memberLevel'])->orderBy('created_at', 'desc');
 
         $grid->column('id', __('Id'));
         $grid->column('nickname', __('Nickname'));
@@ -41,17 +42,32 @@ class UsersController extends AdminController
         $grid->column('wallet', __('Wallet'))->display(function ($item) {
             return strval($this->wallet->balance * 0.01);
         });
-        $grid->column('coffer', '金库(已结算/待结算)')->display(function ($item) {
-            if (empty($this->coffer)) return '';
-            return strval($this->coffer->balance * 0.01).'/'.strval($this->coffer->unsettle_balance * 0.01);
+        $grid->column('integral', __('Integral'))->display(function ($item) {
+            return $this->integral->balance;
         });
-        $grid->column('max_discount', '最大优惠')->display(function () {
+        $grid->column('memberLevel', __('Member level id'))->display(function ($item) {
+            return $this->score->memberLevel->title;
+        });
+        $grid->column('score', __('Score'))->display(function ($item) {
+            return $this->score->balance;
+        });
+//        $grid->column('coffer', '金库(已结算/待结算)')->display(function ($item) {
+//            if (empty($this->coffer)) return '';
+//            return strval($this->coffer->balance * 0.01).'/'.strval($this->coffer->unsettle_balance * 0.01);
+//        });
+        $grid->column('max_discount', '会员折扣')->display(function () {
             $discount = $this->getBestMemberDiscount();
             return $discount >= 100 ? '无' : $discount*0.1 . '折';
         });
         $grid->column('has_fee_freight', '包邮？')->display(function () {
             return $this->hasFeeFreight();
         })->using(YN2TEXT);
+
+        $states = [
+            'on'  => ['value' => 1, 'text' => '职员', 'color' => 'primary'],
+            'off' => ['value' => 0, 'text' => '用户', 'color' => 'default'],
+        ];
+        $grid->column('is_staff', __('Is staff'))->switch($states);
 
         $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
 
@@ -84,7 +100,19 @@ class UsersController extends AdminController
         $show->field('sex', __('Sex'))->using(User::SEX2TEXT);
         $show->field('mobile', __('Mobile'));
         $show->field('wxapp_userinfo', __('Wxapp userinfo'))->unescape()->array2json();
-        $show->field('max_discount', '最大优惠')->as(function () {
+        $show->field('wallet', __('Wallet'))->as(function ($item) {
+            return strval($this->wallet->balance * 0.01);
+        });
+        $show->field('integral', __('Integral'))->as(function ($item) {
+            return $this->integral->balance;
+        });
+        $show->field('memberLevel', __('Member level id'))->as(function ($item) {
+            return $this->score->memberLevel->title;
+        });
+        $show->field('score', __('Score'))->as(function ($item) {
+            return $this->score->balance;
+        });
+        $show->field('max_discount', '会员折扣')->as(function () {
             $discount = $this->getBestMemberDiscount();
             return $discount >= 100 ? '无' : $discount*0.1 . '折';
         });
@@ -95,6 +123,7 @@ class UsersController extends AdminController
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
+        /*
         $show->memberLevels('会员记录', function (Grid $grid) {
             $grid->column('id', __('Id'));
             grid_display_relation($grid, 'memberLevel');
@@ -115,6 +144,7 @@ class UsersController extends AdminController
             $grid->disableRowSelector();
             $grid->disableActions();
         });
+        */
 
         $show->coupons('优惠券', function (Grid $grid) {
             $grid->model()->recent();
@@ -137,7 +167,7 @@ class UsersController extends AdminController
             $grid->disableActions();
         });
 
-
+        /*
         $show->cofferLogs('金库日志', function (Grid $grid) {
             $grid->model()->recent();
             $grid->column('id', __('Id'));
@@ -152,12 +182,43 @@ class UsersController extends AdminController
             $grid->disableRowSelector();
             $grid->disableActions();
         });
+        */
 
         $show->walletLogs('钱包日志', function (Grid $grid) {
             $grid->model()->recent();
             $grid->column('id', __('Id'));
             $grid->column('balance', __('Balance'))->currency();
             $grid->column('type', __('Type'))->using(WalletLog::type_text);
+            $grid->column('description', __('Description'));
+            $grid->column('ip', __('Ip'));
+            $grid->column('created_at', __('Created at'));
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
+        $show->integralLogs('积分日志', function (Grid $grid) {
+            $grid->model()->recent();
+            $grid->column('id', __('Id'));
+            $grid->column('balance', __('Balance'));
+            $grid->column('type', __('Type'))->using(IntegralLog::type_text);
+            $grid->column('description', __('Description'));
+            $grid->column('ip', __('Ip'));
+            $grid->column('created_at', __('Created at'));
+            $grid->disableCreateButton();
+            $grid->disableExport();
+            $grid->disableFilter();
+            $grid->disableRowSelector();
+            $grid->disableActions();
+        });
+
+        $show->scoreLogs('会员经验日志', function (Grid $grid) {
+            $grid->model()->recent();
+            $grid->column('id', __('Id'));
+            $grid->column('balance', __('Balance'));
+            $grid->column('type', __('Type'))->using(IntegralLog::type_text);
             $grid->column('description', __('Description'));
             $grid->column('ip', __('Ip'));
             $grid->column('created_at', __('Created at'));
@@ -184,7 +245,12 @@ class UsersController extends AdminController
         $form->text('wxapp_openid', __('Wxapp openid'))->required()->rules(['max:28']);
         $form->text('nickname', __('Nickname'))->required()->rules(['max:30']);
         $form->select('sex', __('Sex'))->options(User::SEX2TEXT)->required();
-        $form->mobile('mobile', __('Mobile'))->required()->rules([new CnMobile()]);
+        $form->mobile('mobile', __('Mobile'))->rules([new CnMobile()]);
+        $states = [
+            'on'  => ['value' => 1, 'text' => '职员', 'color' => 'primary'],
+            'off' => ['value' => 0, 'text' => '用户', 'color' => 'default'],
+        ];
+        $form->switch('is_staff', __('Is staff'))->default(0)->options($states);
         $form->switch('has_enabled', __('Has enabled'))->default(1);
 
         return $form;

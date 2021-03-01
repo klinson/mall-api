@@ -30,6 +30,7 @@ class UserTransformer extends TransformerAbstract
                     'agency_id' => $model->agency_id,
                     'avatar' => $avatar,
                     'created_at' => $model->created_at->toDateTimeString(),
+                    'is_staff' => $model->is_staff,
                 ];
                 break;
             case '':
@@ -65,6 +66,7 @@ class UserTransformer extends TransformerAbstract
                     'avatar' => $avatar,
                     'created_at' => $model->created_at->toDateTimeString(),
                     'token' => $this->token,
+                    'is_staff' => $model->is_staff,
                 ];
                 break;
         }
