@@ -323,6 +323,9 @@ class OrdersController extends Controller
         $all_price = $all_goods_price + $freight_price;
         // 支付费用（优惠后的会员价-优惠券折扣+快递费-积分抵扣）
         $real_price = $no_freight_price + $freight_price - ($used_integral * $integral2money_rate * 100);
+        if ($real_price <= 0) {
+            return $this->response->errorBadRequest('积分抵扣金额部分不能超过总价');
+        }
 
         $order = new Order();
         $order->order_number = Order::generateOrderNumber();
@@ -401,6 +404,8 @@ class OrdersController extends Controller
                         DB::rollBack();
                         return $this->response->errorBadRequest($exception->getMessage());
                     }
+
+
                 }
 
                 DB::commit();
@@ -515,60 +520,59 @@ class OrdersController extends Controller
                 return $this->response->errorBadRequest('请输入正确的余额金额');
             }
         }
+        else {
+            if (config('app.env') !== 'local') {
+                $order->real_cost = $order->real_price;
+                $order->used_balance = 0;
 
-
-
-        if (config('app.env') !== 'local') {
-            $order->real_cost = $order->real_price;
-            $order->used_balance = 0;
-
-            $app = app('wechat.payment');
-            $config = $app->getConfig();
-            $order_title = "【".config('app.name')."】订单：{$order->order_number}";
-            $result = $app->order->unify([
-                'body' => $order_title,
-                'out_trade_no' => $order->order_number,
-                'total_fee' => $order->real_cost,
-                'trade_type' => 'JSAPI',
-                'spbill_create_ip' => $request->getClientIp(),
-                'openid' => \Auth::user()->wxapp_openid,
-                'notify_url' => Order::getWechatPayNotifyUrl(),
-            ]);
+                $app = app('wechat.payment');
+                $config = $app->getConfig();
+                $order_title = "【".config('app.name')."】订单：{$order->order_number}";
+                $result = $app->order->unify([
+                    'body' => $order_title,
+                    'out_trade_no' => $order->order_number,
+                    'total_fee' => $order->real_cost,
+                    'trade_type' => 'JSAPI',
+                    'spbill_create_ip' => $request->getClientIp(),
+                    'openid' => \Auth::user()->wxapp_openid,
+                    'notify_url' => Order::getWechatPayNotifyUrl(),
+                ]);
 
 //        dd($result);
-            Log::info("[wechat][payment][pay][{$order->order_number}]微信支付下单返回：" . json_encode($result, JSON_UNESCAPED_UNICODE));
-            if (($result['return_code'] ?? 'FAIL') == 'FAIL') {
-                Log::error("[wechat][payment][pay][{$order->order_number}]微信支付下单失败：[{$result['return_code']}]{$result['return_msg']}");
-                return $this->response->errorBadRequest('支付失败，' . $result['return_msg']);
-            }
+                Log::info("[wechat][payment][pay][{$order->order_number}]微信支付下单返回：" . json_encode($result, JSON_UNESCAPED_UNICODE));
+                if (($result['return_code'] ?? 'FAIL') == 'FAIL') {
+                    Log::error("[wechat][payment][pay][{$order->order_number}]微信支付下单失败：[{$result['return_code']}]{$result['return_msg']}");
+                    return $this->response->errorBadRequest('支付失败，' . $result['return_msg']);
+                }
 
-            if (($result['result_code'] ?? 'FAIL') == 'FAIL') {
-                Log::error("[wechat][payment][pay][{$order->order_number}]微信支付下单失败：[{$result['err_code']}]{$result['err_code_des']}");
-                return $this->response->errorBadRequest('支付失败，' . $result['err_code_des']);
-            }
+                if (($result['result_code'] ?? 'FAIL') == 'FAIL') {
+                    Log::error("[wechat][payment][pay][{$order->order_number}]微信支付下单失败：[{$result['err_code']}]{$result['err_code_des']}");
+                    return $this->response->errorBadRequest('支付失败，' . $result['err_code_des']);
+                }
 
-            $timestamp = time();
-            $return = [
-                'trade_type' => $result['trade_type'],
-                'prepay_id' => $result['prepay_id'],
-                'nonce_str' => $result['nonce_str'],
-                'timestamp' => $timestamp,
-                'sign_type' => 'MD5',
-                'sign' => generate_wechat_payment_md5_sign($config['app_id'], $result['nonce_str'], $result['prepay_id'], $timestamp, $config['key']),
+                $timestamp = time();
+                $return = [
+                    'trade_type' => $result['trade_type'],
+                    'prepay_id' => $result['prepay_id'],
+                    'nonce_str' => $result['nonce_str'],
+                    'timestamp' => $timestamp,
+                    'sign_type' => 'MD5',
+                    'sign' => generate_wechat_payment_md5_sign($config['app_id'], $result['nonce_str'], $result['prepay_id'], $timestamp, $config['key']),
 //            'mch_id' => $result['mch_id'],
-                'appid' => $result['appid'],
-                'order_number' => $order->order_number,
-                'order_title' => $order_title,
-                'order_price' => $order->real_cost,
-            ];
+                    'appid' => $result['appid'],
+                    'order_number' => $order->order_number,
+                    'order_title' => $order_title,
+                    'order_price' => $order->real_cost,
+                ];
 
-            // 日志
+                // 日志
 //            dispatch(new RecordOrderLog($order, $this->user, 15, $request->getClientIp()));
 
-            return $this->response->array($return);
-        } else {
-            $order->pay();
-            return $this->response->item($order, new OrderTransformer());
+                return $this->response->array($return);
+            } else {
+                $order->pay();
+                return $this->response->item($order, new OrderTransformer());
+            }
         }
     }
 

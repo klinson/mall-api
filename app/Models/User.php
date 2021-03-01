@@ -343,4 +343,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(UserHasCoupon::class);
     }
+
+    /**
+     * 是否是员工
+     * @return bool
+     * @author klinson <klinson@163.com>
+     */
+    public function isStaff()
+    {
+        return $this->is_staff === 1;
+    }
 }

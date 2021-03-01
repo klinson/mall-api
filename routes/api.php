@@ -169,5 +169,11 @@ $api->version('v1', [
         $api->get('user/coupons', 'CouponsController@myCoupons');
         $api->post('coupons/check', 'CouponsController@checkUserCoupons');
 
+        // 线下订单
+        $api->get('offlineOrders', 'OfflineOrdersController@index');
+        $api->post('offlineOrders', 'OfflineOrdersController@store');
+        $api->get('offlineOrders/{order}', 'OfflineOrdersController@show')->where('order', '[0-9]+');
+        $api->put('offlineOrders/{order}/comfirm', 'OfflineOrdersController@confirm')->where('order', '[0-9]+');
+        $api->put('offlineOrders/{order}/pay', 'OfflineOrdersController@pay')->where('order', '[0-9]+');
     });
 });
