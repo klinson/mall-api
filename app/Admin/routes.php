@@ -82,5 +82,7 @@ Route::group([
 
     $router->resource('presses', PressesController::class);
     $router->resource('authors', AuthorsController::class);
+    $router->resource('offlineOrders', OfflineOrdersController::class);
+
 
 });
