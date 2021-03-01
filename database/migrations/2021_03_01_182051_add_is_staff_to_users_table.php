@@ -14,7 +14,7 @@ class AddIsStaffToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedTinyInteger('is_staff')->nullable();
+            $table->unsignedTinyInteger('is_staff')->default(0);
         });
     }
 
