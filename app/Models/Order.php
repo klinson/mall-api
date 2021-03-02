@@ -119,6 +119,8 @@ class Order extends Model
         }
 
         try {
+            $old_status = $this->status;
+
             \DB::beginTransaction();
 
             // 修改订单状态
@@ -139,12 +141,13 @@ class Order extends Model
             }
 
             // 已经付款了，需要退钱
-            if ($this->status > 1) {
+            if ($old_status > 1) {
                 if ($this->used_balance > 0) {
                     $this->user->wallet->increment('balance', $this->used_balance);
                     $this->user->wallet->save();
                     $this->user->wallet->log($this->used_balance, $this, "取消订单（{$this->order_number}）退款入账", 1);
-                } else {
+                }
+                if ($this->real_cost > 0) {
                     $this->cancel_order_number = self::generateOrderNumber();
                     if (! app()->isLocal()) {
                         $app = app('wechat.payment');
