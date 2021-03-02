@@ -84,5 +84,9 @@ Route::group([
     $router->resource('authors', AuthorsController::class);
     $router->resource('offlineOrders', OfflineOrdersController::class);
 
+    $router->put('groupOrders/{id}/pay', 'GroupOrdersController@pay')->where('id', '[0-9]+');
+    $router->put('groupOrders/{id}/cancel', 'GroupOrdersController@cancel')->where('id', '[0-9]+');
+    $router->resource('groupOrders', GroupOrdersController::class);
+
 
 });

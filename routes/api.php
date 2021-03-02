@@ -175,5 +175,9 @@ $api->version('v1', [
         $api->get('offlineOrders/{order}', 'OfflineOrdersController@show')->where('order', '[0-9]+');
         $api->put('offlineOrders/{order}/comfirm', 'OfflineOrdersController@confirm')->where('order', '[0-9]+');
         $api->put('offlineOrders/{order}/pay', 'OfflineOrdersController@pay')->where('order', '[0-9]+');
+
+        // 团购订单
+        $api->get('groupOrders', 'GroupOrdersController@index');
+        $api->get('groupOrders/{order}', 'GroupOrdersController@show')->where('order', '[0-9]+');
     });
 });
