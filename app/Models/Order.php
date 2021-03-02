@@ -126,6 +126,18 @@ class Order extends Model
             $this->cancel_reason = is_null($reason) ? '系统取消' : $reason;
             $this->save();
 
+            // 恢复库存
+            $this->resetSpecificationQuantity();
+
+            // 退回积分
+            if ($this->used_integral) $this->user->integral->useIt($this, 2);
+
+            // 退回优惠券
+            if ($this->coupon && ! $this->coupon->backIt()) {
+                \DB::rollBack();
+                throw new \Exception('退款失败，优惠券退回失败');
+            }
+
             // 已经付款了，需要退钱
             if ($this->status > 1) {
                 if ($this->used_balance > 0) {
@@ -156,18 +168,6 @@ class Order extends Model
                         Log::error("[wechat][payment][refund][{$this->order_number}][{$this->cancel_order_number}]微信支付local环境退款成功：{$this->real_cost}");
                     }
                 }
-            }
-
-            // 恢复库存
-            $this->resetSpecificationQuantity();
-
-            // 退回积分
-            if ($this->used_integral) $this->user->integral->useIt($this, 2);
-
-            // 退回优惠券
-            if ($this->coupon && ! $this->coupon->backIt()) {
-                \DB::rollBack();
-                throw new \Exception('退款失败，优惠券退回失败');
             }
 
             \DB::commit();
