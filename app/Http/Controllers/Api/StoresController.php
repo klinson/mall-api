@@ -20,7 +20,7 @@ class StoresController extends Controller
             foreach ($stores as &$store) {
                 $store['distance'] = get_distance($request->latitude, $request->longitude, $store['latitude'], $store['longitude']);
             }
-            $stores = array_sort($stores, 'distance');
+            $stores = array_values(array_sort($stores, 'distance'));
         }
         return $this->response->array($stores);
     }
