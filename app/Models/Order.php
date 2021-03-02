@@ -162,10 +162,10 @@ class Order extends Model
             $this->resetSpecificationQuantity();
 
             // 退回积分
-            $this->user->integral->useIt($this, 2);
+            if ($this->used_integral) $this->user->integral->useIt($this, 2);
 
             // 退回优惠券
-            if (! $this->coupon->backIt()) {
+            if ($this->coupon && ! $this->coupon->backIt()) {
                 \DB::rollBack();
                 throw new \Exception('退款失败，优惠券退回失败');
             }
