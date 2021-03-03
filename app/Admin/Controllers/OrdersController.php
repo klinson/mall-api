@@ -6,6 +6,7 @@ use App\Admin\Extensions\Actions\AjaxWithFormButton;
 use App\Admin\Extensions\Actions\GetButton;
 use App\Admin\Extensions\Exporters\OrderExporter;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
+use App\Models\Address;
 use App\Models\CofferLog;
 use App\Models\Express;
 use App\Models\Order;
@@ -72,16 +73,26 @@ class OrdersController extends AdminController
         $grid->column('goods_price', __('Goods price'))->currency()->sortable();
         $grid->column('member_discount_price', __('Member discount Price'))->currency()->sortable();
         $grid->column('coupon_price', __('Coupon price'))->currency()->sortable();
-        $grid->column('allow_coupon_price', __('Allow coupon price'))->currency()->sortable();
+//        $grid->column('allow_coupon_price', __('Allow coupon price'))->currency()->sortable();
+        $grid->column('used_integral', __('Used integral'))->display(function ($item) {
+            if (empty($item)) return 0;
+            else return "￥".($this->integral_price*0.01)." ({$this->used_integral}分)";
+        });
         $grid->column('freight_price', __('Freight price'))->currency()->sortable();;
         $grid->column('real_price', __('Real price'))->currency()->sortable();
         $grid->column('pay_mode', '支付方式')->display(function () {
             return $this->used_balance ? '钱包' : '微信';
         });
-        $grid->column('remarks', __('Remarks'));
-        $grid->column('address_snapshot', __('Address'))->display(function ($item) {
-            return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
+        $grid->column('delivery_type', __('Delivery type'))->using(Order::delivery_type_map);
+        $grid->column('delivery_snapshot', __('Delivery snapshot'))->display(function ($item) {
+            if ($this->delivery_type == Address::class) {
+                return "{$item['name']}|{$item['mobile']}<br>".($item['city_name'] ?? '')."-{$item['address']}";
+            } else {
+                return $item['title'];
+            }
         });
+
+        $grid->column('remarks', __('Remarks'));
 
         $grid->column('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
         $grid->column('created_at', __('Created at'))->sortable()->filter('range', 'datetime');
@@ -138,6 +149,7 @@ class OrdersController extends AdminController
         $grid->filter(function(Grid\Filter $filter){
             $filter->like('order_number', __('Order number'));
             $filter->like('express_number', __('Express number'));
+            $filter->equal('delivery_type', __('Delivery type'))->select(Order::delivery_type_map);
         });
 
         $grid->exporter(new OrderExporter());

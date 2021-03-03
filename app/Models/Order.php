@@ -20,11 +20,16 @@ class Order extends Model
         'delivery_snapshot' => 'array',
     ];
 
+    const delivery_type_map = [
+        Address::class => '快递',
+        Store::class => '自提'
+    ];
+
     const wechat_pay_notify_route = '/api/wechat/OrderPaidNotify';
 
-    // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期，7退款
+    // 1待支付，2已支付待发货，3已发货待收货，4已收货交易完成，5取消订单，6超时过期，7退款, 8待自提
     const status_text = [
-        '未下单', '待支付', '待发货', '待收货', '已完成', '已取消', '超时过期', '已退款'
+        '未下单', '待支付', '待发货', '待收货', '已完成', '已取消', '超时过期', '已退款', '待自提'
     ];
 
     const express_status_text = [
@@ -114,7 +119,7 @@ class Order extends Model
     // 取消订单
     public function cancel($reason = null)
     {
-        if (! in_array($this->status, [1, 2, 3, 4])) {
+        if (! in_array($this->status, [1, 2, 3, 4, 8])) {
             throw new \Exception('订单状态无法取消');
         }
 
@@ -215,19 +220,23 @@ class Order extends Model
         } else {
             $this->real_cost = $this->real_price - $used_balance;
         }
-        $this->status = 2;
+        if ($this->delivery_type == Address::class) $this->status = 2;
+        else $this->status = 8;
         $this->payed_at = date('Y-m-d H:i:s');
         $this->save();
     }
 
+    // 确认收货
     public function receive()
     {
-        if ($this->status !== 3) {
+        if ($this->status !== 3 || $this->status !== 8) {
             return false;
         }
         $this->status = 4;
         $this->confirmed_at = date('Y-m-d H:i:s');
         $this->save();
+
+        //TODO: 记录确认人员
 
         $rate = intval(config('system.invite_bonus_rate', 0));
         dispatch(new UnsettleOrderJob($this, $rate));
