@@ -321,8 +321,11 @@ class OrdersController extends Controller
 
         // 总费用（商品原价+快递费）
         $all_price = $all_goods_price + $freight_price;
+        // 积分抵扣的金额
+        if ($used_integral) $integral_price = to_int($used_integral * $integral2money_rate * 100);
+        else $integral_price = 0;
         // 支付费用（优惠后的会员价-优惠券折扣+快递费-积分抵扣）
-        $real_price = $no_freight_price + $freight_price - ($used_integral * $integral2money_rate * 100);
+        $real_price = $no_freight_price + $freight_price - $integral_price;
         if ($real_price <= 0) {
             return $this->response->errorBadRequest('积分抵扣金额部分不能超过总价');
         }
@@ -340,6 +343,8 @@ class OrdersController extends Controller
         $order->allow_coupon_price = $allow_coupon_price;
         $order->user_coupon_id = $userCoupon ? $userCoupon->id : 0;
         $order->used_integral = $used_integral;
+        $order->integral_rate = $integral2money_rate;
+        $order->integral_price = $integral_price;
         $order->real_price = $real_price;
         $order->goods_count = $goods_count;
         $order->goods_weight = $goods_weight;

@@ -42,6 +42,8 @@ class OrderTransformer extends TransformerAbstract
             'confirmed_at' => $order->confirmed_at,
             'used_balance' => $order->used_balance,
             'used_integral' => $order->used_integral,
+            'integral_rate' => $order->integral_rate,
+            'integral_price' => $order->integral_price,
             'real_cost' => $order->real_cost,
             'cancel_order_number' => $order->cancel_order_number,
             'cancel_reason' => $order->cancel_reason,
