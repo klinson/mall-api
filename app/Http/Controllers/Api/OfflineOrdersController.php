@@ -105,13 +105,19 @@ class OfflineOrdersController extends Controller
                 return $this->response->errorBadRequest($exception->getMessage());
             }
 
-            $order->real_price = $order->all_price - ($used_integral * $integral2money_rate * 100);
+            // 积分抵扣的金额
+            $integral_price = to_int($used_integral * $integral2money_rate * 100);
+            $order->real_price = $order->all_price - $integral_price;
+            $order->integral_price = $integral_price;
+            $order->integral_rate = $integral2money_rate;
             if ($order->real_price <= 0) {
                 DB::rollBack();
                 return $this->response->errorBadRequest('积分抵扣金额部分不能超过总价');
             }
         } else {
             $order->real_price = $order->all_price;
+            $order->integral_price = 0;
+            $order->integral_rate = 0;
             $order->used_integral = 0;
         }
         $order->remarks = $request->remarks;

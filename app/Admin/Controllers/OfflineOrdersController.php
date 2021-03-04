@@ -33,7 +33,10 @@ class OfflineOrdersController extends AdminController
         grid_display_relation($grid, 'staff', 'nickname');
         grid_display_relation($grid, 'store');
         $grid->column('all_price', __('All price'))->currency()->sortable();
-        $grid->column('used_integral', __('Used integral'))->sortable();
+        $grid->column('used_integral', __('Used integral'))->display(function ($item) {
+            if (empty($item)) return 0;
+            else return "￥".($this->integral_price*0.01)." ({$this->used_integral}分)";
+        });
         $grid->column('real_price', __('Real price'))->currency()->sortable();
         $grid->column('used_balance', __('Used balance'))->currency()->sortable();
         $grid->column('real_cost', __('Real cost'))->currency()->sortable();
@@ -71,6 +74,10 @@ class OfflineOrdersController extends AdminController
         show_display_relation($show, 'store');
         $show->field('all_price', __('All price'))->currency();
         $show->field('used_integral', __('Used integral'));
+        $show->field('used_integral', __('Used integral'))->as(function ($item) {
+            if (empty($item)) return 0;
+            else return "￥".($this->integral_price*0.01)." ({$this->used_integral}分)";
+        });
         $show->field('real_price', __('Real price'))->currency();
         $show->field('used_balance', __('Used balance'))->currency();
         $show->field('real_cost', __('Real cost'))->currency();

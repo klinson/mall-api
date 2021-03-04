@@ -25,6 +25,8 @@ class OfflineOrderTransformer extends TransformerAbstract
             'confirmed_at' => $order->confirmed_at,
             'payed_at' => $order->payed_at,
             'used_integral' => $order->used_integral,
+            'integral_rate' => $order->integral_rate,
+            'integral_price' => $order->integral_price,
             'used_balance' => $order->used_balance,
             'real_cost' => $order->real_cost,
         ];

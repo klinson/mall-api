@@ -180,17 +180,26 @@ class OrdersController extends AdminController
         $show->field('all_price', __('All price'))->currency();
         $show->field('goods_price', __('Goods price'))->currency();
         $show->field('member_discount_price', __('Member discount Price'))->currency();
-        $show->field('coupon_price', __('Coupon price'))->currency();
         $show->field('allow_coupon_price', __('Allow coupon price'))->currency();
+        $show->field('coupon_price', __('Coupon price'))->currency();
+        $show->field('used_integral', __('Used integral'))->as(function ($item) {
+            if (empty($item)) return 0;
+            else return "￥".($this->integral_price*0.01)." ({$this->used_integral}分)";
+        });
         $show->field('freight_price', __('Freight price'))->currency();;
         $show->field('real_price', __('Real price'))->currency();
         $show->field('pay_mode', '支付方式')->as(function () {
             return $this->used_balance ? '钱包' : '微信';
         });
-        $show->field('remarks', __('Remarks'));
-        $show->field('address_snapshot', __('Address'))->unescape()->as(function ($item) {
-            return "{$item['name']}|{$item['mobile']}<br>{$item['city_name']}-{$item['address']}";
+        $show->field('delivery_type', __('Delivery type'))->using(Order::delivery_type_map);
+        $show->field('delivery_snapshot', __('Delivery snapshot'))->unescape()->as(function ($item) {
+            if ($this->delivery_type == Address::class) {
+                return "{$item['name']}|{$item['mobile']}<br>".($item['city_name'] ?? '')."-{$item['address']}";
+            } else {
+                return $item['title'];
+            }
         });
+        $show->field('remarks', __('Remarks'));
 
         $show->field('status', __('Status'))->using(Order::status_text)->filter(Order::status_text);
         $show->field('created_at', __('Created at'));
