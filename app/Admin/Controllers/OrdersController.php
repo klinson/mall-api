@@ -129,7 +129,7 @@ class OrdersController extends AdminController
                     ]
                 ));
             }
-            if ($this->row->status > 2) {
+            if ($this->row->status > 2 && $this->row->delivery_type == Address::class) {
                 $actions->append(new GetButton(
                     $actions->getResource() . '/' . $actions->getKey() . '/logistics',
                     '物流查询'

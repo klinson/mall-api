@@ -584,7 +584,8 @@ class OrdersController extends Controller
     // 确认收到货
     public function receive(Order $order, Request $request)
     {
-        $this->authorize('is-mine', $order);
+        if (! $order->isMine() && ! $this->user->isStaff()) return $this->response->errorForbidden();
+//        $this->authorize('is-mine', $order);
         if (! $order->receive()) {
             return $this->response->errorBadRequest('订单无法确认，请查看订单状态');
         }

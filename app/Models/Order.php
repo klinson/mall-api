@@ -234,9 +234,11 @@ class Order extends Model
         }
         $this->status = 4;
         $this->confirmed_at = date('Y-m-d H:i:s');
-        $this->save();
+        //记录确认人员
+        $this->confirm_user_type = get_class(\Auth::user());
+        $this->confirm_user_id = \Auth::user()->id;
 
-        //TODO: 记录确认人员
+        $this->save();
 
         $rate = intval(config('system.invite_bonus_rate', 0));
         dispatch(new UnsettleOrderJob($this, $rate));
