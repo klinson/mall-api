@@ -429,7 +429,9 @@ class OrdersController extends Controller
 
     public function show(Order $order)
     {
-        $this->authorize('is-mine', $order);
+        // 职员可以查询
+        if (! $order->isMine() && ! $this->user->isStaff()) return $this->response->errorForbidden();
+//        $this->authorize('is-mine', $order);
         return $this->response->item($order, new OrderTransformer());
     }
 
@@ -584,7 +586,10 @@ class OrdersController extends Controller
     // 确认收到货
     public function receive(Order $order, Request $request)
     {
-        if (! $order->isMine() && ! $this->user->isStaff()) return $this->response->errorForbidden();
+        if (! (
+            ($order->delivery_type == Address::class && $order->isMine())
+            || $order->delivery_type == Store::class && $this->user->isStaff()
+        )) return $this->response->errorForbidden();
 //        $this->authorize('is-mine', $order);
         if (! $order->receive()) {
             return $this->response->errorBadRequest('订单无法确认，请查看订单状态');
