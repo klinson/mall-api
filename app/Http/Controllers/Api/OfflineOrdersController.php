@@ -39,7 +39,7 @@ class OfflineOrdersController extends Controller
 
     public function show(OfflineOrder $order)
     {
-        if (! ($order->user_id == $this->user->id || ($this->user->isStaff() && $order->staff_id == $this->user->id))) return $this->response->errorUnauthorized();
+        if (! ($order->user_id === 0 || $order->user_id == $this->user->id || ($this->user->isStaff() && $order->staff_id == $this->user->id))) return $this->response->errorUnauthorized();
 
         return $this->response->item($order, new OfflineOrderTransformer());
     }
