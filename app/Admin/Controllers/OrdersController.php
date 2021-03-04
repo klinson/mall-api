@@ -7,10 +7,12 @@ use App\Admin\Extensions\Actions\GetButton;
 use App\Admin\Extensions\Exporters\OrderExporter;
 use App\Admin\Extensions\Tools\DefaultBatchTool;
 use App\Models\Address;
+use App\Models\AdminUser;
 use App\Models\CofferLog;
 use App\Models\Express;
 use App\Models\Order;
 use App\Models\RefundOrder;
+use App\Models\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -198,6 +200,25 @@ class OrdersController extends AdminController
             } else {
                 return $item['title'];
             }
+        });
+        $show->field('confirmUser', __('Confirm user'))->as(function ($item) {
+            switch (get_class($item)) {
+                case AdminUser::class:
+                    $name = "【管理员】".$item->name;
+                    break;
+                case User::class:
+                    if ($this->user_id == $this->confirm_user_id) {
+                        $name = "【用户】";
+                    } else {
+                        $name = "【职员】";
+                    }
+                    $name .= $item->nickname . ' | ' . $item->mobile;
+                    break;
+                default:
+                    $name = '';
+                    break;
+            }
+            return $name;
         });
         $show->field('remarks', __('Remarks'));
 

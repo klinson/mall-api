@@ -7,8 +7,10 @@ use App\Jobs\UnsettleOrderJob;
 use App\Models\Traits\HasOwnerHelper;
 use App\Models\Traits\ScopeDateHelper;
 use Carbon\Carbon;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 class Order extends Model
@@ -49,6 +51,11 @@ class Order extends Model
     public function orderGoods()
     {
         return $this->hasMany(OrderGoods::class, 'order_id', 'id');
+    }
+
+    public function confirmUser()
+    {
+        return $this->morphTo('confirm_user', 'confirm_user_type', 'confirm_user_id');
     }
 
     public function user()
@@ -229,14 +236,15 @@ class Order extends Model
     // 确认收货
     public function receive()
     {
-        if ($this->status !== 3 || $this->status !== 8) {
+        $user = Auth::user() ?: Admin::user();
+        if ($this->status !== 3 && $this->status !== 8) {
             return false;
         }
         $this->status = 4;
         $this->confirmed_at = date('Y-m-d H:i:s');
         //记录确认人员
-        $this->confirm_user_type = get_class(\Auth::user());
-        $this->confirm_user_id = \Auth::user()->id;
+        $this->confirm_user_type = get_class($user);
+        $this->confirm_user_id = $user->id;
 
         $this->save();
 
