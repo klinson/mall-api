@@ -19,6 +19,14 @@ $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api',
     'middleware' => ['serializer:array', 'bindings'],
 ], function ($api) {
+    // 手机验证码获取
+    $api->group([
+        'middleware' => 'refresh.token'
+    ], function ($api) {
+        $api->post('getMobileCode', 'UserController@getMobileCode');
+        $api->post('user/bindMobile', 'UserController@bindMobile');
+    });
+
     // 登录验证相关路由
     $api->group([
         'prefix' => 'auth'
