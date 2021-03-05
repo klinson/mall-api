@@ -20,6 +20,12 @@ class MemberLevel extends Model
         return $query->orderBy('level', 'asc');
     }
 
+    // 下个等级
+    public function nextMemberLevel()
+    {
+        return MemberLevel::where('level', '>', $this->level)->levelByAsc()->first();
+    }
+
     public function getLogoUrlAttribute()
     {
         if ($this->logo) {

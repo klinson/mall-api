@@ -38,9 +38,13 @@ class Integral extends Model
                 $this->save();
                 $this->log($order->used_integral, $order, "订单（{$order->order_number}）退回{$order->used_integral}积分", $type);
             } else {
-                $this->increment('balance', $order->used_integral);
-                $this->save();
-                $this->log($order->used_integral, $order, "订单（{$order->order_number}）获得{$order->used_integral}积分", $type);
+                $money2integral_rate = config('system.money2integral_rate', 0);
+                if ($money2integral_rate > 0) {
+                    $integral = to_int($order->real_price * $money2integral_rate * 0.01);
+                    $this->increment('balance', $integral);
+                    $this->save();
+                    $this->log($integral, $order, "订单（{$order->order_number}）获得{$integral}积分", $type);
+                }
             }
         }
     }

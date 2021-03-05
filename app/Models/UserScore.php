@@ -16,9 +16,30 @@ class UserScore extends Model
         return $this->belongsTo(MemberLevel::class, 'member_level_id');
     }
 
+    // 下个登记
+    public function nextMemberLevel()
+    {
+        return $this->memberLevel->nextMemberLevel();
+    }
+
+    // 加经验
+    public function addScore($order)
+    {
+        $integral = to_int($order->real_price * 0.01);
+        $this->increment('balance', $integral);
+        if ($level = $this->nextMemberLevel()) {
+            if ($level->score <= $this->balance) {
+                $this->member_level_id = $level;
+            }
+        }
+        $this->save();
+        $this->log($integral, $order, "订单（{$order->order_number}）获得{$integral}积分", 1);
+
+    }
+
     public function logs()
     {
-        return $this->hasMany(WalletLog::class, 'user_id', 'user_id');
+        return $this->hasMany(UserScoreLog::class, 'user_id', 'user_id');
     }
 
     public function log($balance, $model, $description, $type = 0)
