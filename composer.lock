@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c02bcac9880ffd7a0f805641fca5458a",
+    "content-hash": "49ab94ecf2dfc54d27898f88a59474d9",
     "packages": [
         {
             "name": "cakephp/chronos",
@@ -1072,6 +1072,54 @@
                 "parser"
             ],
             "time": "2019-03-17T18:48:37+00:00"
+        },
+        {
+            "name": "fastgoo/aliyun-sms",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fastgoo/aliyun-sms.git",
+                "reference": "038644da8ba31ab5dbc77cd26f7577b2b02880e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fastgoo/aliyun-sms/zipball/038644da8ba31ab5dbc77cd26f7577b2b02880e0",
+                "reference": "038644da8ba31ab5dbc77cd26f7577b2b02880e0",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aliyun\\Sms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mr.Zhou",
+                    "email": "773729704@qq.com",
+                    "homepage": "https://github.com/fastgoo"
+                }
+            ],
+            "description": "阿里云短信扩展包",
+            "homepage": "https://phalcon.fastgoo.net",
+            "keywords": [
+                "aliyun",
+                "sms"
+            ],
+            "time": "2018-01-24T01:04:13+00:00"
         },
         {
             "name": "fideloper/proxy",
