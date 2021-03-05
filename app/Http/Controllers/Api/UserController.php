@@ -107,6 +107,7 @@ class UserController extends Controller
         if (empty($code) || ($code['send_at'] + 60 * 5) < time() || $code['code'] !== $request->code) {
             return $this->response->errorBadRequest('手机验证码错误');
         }
+        cache()->delete('mobile_code:'.$request->mobile);
 
         \Auth::user()->mobile = $request->mobile;
         \Auth::user()->save();
