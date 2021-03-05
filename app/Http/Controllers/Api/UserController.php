@@ -111,7 +111,7 @@ class UserController extends Controller
         \Auth::user()->mobile = $request->mobile;
         \Auth::user()->save();
 
-        return $this->response->item(\Auth::user(), new UserTransformer());
+        return $this->response->item(\Auth::user(), new UserTransformer('info'));
 
     }
 }
