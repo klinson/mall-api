@@ -25,15 +25,15 @@ class UserScore extends Model
     // 加经验
     public function addScore($order)
     {
-        $integral = to_int($order->real_price * 0.01);
-        $this->increment('balance', $integral);
+        $score = to_int($order->real_price * 0.01);
+        $this->increment('balance', $score);
         if ($level = $this->nextMemberLevel()) {
             if ($level->score <= $this->balance) {
-                $this->member_level_id = $level;
+                $this->member_level_id = $level->id;
             }
         }
         $this->save();
-        $this->log($integral, $order, "订单（{$order->order_number}）获得{$integral}积分", 1);
+        $this->log($score, $order, "订单（{$order->order_number}）获得{$score}经验", 1);
 
     }
 

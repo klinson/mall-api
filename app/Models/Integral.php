@@ -23,21 +23,20 @@ class Integral extends Model
      */
     public function useIt($order, $type = 0)
     {
-        if ($order->used_integral > 0) {
-            if ($type == 0) {
-                if ($this->balance < $order->used_integral) {
-                    throw new \Exception('积分不足');
+        switch ($type) {
+            case 0:
+                if ($order->used_integral > 0) {
+                    if ($this->balance < $order->used_integral) {
+                        throw new \Exception('积分不足');
+                    }
+                    $this->decrement('balance', $order->used_integral);
+                    if (! $this->save()) {
+                        throw new \Exception('积分扣除失败');
+                    }
+                    $this->log($order->used_integral, $order, "支付订单（{$order->order_number}）使用{$order->used_integral}积分");
                 }
-                $this->decrement('balance', $order->used_integral);
-                if (! $this->save()) {
-                    throw new \Exception('积分扣除失败');
-                }
-                $this->log($order->used_integral, $order, "支付订单（{$order->order_number}）使用{$order->used_integral}积分");
-            } else if ($type == 2) {
-                $this->increment('balance', $order->used_integral);
-                $this->save();
-                $this->log($order->used_integral, $order, "订单（{$order->order_number}）退回{$order->used_integral}积分", $type);
-            } else {
+                break;
+            case 1:
                 $money2integral_rate = config('system.money2integral_rate', 0);
                 if ($money2integral_rate > 0) {
                     $integral = to_int($order->real_price * $money2integral_rate * 0.01);
@@ -45,7 +44,14 @@ class Integral extends Model
                     $this->save();
                     $this->log($integral, $order, "订单（{$order->order_number}）获得{$integral}积分", $type);
                 }
-            }
+                break;
+            case 2:
+                if ($order->used_integral > 0) {
+                    $this->increment('balance', $order->used_integral);
+                    $this->save();
+                    $this->log($order->used_integral, $order, "订单（{$order->order_number}）退回{$order->used_integral}积分", $type);
+                }
+                break;
         }
     }
 

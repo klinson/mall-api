@@ -26,6 +26,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        // 结算订单到积分和会员经验
+        $schedule->command('order:settle order')->dailyAt('01:00');
+        $schedule->command('order:settle offline_order')->dailyAt('02:00');
     }
 
     /**

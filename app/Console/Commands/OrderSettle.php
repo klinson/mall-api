@@ -46,10 +46,12 @@ class OrderSettle extends Command
         switch ($type) {
             case 'order':
                 $query = Order::query();
+                $time_field = 'confirmed_at';
                 $status = 4;
                 break;
             case 'offline_order':
                 $query = OfflineOrder::query();
+                $time_field = 'payed_at';
                 $status = 3;
                 break;
             default:
@@ -57,7 +59,7 @@ class OrderSettle extends Command
                 break;
         }
         $query->with(['owner'])->where('status', $status)
-            ->whereBetween('confirmed_at', [
+            ->whereBetween($time_field, [
                 Carbon::yesterday()->startOfDay()->toDateTimeString(), Carbon::yesterday()->endOfDay()->toDateTimeString()
             ])->chunk(1000, function ($list) {
                 foreach ($list as $order) {
