@@ -3,11 +3,14 @@
 namespace App\Admin\Controllers;
 
 use App\Models\CofferWithdrawal;
+use App\Models\GroupOrder;
 use App\Models\LotteryRecord;
+use App\Models\OfflineOrder;
 use App\Models\Order;
 use App\Models\RefundOrder;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
+use Encore\Admin\Form\Field\Divider;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
@@ -28,44 +31,31 @@ class HomeController extends Controller
                 'width' => 4,
                 'data' => [
                     [
-                        'title' => '订单待发货',
+                        'title' => '普通订单待发货',
                         'icon' => 'cart-plus',
-                        'color' => 'aqua',
+                        'color' => 'red',
                         'link' => '/admin/orders?status[]=2',
                         'info' => Order::where('status', 2)->count(),
                     ],
                     [
-                        'title' => '售后待审核',
+                        'title' => '普通订单待自提',
                         'icon' => 'cart-plus',
-                        'color' => 'aqua',
-                        'link' => '/admin/refundOrders?status[]=1',
-                        'info' => RefundOrder::where('status', 1)->count(),
+                        'color' => 'green',
+                        'link' => '/admin/orders?status[]=8',
+                        'info' => Order::where('status', 8)->count(),
                     ],
                     [
-                        'title' => '售后待确认',
+                        'title' => '团购订单待支付',
                         'icon' => 'cart-plus',
-                        'color' => 'aqua',
-                        'link' => '/admin/refundOrders?status[]=3',
-                        'info' => RefundOrder::where('status', 3)->count(),
-                    ],
-                    [
-                        'title' => '中奖待发货',
-                        'icon' => 'cart-plus',
-                        'color' => 'aqua',
-                        'link' => '/admin/lotteryRecords',
-                        'info' => LotteryRecord::where('status', 1)->count(),
-                    ],
-                    [
-                        'title' => '提现待处理',
-                        'icon' => 'cart-plus',
-                        'color' => 'aqua',
-                        'link' => '/admin/cofferWithdrawals',
-                        'info' => CofferWithdrawal::where('status', 1)->count(),
+                        'color' => 'yellow',
+                        'link' => '/admin/groupOrders?status[]=1',
+                        'info' => GroupOrder::where('status', 1)->count(),
                     ],
                 ]
             ],
             [
-                'title' => '商场订单下单量',
+                'big_title' => '普通订单统计',
+                'title' => '下单量',
                 'width' => 4,
                 'data' => [
                     [
@@ -113,7 +103,7 @@ class HomeController extends Controller
                 ]
             ],
             [
-                'title' => '商场订单支付量',
+                'title' => '支付量',
                 'width' => 4,
                 'data' => [
                     [
@@ -161,7 +151,7 @@ class HomeController extends Controller
                 ]
             ],
             [
-                'title' => '商场订单完成量',
+                'title' => '完成量',
                 'width' => 4,
                 'data' => [
                     [
@@ -208,9 +198,162 @@ class HomeController extends Controller
                     ],
                 ]
             ],
+
+            [
+                'big_title' => '线下订单统计',
+                'title' => '成交量',
+                'width' => 4,
+                'data' => [
+                    [
+                        'title' => '今日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inToday('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '本周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inWeek('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '本月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inMonth('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '昨日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inYesterday('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '上周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inLastWeek('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '上月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/offlineOrders',
+                        'info' => OfflineOrder::inLastMonth('payed_at')->count(),
+                    ],
+                ],
+            ],
+
+            [
+                'big_title' => '团购订单统计',
+                'title' => '下单量',
+                'width' => 4,
+                'data' => [
+                    [
+                        'title' => '今日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inToday('created_at')->count(),
+                    ],
+                    [
+                        'title' => '本周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inWeek('created_at')->count(),
+                    ],
+                    [
+                        'title' => '本月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inMonth('created_at')->count(),
+                    ],
+                    [
+                        'title' => '昨日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inYesterday('created_at')->count(),
+                    ],
+                    [
+                        'title' => '上周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inLastWeek('created_at')->count(),
+                    ],
+                    [
+                        'title' => '上月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inLastMonth('created_at')->count(),
+                    ],
+                ],
+            ],
+            [
+                'title' => '成交量',
+                'width' => 4,
+                'data' => [
+                    [
+                        'title' => '今日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inToday('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '本周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inWeek('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '本月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inMonth('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '昨日',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inYesterday('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '上周',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inLastWeek('payed_at')->count(),
+                    ],
+                    [
+                        'title' => '上月',
+                        'icon' => 'cart-plus',
+                        'color' => 'aqua',
+                        'link' => '/admin/groupOrders',
+                        'info' => GroupOrder::inLastMonth('payed_at')->count(),
+                    ],
+                ],
+            ],
         ];
 
         foreach ($list as $item) {
+            // 大标题
+            if ($item['big_title'] ?? '') {
+                $content->row(new Divider("————————  {$item['big_title']}  ————————"));
+            }
+
             $content_c = new Content();
             $content_c->row(function (Row $row) use ($item) {
                 foreach ($item['data'] as $box) {

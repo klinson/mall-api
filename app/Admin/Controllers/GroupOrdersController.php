@@ -35,7 +35,7 @@ class GroupOrdersController extends AdminController
         grid_display_relation($grid, 'admin', 'username');
         $grid->column('all_price', __('All price'))->currency()->sortable();;
         $grid->column('remarks', __('Remarks'));
-        $grid->column('status', __('Status'))->using(GroupOrder::status_text);
+        $grid->column('status', __('Status'))->using(GroupOrder::status_text)->filter(GroupOrder::status_text);
         $grid->column('payed_at', __('Payed at'));
         $grid->column('created_at', __('Created at'));
 
@@ -45,6 +45,9 @@ class GroupOrdersController extends AdminController
                 $actions->append(new AjaxButton($actions->getResource().'/'.$actions->getKey().'/pay', '确认支付', 'success'));
                 $actions->append(new AjaxButton($actions->getResource().'/'.$actions->getKey().'/cancel', '取消订单', 'warning'));
             }
+        });
+        $grid->filter(function(Grid\Filter $filter){
+            $filter->like('order_number', __('Order number'));
         });
         return $grid;
     }

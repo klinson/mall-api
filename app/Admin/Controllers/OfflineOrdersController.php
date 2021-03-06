@@ -40,7 +40,7 @@ class OfflineOrdersController extends AdminController
         $grid->column('real_price', __('Real price'))->currency()->sortable();
         $grid->column('used_balance', __('Used balance'))->currency()->sortable();
         $grid->column('real_cost', __('Real cost'))->currency()->sortable();
-        $grid->column('status', __('Status'))->using(OfflineOrder::status_text);
+        $grid->column('status', __('Status'))->using(OfflineOrder::status_text)->filter(OfflineOrder::status_text);
         $grid->column('remarks', __('Remarks'));
         $grid->column('confirmed_at', __('Confirmed at'))->sortable();
         $grid->column('payed_at', __('Payed at'))->sortable();

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Traits\HasOwnerHelper;
+use App\Models\Traits\ScopeDateHelper;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GroupOrder extends Model
 {
-    use SoftDeletes, HasOwnerHelper;
+    use SoftDeletes, HasOwnerHelper, ScopeDateHelper;
     const hasDefaultObserver = true;
 
     const status_text = [

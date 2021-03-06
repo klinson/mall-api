@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Models\Traits\HasOwnerHelper;
+use App\Models\Traits\ScopeDateHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OfflineOrder extends Model
 {
-    use SoftDeletes, HasOwnerHelper;
+    use SoftDeletes, HasOwnerHelper, ScopeDateHelper;
 
     const wechat_pay_notify_route = '/api/wechat/OfflineOrderPaidNotify';
 
