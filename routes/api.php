@@ -61,6 +61,7 @@ $api->version('v1', [
 
         // 微信回调路由
         $api->post('wechat/OrderPaidNotify', 'WechatController@OrderPaidNotify');
+        $api->post('wechat/OfflineOrderPaidNotify', 'WechatController@OfflineOrderPaidNotify');
         $api->post('wechat/RechargeThresholdOrderPaidNotify', 'WechatController@RechargeThresholdOrderPaidNotify');
         $api->post('wechat/MemberRechargeOrderPaidNotify', 'WechatController@MemberRechargeOrderPaidNotify');
 

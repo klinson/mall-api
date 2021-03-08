@@ -91,10 +91,11 @@ class RechargeThresholdOrder extends Model
     {
         $app = app('wechat.payment');
         $config = $app->getConfig();
-        $order_title = "【".config('app.name')."】钱包充值：{$this->order_number}";
+        $order_title = "钱包充值：{$this->order_number}";
         if ($this->wallet_activity_snapshot) {
             $order_title .= "（活动：{$this->wallet_activity_snapshot['title']}）";
         }
+        if (app()->environment() !== 'production') $order_title = '【测试】'.$order_title;
         $result = $app->order->unify([
             'body' => $order_title,
             'out_trade_no' => $this->order_number,

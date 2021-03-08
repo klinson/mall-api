@@ -175,7 +175,8 @@ class OfflineOrdersController extends Controller
 
                 $app = app('wechat.payment');
                 $config = $app->getConfig();
-                $order_title = "【".config('app.name')."】订单：{$order->order_number}";
+                $order_title = "线下订单：{$order->order_number}";
+                if (app()->environment() !== 'production') $order_title = '【测试】'.$order_title;
                 $result = $app->order->unify([
                     'body' => $order_title,
                     'out_trade_no' => $order->order_number,
