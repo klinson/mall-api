@@ -62,10 +62,7 @@ class WechatController
                                 $res = true;
                             } else {
                                 // 标记支付
-                                $order->payed_at = date('Y-m-d H:i:s'); // 更新支付时间为当前时间
-                                $order->real_cost = array_get($query_info, 'total_fee'); // 更新实际支付金额
-                                $order->status = 2;
-                                $order->save(); // 保存订单
+                                $order->pay(0, array_get($query_info, 'total_fee'));
                                 $res = true;
                             }
 

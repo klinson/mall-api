@@ -218,14 +218,15 @@ class Order extends Model
      * @param int $used_balance
      * @author klinson <klinson@163.com>
      */
-    public function pay($used_balance = 0)
+    public function pay($used_balance = 0, $real_cost = null)
     {
         // 直接支付成功
         $this->used_balance = $used_balance;
         if ($used_balance >= $this->real_price) {
             $this->real_cost = 0;
         } else {
-            $this->real_cost = $this->real_price - $used_balance;
+            if (is_null($real_cost)) $this->real_cost = $this->real_price - $used_balance;
+            else $this->real_cost = $real_cost;
         }
         if ($this->delivery_type == Address::class) $this->status = 2;
         else $this->status = 8;
