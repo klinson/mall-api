@@ -9,6 +9,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Forms\ExpressAddressConfig;
+use App\Admin\Forms\IntegralConfig;
 use App\Admin\Forms\LotteryConfig;
 use App\Admin\Forms\SystemConfig;
 use Encore\Admin\Config\ConfigModel;
@@ -27,9 +28,10 @@ class SystemController extends Controller
 
 
         $forms = [
-            'system' => SystemConfig::class,
+//            'system' => SystemConfig::class,
+            'integral' => IntegralConfig::class,
             'express' => ExpressAddressConfig::class,
-            'lottery' => LotteryConfig::class,
+//            'lottery' => LotteryConfig::class,
         ];
 
 
