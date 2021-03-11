@@ -15,6 +15,8 @@ Route::group([
     $router->resource('users', UsersController::class);
     $router->get('categories/resetCache', 'CategoriesController@resetCache');
     $router->resource('categories', CategoriesController::class);
+    $router->get('goods/import', 'GoodsController@import');
+    $router->post('goods/import', 'GoodsController@import');
     $router->resource('goods', GoodsController::class);
     $router->resource('discountGoods', DiscountGoodsController::class);
 

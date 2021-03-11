@@ -10,8 +10,14 @@ use App\Models\Press;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
+use Encore\Admin\Layout\Content;
+use Encore\Admin\Layout\Row;
 use Encore\Admin\Show;
 use App\Admin\Extensions\Actions\CopyInfoButton;
+use Encore\Admin\Widgets\Box;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Readers\LaravelExcelReader;
 
 
 class GoodsController extends AdminController
@@ -207,5 +213,35 @@ class GoodsController extends AdminController
         });
 
         return $form;
+    }
+
+    public function import(Request $request, Content $content)
+    {
+        if ($request->isMethod('post')) {
+            $file = $request->file('file');
+            $reader = \PHPExcel_IOFactory::createReaderForFile($file->getRealPath());
+            $objPHPExcel = $reader->load($file->getRealPath());
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+            $first = 5;
+            for ($i = $first; $i <= $highestRow; $i++) {
+                $rowData = $sheet->rangeToArray('A' . $i . ':' . $highestColumn . $i, NULL, TRUE, FALSE);
+                dd($rowData);
+            }
+
+
+        } else {
+            $content->title('批量导入商品');
+            $form = new \Encore\Admin\Widgets\Form();
+            $form->action(admin_base_path('/goods/import'));
+            $form->method();
+            $form->file('file', '导入文件')->uniqueName()->required();
+            $content->row(function (Row $row) use ($form) {
+                $row->column(12, new Box('', $form));
+            });
+            return $content;
+        }
+
     }
 }
