@@ -15,11 +15,14 @@ class GoodsSpecificationObserver
 {
     public function saved(GoodsSpecification $model)
     {
-        if (! $model->thumbnail) {
-            $model->thumbnail = $model->goods->thumbnail;
-            $model->save();
-        }
         $model->goods->autoUpdate();
+    }
+
+    public function saving(GoodsSpecification $model)
+    {
+        if (! $model->thumbnail && $model->goods->thumbnail) {
+            $model->thumbnail = $model->goods->thumbnail;
+        }
     }
 
     public function deleted(GoodsSpecification $model)

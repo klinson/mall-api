@@ -3,9 +3,11 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\Actions\GetButton;
+use App\Admin\Extensions\Tools\DefaultSimpleTool;
 use App\Models\Author;
 use App\Models\Category;
 use App\Models\Goods;
+use App\Models\GoodsSpecification;
 use App\Models\Press;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -84,6 +86,10 @@ class GoodsController extends AdminController
                 '复制代码',
                 $this->row->ad_code
             ));
+        });
+
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new DefaultSimpleTool(admin_base_path('goods/import'), '批量导入', 'right', 'warning', 'upload'));
         });
 
         $grid->filter(function ($filter) {
@@ -219,24 +225,78 @@ class GoodsController extends AdminController
     {
         if ($request->isMethod('post')) {
             $file = $request->file('file');
+            if (empty($file)) {
+                admin_error('请上传导入文件');
+                return redirect()->back();
+            }
+            if (empty($request->category_id)) {
+                admin_error('请选择分类');
+                return redirect()->back();
+            }
+
             $reader = \PHPExcel_IOFactory::createReaderForFile($file->getRealPath());
             $objPHPExcel = $reader->load($file->getRealPath());
             $sheet = $objPHPExcel->getSheet(0);
             $highestRow = $sheet->getHighestRow();
             $highestColumn = $sheet->getHighestColumn();
             $first = 5;
-            for ($i = $first; $i <= $highestRow; $i++) {
-                $rowData = $sheet->rangeToArray('A' . $i . ':' . $highestColumn . $i, NULL, TRUE, FALSE);
-                dd($rowData);
-            }
+            $list = $sheet->rangeToArray('A' . $first . ':' . $highestColumn . $highestRow, NULL, TRUE, FALSE);
+            $update_count = $create_count = 0;
+            foreach ($list as $data) {
+                $data = array_map('trim', $data);
 
+                $press = Press::firstOrCreate(['title' => $data[2]]);
+                $goods_data = [
+                    'title' => $data[1],
+                    'category_id' => $request->category_id,
+                    'press_id' => $press->id,
+                    'isbn' => ($data[8] && $data[8] != '不区分' ? $data[8] : ''),
+                    'images' => [],
+                ];
+                if (empty($goods_data['title'])) continue;
+
+                $where = ['title' => $goods_data['title']];
+                if ($goods = Goods::where($where)->first()) {
+                    if (empty($goods_data['isbn'])) unset($goods_data['isbn']);
+                    if (empty($goods_data['images'])) unset($goods_data['images']);
+                    $goods->fill($goods_data);
+                    $goods->save();
+                    $update_count++;
+                } else {
+                    $goods = Goods::create($goods_data);
+                    $create_count++;
+                }
+
+                $specification = [
+                    'goods_id' => $goods->id,
+                    'title' => $data[1],
+                    'price' => $data[3] * 100,
+                    'quantity' => $data[5],
+                    'barcode' => $data[0],
+                ];
+                if ($goods->specifications->count() == 1) {
+                    $s = $goods->specifications[0];
+                    if (blank($specification['barcode'])) unset($specification['barcode']);
+                    if (blank($specification['price'])) unset($specification['price']);
+                    if (blank($specification['quantity'])) unset($specification['quantity']);
+
+                    $s->fill($specification);
+                    $s->save();
+                } else {
+                    $s = GoodsSpecification::create($specification);
+                }
+            }
+            admin_success('导入成功', "新增{$create_count}条记录，更新{$update_count}条记录");
+            return redirect()->refresh();
 
         } else {
             $content->title('批量导入商品');
             $form = new \Encore\Admin\Widgets\Form();
             $form->action(admin_base_path('/goods/import'));
             $form->method();
-            $form->file('file', '导入文件')->uniqueName()->required();
+            $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
+            $form->file('file', '导入文件')->uniqueName()->required()->help('注意：导入会覆盖同名字商品');
+            $form->html("<p>模板下载：<a target='_blank' href='".url('/downloads/templates/import-goods.xlsx')."'>导入模板</a></p>");
             $content->row(function (Row $row) use ($form) {
                 $row->column(12, new Box('', $form));
             });

@@ -14,6 +14,8 @@ class Goods extends Model
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 
+    protected $fillable = ['title', 'isbn', 'press_id', 'category_id', 'images'];
+
     public function getThumbnailUrlAttribute()
     {
         if ($this->thumbnail) {
@@ -51,7 +53,7 @@ class Goods extends Model
 
     public function autoUpdate()
     {
-        $specifications = $this->specifications;
+        $specifications = $this->soldSpecifications;
         $this->max_price = $specifications->max('price');
         $this->min_price = $specifications->min('price');
         $this->save();
