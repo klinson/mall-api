@@ -408,3 +408,16 @@ function get_distance($lat1, $lng1, $lat2, $lng2) {
     $s = round($s* 10000)/10000;
     return  round($s);
 }
+
+////由于图片所在位置的列号为字母，转化为数字
+function ABC2decimal($abc){
+    $ten = 0;
+    $len = strlen($abc);
+    for($i=1;$i<=$len;$i++){
+        $char = substr($abc,0-$i,1);//反向获取单个字符
+
+        $int = ord($char);
+        $ten += ($int-65)*pow(26,$i-1);
+    }
+    return $ten;
+}

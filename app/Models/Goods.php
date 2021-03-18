@@ -14,7 +14,7 @@ class Goods extends Model
 
     const THUMBNAIL_TEMPLATE = 'images/template.jpg';
 
-    protected $fillable = ['title', 'isbn', 'press_id', 'category_id', 'images'];
+    protected $fillable = ['title', 'isbn', 'press_id', 'category_id', 'images', 'thumbnail'];
 
     public function getThumbnailUrlAttribute()
     {

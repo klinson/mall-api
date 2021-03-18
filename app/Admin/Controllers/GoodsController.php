@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Goods;
 use App\Models\GoodsSpecification;
 use App\Models\Press;
+use Doctrine\DBAL\Driver\OCI8\Driver;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -18,8 +19,7 @@ use Encore\Admin\Show;
 use App\Admin\Extensions\Actions\CopyInfoButton;
 use Encore\Admin\Widgets\Box;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Readers\LaravelExcelReader;
+use Illuminate\Support\Facades\Storage;
 
 
 class GoodsController extends AdminController
@@ -89,6 +89,7 @@ class GoodsController extends AdminController
         });
 
         $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new DefaultSimpleTool(admin_base_path('goods/import2'), '批量导入2', 'right', 'warning', 'upload'));
             $tools->append(new DefaultSimpleTool(admin_base_path('goods/import'), '批量导入', 'right', 'warning', 'upload'));
         });
 
@@ -219,6 +220,114 @@ class GoodsController extends AdminController
         });
 
         return $form;
+    }
+
+    public function import2(Request $request, Content $content)
+    {
+        if ($request->isMethod('post')) {
+            $file = $request->file('file');
+            if (empty($file)) {
+                admin_error('请上传导入文件');
+                return redirect()->back();
+            }
+            if (empty($request->category_id)) {
+                admin_error('请选择分类');
+                return redirect()->back();
+            }
+            if (blank($request->quantity) || $request->quantity < 0) {
+                admin_error('请输入库存');
+                return redirect()->back();
+            }
+            $request->quantity = intval($request->quantity);
+
+            $reader = \PHPExcel_IOFactory::createReaderForFile($file->getRealPath());
+            $objPHPExcel = $reader->load($file->getRealPath());
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = 'D';
+            $first = 3;
+            $list = $sheet->rangeToArray('A' . $first . ':' . $highestColumn . $highestRow, NULL, TRUE, FALSE);
+            //处理图片
+            $imageFilePath = Storage::disk('admin')->path('images') . DIRECTORY_SEPARATOR .date('Ymd').DIRECTORY_SEPARATOR;//图片在本地存储的路径
+            if (! file_exists ( $imageFilePath )) {
+                @mkdir("$imageFilePath", 0777, true);
+            }
+            foreach($sheet->getDrawingCollection() as $img) {
+                list($startColumn,$startRow)= \PHPExcel_Cell::coordinateFromString($img->getCoordinates());//获取图片所在行和列
+
+                $imgFile = $img->getHashCode().'.'.$img->getExtension();
+                copy($img->getPath(),$imageFilePath.$imgFile);
+
+                $startColumn = ABC2decimal($startColumn);//由于图片所在位置的列号为字母，转化为数字
+                // bug
+                $list[$startRow-$first][$startColumn][] = 'images'.DIRECTORY_SEPARATOR.date('Ymd').DIRECTORY_SEPARATOR.$imgFile;//把图片插入到数组中
+            }
+
+//            dd($list);
+
+            $update_count = $create_count = 0;
+            foreach ($list as $data) {
+//                $data = array_filter(array_map('trim', $data));
+
+                $goods_data = [
+                    'title' => $data[1],
+                    'category_id' => $request->category_id,
+                    'images' => (isset($data[4]) && !empty($data[4])) ? $data[4] : [],
+                ];
+                if ($goods_data['images']) {
+                    $goods_data['thumbnail'] = $goods_data['images'][0];
+                }
+                if (empty($goods_data['title'])) continue;
+
+                $where = ['title' => $goods_data['title']];
+                if ($goods = Goods::where($where)->first()) {
+                    if (empty($goods_data['isbn'])) unset($goods_data['isbn']);
+                    if (empty($goods_data['images'])) unset($goods_data['images']);
+                    $goods->fill($goods_data);
+                    $goods->save();
+                    $update_count++;
+                } else {
+                    $goods = Goods::create($goods_data);
+                    $create_count++;
+                }
+
+                $tmp = array_values(array_filter(array_map('trim', explode("\n", $data[2]))));
+                foreach ($tmp as $ss) {
+                    $tmpp = explode('：', $ss);
+
+                    $specification = [
+                        'goods_id' => $goods->id,
+                        'title' => count($tmpp) >= 2 ? $tmpp[0] : $goods_data['title'],
+                        'price' => floatval(trim($data[3], '¥ ')) * 100,
+                        'quantity' => $request->quantity,
+                        'barcode' => count($tmpp) >= 2 ? $tmpp[1] : $tmpp[0],
+                    ];
+                    $s = GoodsSpecification::where('barcode', $specification['barcode'])->first();
+                    if ($s) {
+                        $s->fill($specification);
+                        $s->save();
+                    } else {
+                        $s = GoodsSpecification::create($specification);
+                    }
+                }
+            }
+            admin_success('导入成功', "新增{$create_count}条记录，更新{$update_count}条记录");
+            return redirect()->refresh();
+        } else {
+            $content->title('批量导入商品');
+            $form = new \Encore\Admin\Widgets\Form();
+            $form->action(admin_base_path('/goods/import2'));
+            $form->method();
+            $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
+            $form->number('quantity', __('Quantity'))->default(10)->required();
+            $form->file('file', '导入文件')->uniqueName()->required()->help('注意：导入会覆盖同名字商品');
+            $form->html("<p>模板下载：<a target='_blank' href='".url('/downloads/templates/import-goods2.xlsx')."'>导入模板</a></p>");
+            $content->row(function (Row $row) use ($form) {
+                $row->column(12, new Box('', $form));
+            });
+            return $content;
+        }
+
     }
 
     public function import(Request $request, Content $content)

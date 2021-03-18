@@ -17,6 +17,8 @@ Route::group([
     $router->resource('categories', CategoriesController::class);
     $router->get('goods/import', 'GoodsController@import');
     $router->post('goods/import', 'GoodsController@import');
+    $router->get('goods/import2', 'GoodsController@import2');
+    $router->post('goods/import2', 'GoodsController@import2');
     $router->resource('goods', GoodsController::class);
     $router->resource('discountGoods', DiscountGoodsController::class);
 
