@@ -179,14 +179,14 @@ class GoodsController extends AdminController
 
         $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
         $form->text('title', __('Title'))->required();
-        $form->text('isbn', __('Isbn'))->required();
+        $form->text('isbn', __('Isbn'));
         $form->image('thumbnail', __('Thumbnail'))->uniqueName();
         $form->multipleImage('images', __('Images'))->uniqueName()->removable();
         $form->textarea('description', __('Description'));
         $form->editor('detail', __('Detail'));
 
         $form->date('publish_date', __('Publish date'))->format('YYYY-MM');
-        Press::form_display_select($form, 'press_id')->default(1);
+        Press::form_display_select($form, 'press_id')->default(0);
         Author::form_display_select($form, 'authors', 'name', __('Authors'), false, 'name', 'multipleSelect');
 //        $form->multipleSelect('authors', __('Authors'))->options(Author::all()->pluck('name', 'id'));
 
@@ -214,6 +214,7 @@ class GoodsController extends AdminController
                     $form->images = [];
                 }
             };
+            if (is_null($form->press_id)) $form->press_id = 0;
 //            $form->authors = array_filter($form->authors);
 
 //            $form->authors = [[1], [2]];
