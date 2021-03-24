@@ -89,6 +89,7 @@ class GoodsController extends AdminController
         });
 
         $grid->tools(function (Grid\Tools $tools) {
+            $tools->append(new DefaultSimpleTool(admin_base_path('goods/import3'), '批量导入3', 'right', 'warning', 'upload'));
             $tools->append(new DefaultSimpleTool(admin_base_path('goods/import2'), '批量导入2', 'right', 'warning', 'upload'));
             $tools->append(new DefaultSimpleTool(admin_base_path('goods/import'), '批量导入', 'right', 'warning', 'upload'));
         });
@@ -221,6 +222,110 @@ class GoodsController extends AdminController
         });
 
         return $form;
+    }
+    public function import3(Request $request, Content $content)
+    {
+        if ($request->isMethod('post')) {
+            $file = $request->file('file');
+            if (empty($file)) {
+                admin_error('请上传导入文件');
+                return redirect()->back();
+            }
+            if (empty($request->category_id)) {
+                admin_error('请选择分类');
+                return redirect()->back();
+            }
+
+            $reader = \PHPExcel_IOFactory::createReaderForFile($file->getRealPath());
+            $objPHPExcel = $reader->load($file->getRealPath());
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = 'M';
+            $first = 3;
+            $list = $sheet->rangeToArray('A' . $first . ':' . $highestColumn . $highestRow, NULL, TRUE, FALSE);
+            //处理图片
+            $imageFilePath = Storage::disk('admin')->path('images') . DIRECTORY_SEPARATOR .date('Ymd').DIRECTORY_SEPARATOR;//图片在本地存储的路径
+            if (! file_exists ( $imageFilePath )) {
+                @mkdir("$imageFilePath", 0777, true);
+            }
+            foreach($sheet->getDrawingCollection() as $img) {
+                list($startColumn,$startRow)= \PHPExcel_Cell::coordinateFromString($img->getCoordinates());//获取图片所在行和列
+
+                $imgFile = $img->getHashCode().'.'.$img->getExtension();
+                copy($img->getPath(),$imageFilePath.$imgFile);
+
+                $startColumn = ABC2decimal($startColumn);//由于图片所在位置的列号为字母，转化为数字
+                // bug
+                $list[$startRow-$first][$startColumn][] = 'images'.DIRECTORY_SEPARATOR.date('Ymd').DIRECTORY_SEPARATOR.$imgFile;//把图片插入到数组中
+            }
+
+            $update_count = $create_count = 0;
+            foreach ($list as $data) {
+//                $data = array_filter(array_map('trim', $data));
+                if (! empty($data[1])) {
+                    $goods_data = [
+                        'title' => $data[1],
+                        'category_id' => $request->category_id,
+                    ];
+                    if (! empty($data[2])) $goods_data['isbn'] = trim($data[2]);
+                    if (! empty($data[3])) $goods_data['description'] = trim($data[3]);
+                    if (! empty($data[4])) $goods_data['detail'] = trim($data[4]);
+                    if (! empty($data[5])) {
+                        $goods_data['images'] = $data[5];
+                        $goods_data['thumbnail'] = $goods_data['images'][0];
+                    }
+
+                    if (empty($goods_data['title'])) continue;
+
+                    $where = ['title' => $goods_data['title']];
+                    if ($goods = Goods::where($where)->first()) {
+                        if (empty($goods_data['isbn'])) unset($goods_data['isbn']);
+                        if (empty($goods_data['images'])) unset($goods_data['images']);
+                        $goods->fill($goods_data);
+                        $goods->save();
+                        $update_count++;
+                    } else {
+                        if (! isset($goods_data['images'])) $goods_data['images'] = [];
+                        $goods = Goods::create($goods_data);
+                        $create_count++;
+                    }
+                }
+
+                if (empty($data[7])) continue;
+
+                $specification = [
+                    'goods_id' => $goods->id,
+                    'title' => trim($data[6]),
+                    'price' => $data[9] * 100,
+                    'quantity' => $data[10],
+                    'barcode' => trim($data[7]),
+                ];
+                if (! empty($data[8])) $data['thumbnail'] = $data[8][0];
+                if (! empty($data[11])) $specification['sold_quantity'] = floatval($data[11]);
+                if (! empty($data[12])) $specification['weight'] = floatval($data[12]);
+                $s = GoodsSpecification::where('barcode', $specification['barcode'])->first();
+                if ($s) {
+                    $s->fill($specification);
+                    $s->save();
+                } else {
+                    $s = GoodsSpecification::create($specification);
+                }
+            }
+            admin_success('导入成功', "新增{$create_count}条记录，更新{$update_count}条记录");
+            return redirect()->refresh();
+        } else {
+            $content->title('批量导入商品');
+            $form = new \Encore\Admin\Widgets\Form();
+            $form->action(admin_base_path('/goods/import3'));
+            $form->method();
+            $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
+            $form->file('file', '导入文件')->uniqueName()->required()->help('注意：导入会覆盖同名字商品');
+            $form->html("<p>模板下载：<a target='_blank' href='".url('/downloads/templates/import-goods2.xlsx')."'>导入模板</a></p>");
+            $content->row(function (Row $row) use ($form) {
+                $row->column(12, new Box('', $form));
+            });
+            return $content;
+        }
     }
 
     public function import2(Request $request, Content $content)

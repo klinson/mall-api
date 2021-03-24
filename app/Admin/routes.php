@@ -19,6 +19,8 @@ Route::group([
     $router->post('goods/import', 'GoodsController@import');
     $router->get('goods/import2', 'GoodsController@import2');
     $router->post('goods/import2', 'GoodsController@import2');
+    $router->get('goods/import3', 'GoodsController@import3');
+    $router->post('goods/import3', 'GoodsController@import3');
     $router->resource('goods', GoodsController::class);
     $router->resource('discountGoods', DiscountGoodsController::class);
 
