@@ -262,16 +262,30 @@ class GoodsController extends AdminController
             $update_count = $create_count = 0;
             foreach ($list as $data) {
 //                $data = array_filter(array_map('trim', $data));
+
                 if (! empty($data[1])) {
                     $goods_data = [
                         'title' => $data[1],
                         'category_id' => $request->category_id,
                     ];
                     if (! empty($data[2])) $goods_data['isbn'] = trim($data[2]);
-                    if (! empty($data[3])) $goods_data['description'] = trim($data[3]);
-                    if (! empty($data[4])) $goods_data['detail'] = trim($data[4]);
-                    if (! empty($data[5])) {
-                        $goods_data['images'] = $data[5];
+                    if (! empty($data[3])) {
+                        $press = Press::firstOrCreate(['title' => trim($data[3])]);
+                        $goods_data['press_id'] = $press->id;
+                    }
+                    $authors = [];
+                    if (! empty($data[4])) {
+                        $author_names = explode(',', str_replace('，', ',', trim($data[4])));
+                        foreach ($author_names as $author_name) {
+                            $author = Author::firstOrCreate(['name' => trim($author_name)]);
+                            $authors[] = $author->id;
+                        }
+                    }
+
+                    if (! empty($data[5])) $goods_data['description'] = $data[5];
+                    if (! empty($data[6])) $goods_data['detail'] = $data[6];
+                    if (! empty($data[7])) {
+                        $goods_data['images'] = $data[7];
                         $goods_data['thumbnail'] = $goods_data['images'][0];
                     }
 
@@ -289,20 +303,23 @@ class GoodsController extends AdminController
                         $goods = Goods::create($goods_data);
                         $create_count++;
                     }
+                    if ($authors) {
+                        $goods->authors()->sync($authors);
+                    }
                 }
 
-                if (empty($data[7])) continue;
+                if (empty($data[9])) continue;
 
                 $specification = [
                     'goods_id' => $goods->id,
-                    'title' => trim($data[6]),
-                    'price' => $data[9] * 100,
-                    'quantity' => $data[10],
-                    'barcode' => trim($data[7]),
+                    'title' => trim($data[8]),
+                    'price' => floatval($data[11]) * 100,
+                    'quantity' => intval($data[12]),
+                    'barcode' => trim($data[9]),
                 ];
-                if (! empty($data[8])) $data['thumbnail'] = $data[8][0];
-                if (! empty($data[11])) $specification['sold_quantity'] = floatval($data[11]);
-                if (! empty($data[12])) $specification['weight'] = floatval($data[12]);
+                if (! empty($data[10])) $data['thumbnail'] = $data[10][0];
+                if (! empty($data[13])) $specification['sold_quantity'] = floatval($data[13]);
+                if (! empty($data[14])) $specification['weight'] = floatval($data[14]);
                 $s = GoodsSpecification::where('barcode', $specification['barcode'])->first();
                 if ($s) {
                     $s->fill($specification);
@@ -320,7 +337,7 @@ class GoodsController extends AdminController
             $form->method();
             $form->select('category_id', __('Category id'))->options(Category::selectOptions(null, null))->required();
             $form->file('file', '导入文件')->uniqueName()->required()->help('注意：导入会覆盖同名字商品');
-            $form->html("<p>模板下载：<a target='_blank' href='".url('/downloads/templates/import-goods2.xlsx')."'>导入模板</a></p>");
+            $form->html("<p>模板下载：<a target='_blank' href='".url('/downloads/templates/import-goods3.xlsx')."'>导入模板</a></p>");
             $content->row(function (Row $row) use ($form) {
                 $row->column(12, new Box('', $form));
             });
