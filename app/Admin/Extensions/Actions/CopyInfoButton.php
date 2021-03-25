@@ -19,19 +19,21 @@ class CopyInfoButton
         $this->btn_type = $btn_type;
         $this->info = $info;
         $this->icon = $icon;
+
+        Admin::js(static::$js);
     }
 
     protected function script()
     {
-        Admin::js(static::$js);
-
         return <<<JS
-var clipboard = new ClipboardJS('.clipboard-btn');
+if (typeof(ClipboardJS) != 'undefined') {
+    var clipboard = new ClipboardJS('.clipboard-btn');
 
-clipboard.on('success', function(e) {
-    swal('复制代码成功', '', 'success');
-    e.clearSelection();
-});
+    clipboard.on('success', function(e) {
+        swal('复制代码成功', '', 'success');
+        e.clearSelection();
+    });
+}
 JS;
     }
 
