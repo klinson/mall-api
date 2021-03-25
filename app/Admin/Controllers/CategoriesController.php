@@ -26,6 +26,7 @@ class CategoriesController extends Controller
      * @var string
      */
     protected $title = '分类管理';
+    protected $pageHeader = '分类管理';
 
     public function index()
     {
