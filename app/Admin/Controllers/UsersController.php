@@ -36,7 +36,7 @@ class UsersController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('nickname', __('Nickname'));
         $grid->column('avatar', __('Avatar'))->image();
-        grid_display_relation($grid, 'agency', 'title');
+//        grid_display_relation($grid, 'agency', 'title');
         $grid->column('sex', __('Sex'))->using(User::SEX2TEXT)->filter(User::SEX2TEXT);;
         $grid->column('mobile', __('Mobile'));
         $grid->column('wallet', __('Wallet'))->display(function ($item) {
