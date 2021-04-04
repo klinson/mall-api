@@ -46,8 +46,8 @@ class IntegralConfig extends Form
      */
     public function form()
     {
-        $this->number('system|integral2money_rate', '积分=》钱')->required()->min(0)->help('0.01=>100积分*0.01等于1块钱')->setElementClass('s2');
-        $this->number('system|money2integral_rate', '消费金额=》积分')->required()->min(0)->help('1 => 1块钱*1等于1积分')->setElementClass('s2');
+        $this->number('system|integral2money_rate', '积分_to_钱')->required()->min(0)->help('0.01=>100积分*0.01等于1块钱')->setElementClass('s2');
+        $this->number('system|money2integral_rate', '消费金额_to_积分')->required()->min(0)->help('1 => 1块钱*1等于1积分')->setElementClass('s2');
 
     }
 
