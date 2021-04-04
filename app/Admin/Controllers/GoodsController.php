@@ -321,6 +321,7 @@ class GoodsController extends AdminController
                 if (! empty($data[10])) $data['thumbnail'] = $data[10][0];
                 if (! empty($data[13])) $specification['sold_quantity'] = floatval($data[13]);
                 if (! empty($data[14])) $specification['weight'] = floatval($data[14]);
+                if (empty($specification['title'])) $specification['title'] = '默认';
                 $s = GoodsSpecification::where('barcode', $specification['barcode'])->first();
                 if ($s) {
                     $s->fill($specification);
@@ -427,6 +428,7 @@ class GoodsController extends AdminController
                         'quantity' => $request->quantity,
                         'barcode' => count($tmpp) >= 2 ? $tmpp[1] : $tmpp[0],
                     ];
+                    if (empty($specification['title'])) $specification['title'] = '默认';
                     $s = GoodsSpecification::where('barcode', $specification['barcode'])->first();
                     if ($s) {
                         $s->fill($specification);
@@ -509,6 +511,7 @@ class GoodsController extends AdminController
                     'quantity' => $data[5],
                     'barcode' => $data[0],
                 ];
+                if (empty($specification['title'])) $specification['title'] = '默认';
                 if ($goods->specifications->count() == 1) {
                     $s = $goods->specifications[0];
                     if (blank($specification['barcode'])) unset($specification['barcode']);
