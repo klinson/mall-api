@@ -267,6 +267,7 @@ class GoodsController extends AdminController
                     $goods_data = [
                         'title' => $data[1],
                         'category_id' => $request->category_id,
+                        'has_recommended' => 0,
                     ];
                     if (! empty($data[2])) $goods_data['isbn'] = trim($data[2]);
                     if (! empty($data[3])) {
@@ -396,6 +397,7 @@ class GoodsController extends AdminController
                     'title' => $data[1],
                     'category_id' => $request->category_id,
                     'images' => (isset($data[4]) && !empty($data[4])) ? $data[4] : [],
+                    'has_recommended' => 0,
                 ];
                 if ($goods_data['images']) {
                     $goods_data['thumbnail'] = $goods_data['images'][0];
@@ -484,6 +486,7 @@ class GoodsController extends AdminController
                     'press_id' => $press->id,
                     'isbn' => ($data[8] && $data[8] != '不区分' ? $data[8] : ''),
                     'images' => [],
+                    'has_recommended' => 0,
                 ];
                 if (empty($goods_data['title'])) continue;
 
