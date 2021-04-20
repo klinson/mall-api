@@ -109,16 +109,20 @@ class User extends Authenticatable implements JWTSubject
     {
         if (! $this->wallet) {
             $this->wallet()->create();
+            $this->load('wallet');
         }
         if (! $this->coffer) {
             $this->coffer()->create();
+            $this->load('coffer');
         }
         if (! $this->integral) {
             $this->integral()->create();
+            $this->load('integral');
         }
         // 会员经验值
         if (! $this->score) {
             $this->scoreInit();
+            $this->load('score');
         }
     }
 
