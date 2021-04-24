@@ -13,6 +13,7 @@ class MemberLevelTransformer extends TransformerAbstract
 
     public function transform(Model $model)
     {
+        $next = $model->nextMemberLevel();
         return [
             'id' => $model->id,
             'title' => $model->title,
@@ -21,7 +22,7 @@ class MemberLevelTransformer extends TransformerAbstract
             'is_fee_freight' => $model->is_fee_freight,
             'level' => $model->level,
             'score' => $model->score,
-            'next_score' => $model->nextMemberLevel ? $model->nextMemberLevel->score : 0,
+            'next_score' => $next ? $next->score : 0,
         ];
     }
 }
