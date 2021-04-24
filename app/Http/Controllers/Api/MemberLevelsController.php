@@ -17,7 +17,7 @@ class MemberLevelsController extends Controller
 {
     public function index()
     {
-        return $this->response->collection(MemberLevel::enabled()->levelByAsc()->get(), new MemberLevelTransformer());
+        return $this->response->collection(MemberLevel::load(['nextMemberLevel'])->enabled()->levelByAsc()->get(), new MemberLevelTransformer());
     }
 
     public function show(MemberLevel $memberLevel)
