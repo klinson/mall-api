@@ -61,8 +61,7 @@ class CategoriesController extends Controller
         Admin::script(
             <<<HTML
 (new Clipboard('.clipboard-url-btn')).on('success', function(e) {
-    alert('复制代码['+e.text+']成功');
-
+    swal('复制代码成功', '', 'success');
     e.clearSelection();
 });
 HTML
@@ -79,6 +78,9 @@ HTML
                     $payload .= "<i class='fa fa-arrow-circle-o-up text-red'></i>&nbsp;";
                 }
                 $payload .= "<strong>{$branch['title']}</strong>";
+                if (! $branch['has_enabled']) {
+                    $payload .= '<span class="text-red">[禁用]</span>';
+                }
                 $payload .= "<span class='pull-right dd-nodrag'><a class='clipboard-url-btn' data-clipboard-text='category-{$branch['id']}' href='javascript:void(0);' style='margin-left: 3px'><i class='fa fa-clipboard'></i></a></span>";
 
                 return $payload;
