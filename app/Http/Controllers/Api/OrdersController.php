@@ -465,12 +465,12 @@ class OrdersController extends Controller
         if (! in_array($order->status, [1, 2])) {
             return $this->response->errorBadRequest('订单状态不可取消');
         }
-        if (! $request->reason) {
-            return $this->response->errorBadRequest('请选择取消原因');
-        }
+//        if (! $request->reason) {
+//            return $this->response->errorBadRequest('请说明取消原因');
+//        }
 
         try {
-            $order->cancel($request->reason);
+            $order->cancel($request->reason ?: '用户取消');
 
             // 加库存
 
