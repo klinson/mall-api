@@ -91,7 +91,7 @@ class CouponsController extends AdminController
         $form->text('title', __('Title'))->required();
         $form->currency('start_price', __('Start price'))->required();
         $form->select('type', __('Type'))->options(Coupon::type_text)->required();
-        $form->number('face_value', __('Face value'))->required()->help('依据类型：<br>1. 满减券：8.88=>优惠8.88元，（单位: 元）<br>2. 折扣券：8.8=>打8.8折，（最大值: 100=>原价)')->with(function ($value, $field) {
+        $form->number('face_value', __('Face value'))->required()->help('依据类型：<br>1. 满减券：8.88=>优惠8.88元，（单位: 元）<br>2. 折扣券：8.8=>打8.8折，（最大值: 10=>原价，最小值：0.1=>0.1折)')->with(function ($value, $field) {
             if ($this && ! is_null($value) && $value == $this->face_value) {
                 if ($this->type == 1) {
                     $value = strval($value * 0.1);
