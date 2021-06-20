@@ -50,6 +50,9 @@ class SystemController extends Controller
                 case 'integral2money_rate':
                     $return[$key] = ['rate' => config('system.integral2money_rate', 0)];
                     break;
+                case 'integral_status':
+                    $return[$key] = ['integral_status' => config('system.integral_status', 0)];
+                    break;
                 default:
                     break;
             }

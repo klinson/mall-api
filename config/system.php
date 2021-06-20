@@ -33,6 +33,8 @@ return [
     'invite_bonus_rate' => 500,
 
     // 积分汇率
+    // 积分使用开关
+    'integral_status' => 0,
     // 积分->钱汇率，0.01=>100积分*0.01等于1块钱
     'integral2money_rate' => 0.01,
     // 消费金额->积分汇率 1 => 1块钱*1等于1积分
