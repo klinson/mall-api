@@ -70,6 +70,7 @@ class GoodsController extends AdminController
             }
             $specifications = array_map(function ($item) {
                 return [
+                    '条码' => $item['barcode'],
                     '规格名称' => $item['title'],
                     '售价' => '￥'.strval($item['price'] * 0.01),
                     '库存' => $item['quantity'],

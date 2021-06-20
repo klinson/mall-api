@@ -33,6 +33,7 @@ class OfflineOrdersController extends AdminController
         grid_display_relation($grid, 'staff', 'nickname');
         grid_display_relation($grid, 'store');
         $grid->column('all_price', __('All price'))->currency()->sortable();
+        $grid->column('member_discount_price', __('Member discount Price'))->currency()->sortable();
         $grid->column('used_integral', __('Used integral'))->display(function ($item) {
             if (empty($item)) return 0;
             else return "￥".($this->integral_price*0.01)." ({$this->used_integral}分)";
@@ -73,6 +74,7 @@ class OfflineOrdersController extends AdminController
         show_display_relation($show, 'staff', 'nickname');
         show_display_relation($show, 'store');
         $show->field('all_price', __('All price'))->currency();
+        $show->field('member_discount_price', __('Member discount Price'))->currency();
         $show->field('used_integral', __('Used integral'));
         $show->field('used_integral', __('Used integral'))->as(function ($item) {
             if (empty($item)) return 0;

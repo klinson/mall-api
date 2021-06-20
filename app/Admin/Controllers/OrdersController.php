@@ -46,6 +46,7 @@ class OrdersController extends AdminController
         $grid->column('order_number', __('Order number'))->expand(function () {
             $goods = $this->orderGoods->map(function ($item) {
                 return [
+                    'barcode' => $item->snapshot['barcode'],
                     'goods_title' => $item->snapshot['goods']['title'],
                     'goods_specification_title' => $item->snapshot['title'],
                     'price' => $item->price * 0.01 . ' 元',
@@ -55,6 +56,7 @@ class OrdersController extends AdminController
             })->toArray();
 
             return new Table([
+                '商品条码',
                 '商品名称',
                 '商品规格',
                 '单价',
@@ -238,7 +240,14 @@ class OrdersController extends AdminController
         $show->orderGoods('订单商品', function (Grid $grid) {
             $grid->column('id', __('Id'));
             grid_display_relation($grid, 'goods');
-            grid_display_relation($grid, 'specification');
+//            grid_display_relation($grid, 'specification');
+            $grid->column('specification', __('Specification id'))->display(function ($item) {
+                return $this->snapshot['title'];
+            });
+            $grid->column('barcode', __('Barcode'))->display(function ($item) {
+                return $this->snapshot['barcode'];
+            });
+
             grid_display_relation($grid, 'marketing');
             $grid->column('price', '原价')->currency();
             $grid->column('quantity', __('Quantity'));
