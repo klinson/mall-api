@@ -87,6 +87,17 @@ class OfflineOrdersController extends Controller
             }
         }
 
+        // 获取用户会员折扣
+        $member_discount = \Auth::user()->getBestMemberDiscount(true);
+        $order->member_discount_price = ceil(strval($order->all_price * $member_discount * 0.01));
+        $order->member_discount = $member_discount;
+
+        // 积分开关
+        $integral_status = config('system.integral_status', 0);
+        if (! $integral_status && $used_integral) {
+            return $this->response->errorBadRequest(__('Disable integral'));
+        }
+
         if ($used_integral) {
             $integral2money_rate = config('system.integral2money_rate', 0);
             if (empty($integral2money_rate) || $integral2money_rate < 0 || $integral2money_rate > 1) {
@@ -107,7 +118,7 @@ class OfflineOrdersController extends Controller
 
             // 积分抵扣的金额
             $integral_price = to_int($used_integral * $integral2money_rate * 100);
-            $order->real_price = $order->all_price - $integral_price;
+            $order->real_price = $order->member_discount_price - $integral_price;
             $order->integral_price = $integral_price;
             $order->integral_rate = $integral2money_rate;
             if ($order->real_price <= 0) {
@@ -115,11 +126,12 @@ class OfflineOrdersController extends Controller
                 return $this->response->errorBadRequest('积分抵扣金额部分不能超过总价');
             }
         } else {
-            $order->real_price = $order->all_price;
+            $order->real_price = $order->member_discount_price;
             $order->integral_price = 0;
             $order->integral_rate = 0;
             $order->used_integral = 0;
         }
+
         $order->remarks = $request->remarks;
         $order->confirmed_at = date('Y-m-d H:i:s');
         $order->status = 2;

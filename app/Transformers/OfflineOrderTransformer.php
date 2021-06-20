@@ -18,6 +18,8 @@ class OfflineOrderTransformer extends TransformerAbstract
             'order_number' => $order->order_number,
             'all_price' => $order->all_price,
             'real_price' => $order->real_price,
+            'member_discount_price' => $order->member_discount_price,
+            'member_discount' => $order->member_discount,
             'remarks' => $order->remarks,
             'status' => $order->status,
             'status_text' => OfflineOrder::status_text[$order->status] ?? '',

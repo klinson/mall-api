@@ -230,7 +230,9 @@ class User extends Authenticatable implements JWTSubject
     public function getBestMemberDiscount($reset = false)
     {
         // book分支
-        return $this->getScoreMemberDiscount();
+        $discount = $this->getScoreMemberDiscount();
+        if ($discount <= 0 || $discount > 100) $discount = 100;
+        return $discount;
 
         $cache_key = 'user_member_best_discount_'.$this->id;
 
