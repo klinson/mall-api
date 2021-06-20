@@ -83,9 +83,32 @@ class MemberLevelsController extends AdminController
         $form->number('level', __('Level'))->default(0)->required()->help('等级约大代表此会员越高级');
         $form->image('logo', __('Logo'))->uniqueName();
         $form->number('score', __('Member level score'))->default(0)->required()->min(0);
-        $form->number('discount', __('Discount'))->default(100)->max(100)->min(1)->required()->help('折扣，88=>8.8折,100=>原价');
+        $form->number('discount', __('Discount'))->default(10)->max(10)->min(0.1)->required()->help('折扣，8.8=>8.8折，（最大值: 10=>原价，最小值：0.1=>0.1折)')->with(function ($value, $field) {
+            // 编辑数据的时候需要初始化处理
+            $column_name = $field->column();
+            $old_data = old($column_name);
+            // 提交失败的数据不需要处理
+            if (! $old_data) {
+                $new_value = false;
+                if ($this && ! is_null($value) && $value == $this->$column_name) {
+                    $new_value = strval($value * 0.1);
+                }
+                if ($new_value !== false) {
+                    // 必须这一步才能生效
+                    $value = $new_value;
+                    $field->attribute('value', $value);
+                }
+            }
+
+            return $value;
+        });
+
         $form->switch('is_fee_freight', __('Is fee freight'))->default(0);
         $form->switch('has_enabled', __('Has enabled'))->default(1);
+
+        $form->saving(function ($form) {
+            $form->discount = intval(strval($form->discount * 10));
+        });
 
         return $form;
     }
