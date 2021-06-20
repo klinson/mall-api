@@ -91,7 +91,18 @@ class CouponsController extends AdminController
         $form->text('title', __('Title'))->required();
         $form->currency('start_price', __('Start price'))->required();
         $form->select('type', __('Type'))->options(Coupon::type_text)->required();
-        $form->number('face_value', __('Face value'))->required()->help('依据类型，满减券折（单位: 分），则288=>2.88元，折扣券则88=>打8.8折（最大值: 100=>原价)');
+        $form->number('face_value', __('Face value'))->required()->help('依据类型：<br>1. 满减券：8.88=>优惠8.88元，（单位: 元）<br>2. 折扣券：8.8=>打8.8折，（最大值: 100=>原价)')->with(function ($value, $field) {
+            if ($this && ! is_null($value) && $value == $this->face_value) {
+                if ($this->type == 1) {
+                    $value = strval($value * 0.1);
+                } elseif ($this->type == 2) {
+                    $value = strval($value * 0.01);
+                }
+            }
+            // 必须这一步才能生效
+            $field->attribute('value', $value);
+            return $value;
+        });
 
         $form->number('quantity', __('Quantity'))->min(0)->required();
         $form->number('all_quantity', __('All quantity'))->min(0)->required();
@@ -105,6 +116,14 @@ class CouponsController extends AdminController
         form_sort($form);
 
         $form->switch('has_enabled', __('Has enabled'))->default(1)->required();
+
+        $form->saving(function ($form) {
+            if ($form->type == 1) {
+                $form->face_value = intval(strval($form->face_value * 10));
+            } elseif ($form->type == 2) {
+                $form->face_value = intval(strval($form->face_value * 100));
+            }
+        });
 
         return $form;
     }
