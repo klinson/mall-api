@@ -43,6 +43,9 @@ class OrderSettle extends Command
     {
         $type = trim($this->input->getArgument('type'));
 
+        // 积分开关
+        $integral_status = config('system.integral_status', 0);
+
         switch ($type) {
             case 'order':
                 $query = Order::query();
@@ -61,11 +64,13 @@ class OrderSettle extends Command
         $query->with(['owner'])->where('status', $status)
             ->whereBetween($time_field, [
                 Carbon::yesterday()->startOfDay()->toDateTimeString(), Carbon::yesterday()->endOfDay()->toDateTimeString()
-            ])->chunk(1000, function ($list) {
+            ])->chunk(1000, function ($list) use ($integral_status) {
                 foreach ($list as $order) {
                     DB::beginTransaction();
                     try {
-                        $order->owner->integral->useIt($order, 1);
+                        if ($integral_status) {
+                            $order->owner->integral->useIt($order, 1);
+                        }
                         $order->owner->score->addScore($order);
                         DB::commit();
                     } catch (\Exception $exception) {

@@ -92,6 +92,10 @@ class OrdersController extends Controller
             }
         }
 
+        // 积分开关
+        $integral_status = config('system.integral_status', 0);
+        if ($integral_status && $request->used_integral > 0) return $this->response->errorBadRequest('系统未开放积分配置');
+
         if ($request->used_integral > 0) {
             $used_integral = intval($request->used_integral);
             if ($this->user->integral->balance < $used_integral) {
