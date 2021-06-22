@@ -72,21 +72,26 @@ class OrdersController extends Controller
 
         // 处理化 收货地址、快递配送模板、自提门店
         $address = $freightTemplate = $store = null;
-        if (! $test) {
-            if (! $request->delivery_type) {
-                return $this->response->errorBadRequest('请选择配送方式');
-            }
+        if (! $request->delivery_type) {
+            return $this->response->errorBadRequest('请选择配送方式');
+        }
 
-            if ($request->delivery_type == Address::class) {
+        if ($request->delivery_type == Address::class) {
+            if (! $test) {
                 if (! $request->delivery_id || ! $address = $this->user->addresses()->where('id', $request->delivery_id)->first()) {
                     return $this->response->errorBadRequest('请选择配送地址');
                 }
-                // 获取运费计算模板，没有则非配送范围
-                if (! $freightTemplate = FreightTemplate::getTemplate($address)) {
-                    return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
-                }
             } else {
-                if (! $request->delivery_id || ! $store = Store::where('id', $request->delivery_id)->enabled()->first()) {
+                if ($request->delivery_id) $address = $this->user->addresses()->where('id', $request->delivery_id)->first();
+            }
+
+            // 获取运费计算模板，没有则非配送范围
+            if ($address && (! $freightTemplate = FreightTemplate::getTemplate($address))) {
+                return $this->response->errorBadRequest('当前地址不在配送范围，请重新选择地址');
+            }
+        } else {
+            if (! $test) {
+                if (!$request->delivery_id || !$store = Store::where('id', $request->delivery_id)->enabled()->first()) {
                     return $this->response->errorBadRequest('请选择自取门店');
                 }
             }
